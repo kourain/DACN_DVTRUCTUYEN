@@ -1,0 +1,32 @@
+﻿@model DACN_DVTRUCTUYEN.Areas.Admin.Models.AdminMenu
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h2>Xác nhận xóa menu</h2>
+</div>
+<div class="form-row">
+    <div class="form-group col-md-6">
+        <label asp-for=" AdminMenuId"> AdminMenuId</label>
+        <input type="text" class="form-control mb-3" asp-for=" AdminMenuId" disabled>
+    </div>
+
+    <div class="form-group col-md-6">
+        <label asp-for="ItemName">ItemName</label>
+        <input type="text" class="form-control mb-3" asp-for="ItemName" disabled>
+    </div>
+
+</div>
+<!--Begin form-->
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="AdminMenuId" />
+    <a class="btn btn-lg btn-warning p-2 mr-5" href="javascript:history.back()">
+        <i class="bi bi-arrow-left-circle"></i>Quay lại
+    </a>
+    <button type="submit" class="btn btn-lg btn-danger p-2">
+        <i class="bi bi-trash-fill"></i>Xóa menu
+
+    </button>
+
+</form>
+

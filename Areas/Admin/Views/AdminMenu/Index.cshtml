@@ -1,0 +1,71 @@
+﻿@using DACN_DVTRUCTUYEN.Areas.Admin.Models;
+@model IList<AdminMenu>
+@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+<div class="pagetitle">
+    <h2>Danh sách menu</h2>
+</div>
+
+<p>
+    <a type="button" class="btn btn-success" asp-area="Admin" asp-controller="AdminMenu" asp-action="Create">
+        <i class="bi bi-file-earmark-text me-1">
+            Thêm menu
+        </i>
+    </a>
+</p>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th class="col-1 text-center">#</th>
+                                <th class="col-3 text-center">Tiêu đề</th>
+                                <th class="col-1 text-center">Menu cha</th>
+                                <th class="col-1 text-center">Thứ tự</th>
+                                <th class="col-1 text-center">ControllerName</th>
+                                <th class="col-1 text-center">ActionName</th>
+                                <th class="col-1 text-center">Icon</th>
+                                <th class="col-1 text-center">ItemDropDown</th>
+                                <th class="col-1 text-center">Ẩn/Hiện</th>
+                                <th class="col-2 text-center">Chức năng</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <th class="text-center" scope="row">@item.AdminMenuId</th>
+                                    <th class="text-primary">@item.ItemName </th>
+                                    <th class="text-center">@item.ParentLevel</th>
+                                    <th class="text-center">@item.ItemOrder</th>
+                                    <th class="text-center">@item.ControllerName</th>
+                                    <th class="text-center">@item.ActionName</th>
+                                    <th class="text-center">@item.Icon</th>
+                                    <th class="text-center">@item.ItemDropDown</th>
+                                    <th class="text-center">@item.IsActive</th>
+                                    <th class="text-center">
+                                        <a asp-area="Admin" asp-controller="AdminMenu" asp-action="Edit" asp-route-id="@item.AdminMenuId" class="btn btn-primary btn-sm" title="Sửa nội dung bài viết">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-area="Admin" asp-controller="AdminMenu" asp-action="Delete" asp-route-id="@item.AdminMenuId" class="btn btn-danger btn-sm" title="Xoá thông tin bài viết">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </th>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

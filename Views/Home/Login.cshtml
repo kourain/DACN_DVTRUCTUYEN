@@ -1,0 +1,144 @@
+﻿@model DACN_DVTRUCTUYEN.Models.Login;
+@{
+    Layout = "";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="login.css">
+
+    <title>Đăng nhập</title>
+    <style>
+        .text-danger {
+            color: red;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container active" id="container">
+        <div class="form-container sign-up">
+            <form method="post" id="SVform" asp-action="/SV/Login">
+                <h1>Đăng nhập cho sinh viên</h1>
+                <input asp-for="LoginName" type="text" placeholder="Mã sinh viên" required>
+                <input asp-for="PassWord" type="password" placeholder="Mật khẩu" required>
+                <div class="col-12 text-center text-danger" id="responsesv">
+                    <h6>
+                    </h6>
+                </div>
+                <a href="#">Quên mật khẩu?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div class="form-container sign-in">
+            <form method="post" id="GVform" asp-action="/GV/Login">
+                <h1>Đăng nhập cho giảng viên</h1>
+                <input asp-for="LoginName" type="text" placeholder="Mã giảng viên" required>
+                <input asp-for="PassWord" type="password" placeholder="Mật khẩu" required>
+                <div class="col-12 text-center text-danger" id="responsegv">
+                    <h6>
+                    </h6>
+                </div>
+                <a href="#">Quên mật khẩu?</a>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Xin chào!</h1>
+                    <p>Đây là khu vực đăng nhập cho sinh viên</p>
+                    <button class="hidden" id="sinhvien">Đăng nhập với tư cách giảng viên</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Xin chào!</h1>
+                    <p>Đây là khu vực đăng nhập cho giảng viên</p>
+                    <button class="hidden" id="giangvien">Đăng nhập với tư cách sinh viên</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        const container = document.getElementById('container');
+        const giangvienBtn = document.getElementById('giangvien');
+        const sinhvienBtn = document.getElementById('sinhvien');
+
+        giangvienBtn.addEventListener('click', () => {
+            container.classList.add("active");
+        });
+
+        sinhvienBtn.addEventListener('click', () => {
+            container.classList.remove("active");
+        });
+
+        // Lấy form
+        let form = document.getElementById("SVform");
+
+        form.addEventListener('submit', function (event) {
+            // Ngăn chặn hành vi mặc định của form
+            event.preventDefault();
+
+            // Tạo một đối tượng FormData từ form
+            let formData = new FormData(form);
+
+            // Gửi dữ liệu form sử dụng phương thức POST
+            fetch('/SV/Login', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code == 0) {
+                        $("#responsesv").html("<h6>" + data.messenger + "</h6>");
+                    }
+                    else {
+
+                        console.log(document.cookie)
+                        window.location.href = data.messenger;
+                    }
+                    console.log('Success:', data.messenger);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+        // Lấy form
+        form = document.getElementById("GVform");
+
+        form.addEventListener('submit', function (event) {
+            // Ngăn chặn hành vi mặc định của form
+            event.preventDefault();
+
+            // Tạo một đối tượng FormData từ form
+            let formData = new FormData(form);
+
+            // Gửi dữ liệu form sử dụng phương thức POST
+            fetch('/GV/Login', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code == 0) {
+                        $("#responsegv").html("<h6>" + data.messenger + "</h6>");
+                    }
+                    else {
+                        window.location.href = data.messenger;
+                    }
+                    console.log('Success:', data.messenger);
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+    </script>
+</body>
+
+</html>

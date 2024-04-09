@@ -1,0 +1,22 @@
+﻿@using System.Web;
+@{
+    IgnoreBody();
+    Context.Request.Cookies.TryGetValue("token", out string value);
+    Context.Request.Cookies.TryGetValue("id", out string id);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    @{
+        if (DACN_DVTRUCTUYEN.Utilities.Functions.IsLoginUser(value, id) == 0)
+        {
+            <meta http-equiv='refresh' content='0; URL=/User/Logout'>
+        }
+        else
+        {
+            <meta http-equiv='refresh' content='0; URL=/User'>
+        }
+    }
+</head>
+</html>

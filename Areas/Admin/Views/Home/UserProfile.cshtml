@@ -1,0 +1,122 @@
+﻿@{
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+@model DACN_DVTRUCTUYEN.Models.ChangePass;
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Profile</h1>
+    </div><!-- End Page Title -->
+
+    <section class="section profile">
+        <div class="row">
+            @* <div class="col-xl-4">
+
+            <div class="card">
+            <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
+
+            <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+            <h2>@Model</h2>
+            <h3>Web Designer</h3>
+            <div class="social-links mt-2">
+            <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
+            <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
+            <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
+            </div>
+            </div>
+            </div>
+
+            </div>
+            *@
+            <div class="col-xl-8">
+
+                <div class="card">
+                    <div class="card-body pt-3">
+                        <!-- Bordered Tabs -->
+                        <ul class="nav nav-tabs nav-tabs-bordered">
+                            <li class="nav-item">
+                                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-change-password">Đổi mật khẩu</button>
+                            </li>
+
+                        </ul>
+                        <div class="tab-content pt-2">
+                            <div class="tab-pane fade show active" id="profile-change-password">
+                                <!-- Change Password Form -->
+                                <form method="Post" asp-controller="AdminChangePass" id="formchangepass">
+                                    <div class="row mb-3">
+                                        <label for="oldPass" class="col-md-4 col-lg-3 col-form-label">Mật khẩu hiện tại</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="oldPass" type="password" asp-for="oldPass" class="form-control" id="oldPass">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="newPass" class="col-md-4 col-lg-3 col-form-label">Mật khẩu mới</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="newPass" type="password" asp-for="newPass" class="form-control" id="newPass">
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <label for="renewPass" class="col-md-4 col-lg-3 col-form-label">Nhập lại mật khẩu mới</label>
+                                        <div class="col-md-8 col-lg-9">
+                                            <input name="renewPass" type="password" asp-for="renewPass" class="form-control" id="renewPass">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 text-center text-danger" id="responseadmin">
+                                        <h6>
+                                        </h6>
+                                    </div>
+
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary">Đổi mật khẩu</button>
+                                    </div>
+                                </form><!-- End Change Password Form -->
+
+                            </div>
+
+                        </div><!-- End Bordered Tabs -->
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+</main><!-- End #main -->
+<script>
+    // Lấy form
+    let form = document.getElementById("formchangepass");
+
+    form.addEventListener('submit', function (event) {
+        // Ngăn chặn hành vi mặc định của form
+        event.preventDefault();
+
+        // Tạo một đối tượng FormData từ form
+        let formData = new FormData(form);
+
+        // Gửi dữ liệu form sử dụng phương thức POST
+        fetch('/Admin/AdminChangePass', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.code == 0) {
+                    $("#responseadmin").html("<h6>" + data.messenger + "</h6>");
+                }
+                else {
+                    $("#responseadmin").html("<h6>" + data.messenger + "</h6>");
+                }
+                console.log('Success:', data.messenger);
+                console.log('Success:', data.res2);
+
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    });
+</script>
