@@ -17,56 +17,27 @@
 else
 {
     <head>
-        <!-- Required meta tags -->
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <title>Sinh Viên</title>
-        <!-- plugins:css -->
-        <link rel="stylesheet" href="~/assets/vendors/mdi/css/materialdesignicons.min.css">
-        <link rel="stylesheet" href="~/assets/vendors/flag-icon-css/css/flag-icon.min.css">
-        <link rel="stylesheet" href="~/assets/vendors/css/vendor.bundle.base.css">
-        <!-- endinject -->
-        <!-- Plugin css for this page -->
-        <link rel="stylesheet" href="~/assets/vendors/font-awesome/css/font-awesome.min.css" />
-        <link rel="stylesheet" href="~/assets/vendors/bootstrap-datepicker/bootstrap-datepicker.min.css">
-        <!-- End plugin css for this page -->
-        <!-- inject:css -->
-        <!-- endinject -->
-        <!-- Layout styles -->
-        <link rel="stylesheet" href="~/assets/css/style.css">
-        <!-- End layout styles -->
-        <link rel="shortcut icon" href="~/assets/images/favicon.png" />
+        <meta charset="utf-8" />
+        <link rel="stylesheet" href="~/styles.20ef5bbe88308452e0ae.css" />
+        <title>@ViewData["Title"]</title>
     </head>
-    <body class"">
-        <div class="container-scroller">
-            @await Component.InvokeAsync("UserHeadMenuView")
-            <!-- partial -->
-            <div class="container-fluid page-body-wrapper">
-                @await Component.InvokeAsync("UserMenuView")
-                <!-- partial -->
-                <div class="main-panel">
-                    <div class="content-wrapper" id="renderbody">
-                        @RenderBody()
-                    </div>
-                </div>
+    <body>
+        <div id="___gatsby">
+            <div style="outline: none;" tabindex="-1" id="gatsby-focus-wrapper">
+                @await Component.InvokeAsync("UserMenu")
+                @RenderBody()
+                @await Component.InvokeAsync("Footer")
             </div>
-            <!-- main-panel ends -->
+            <div id="gatsby-announcer" style="position: absolute; top: 0; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;" aria-live="assertive" aria-atomic="true"></div>
         </div>
-        <!-- container-scroller -->
-        <!-- plugins:js -->
-        <script src="~/assets/vendors/js/vendor.bundle.base.js"></script>
-        <!-- endinject -->
-        <!-- Plugin js for this page -->
-        <script src="~/assets/vendors/chart.js/Chart.min.js"></script>
-        <script src="~/assets/vendors/jquery-circle-progress/js/circle-progress.min.js"></script>
-        <!-- End plugin js for this page -->
-        <!-- inject:js -->
-        <script src="~/assets/js/off-canvas.js"></script>
-        <script src="~/assets/js/hoverable-collapse.js"></script>
-        <script src="~/assets/js/misc.js"></script>
-        <!-- endinject -->
-        <!-- Custom js for this page -->
-        <script src="~/assets/js/dashboard.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <div id="__popup"></div>
+        <a id="fb-messenger" target="_blank" rel="noreferrer"><img title="Messenger" class="w L M cc zc" loading="lazy" /></a>
+        <div id="fb-root"></div>
+        <div id="fb-customer-chat" class="fb-customerchat" attribution="biz_inbox"></div>
+        <div id="__dialog"></div>
+        <div id="__alerter" class="a w J M ta ec ic Ie U"></div>
     </body>
+
 }
 </html>

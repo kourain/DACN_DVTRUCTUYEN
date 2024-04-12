@@ -11,7 +11,10 @@ namespace DACN_DVTRUCTUYEN.Models
         public DbSet<AdminUser> AdminUsers { get; set; }
         public DbSet<AdminMenu> AdminMenus { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<UserMenu> UserMenus { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<Footer> Footers { get; set; }
+        public DbSet<ProductOption> ProductOptions { get; set; }
 
     }
 }

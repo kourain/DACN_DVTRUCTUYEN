@@ -1,0 +1,12 @@
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="gradient">
+<stop offset="0%" stop-color="#6677770b" />
+<stop offset="30%" stop-color="#55666613" />
+<stop offset="50%" stop-color="#6677770b" />
+<stop offset="100%" stop-color="#6677770b" />
+<animateTransform attributeName="gradientTransform" type="translate" from="-1 0" to="1 0" dur="2s" repeatCount="indefinite"/>
+</linearGradient>
+</defs>
+<rect class="rect" x="-100" y="0" width="300" height="100" fill="url(#gradient)" />
+</svg>

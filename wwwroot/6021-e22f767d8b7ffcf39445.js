@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdivine_shop_gatsby=self.webpackChunkdivine_shop_gatsby||[]).push([[6021],{6021:function(n,s,t){t.d(s,{i:function(){return e}});const e=(n,s)=>{const t=[n[0]];for(let e=1;e<n.length;e++)t.push(s,n[e]);return t}}}]);

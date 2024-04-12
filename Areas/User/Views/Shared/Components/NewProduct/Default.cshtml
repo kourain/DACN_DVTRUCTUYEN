@@ -1,0 +1,43 @@
+﻿@using System.Web;
+@{
+    string? now = Context.Request.Path.Value;
+    Context.Request.Cookies.TryGetValue("username", out string username);
+    username = HttpUtility.UrlDecode(username);
+}
+<div class="a Re">
+    <div class="Ce">
+        <div class="ta nc Ke">
+            <h4>Một số sản phẩm mới</h4>
+            <a class="b c ta jc Gd Ga" href="/search/featured">Khám phá</a>
+        </div>
+        <div class="fe">Danh sách những sản phẩm mới cập nhật hoặc mới được phát hành</div>
+    </div>
+    <div style="">
+        <div class="ta ec kc Jc Qd Le">
+            <div class="ta gc Pe">
+                @for (int i = 0; i<8; i++)
+                {
+                    <div class="_e mg dh">
+                        <a class="lf gf ff ra" tabindex="-1" href="/tai-khoan-netflix-1-thang">
+                            <img loading="lazy" src="https://cdn.divineshop.vn/image/catalog/Anh-SP/Netflix/Divine-Shop-NETFLIX-1-thang-23298258-63925.jpg?hash=1710321229" class="xc" alt="Tài Khoản Netflix Premium 1 tháng - Xem phim chất lượng 4k và Full HD" />
+                            <a class="Ua Ra bf ia rc tc ra" href="/user/product/netflix">Tài Khoản Netflix Premium 1 tháng - Xem phim chất lượng 4k và Full HD</a>
+                            <div class="ta Ua ja">
+                                <div class="Vb ta gc De jc">
+                                    <div class="Zd">99.000đ</div>
+                                    <div class="ie Zd me">260.000đ</div>
+                                    <div>
+                                        <small class="Zd aa Id Jd xc _c ke">-62%</small>
+                                    </div>
+                                </div>
+                            </div>
+                    </div>
+                }
+            </div>
+            <div class="ta mc">
+                <button type="button" class="b ta Ee ge Zd">
+                    <div>Xem thêm</div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

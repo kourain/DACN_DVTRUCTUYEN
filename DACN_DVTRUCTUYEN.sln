@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34622.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DACN_DVTRUCTUYEN", "DACN_DVTRUCTUYEN.csproj", "{BAD184F2-7EA1-4D36-BC87-97649C4F39C8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DACN_DVTRUCTUYEN", "DACN_DVTRUCTUYEN.csproj", "{BAD184F2-7EA1-4D36-BC87-97649C4F39C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

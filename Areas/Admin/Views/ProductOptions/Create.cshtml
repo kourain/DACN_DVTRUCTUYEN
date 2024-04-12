@@ -1,0 +1,60 @@
+﻿@model DACN_DVTRUCTUYEN.Models.ProductOption
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>ProductOption</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="OptionName" class="control-label"></label>
+                <input asp-for="OptionName" class="form-control" />
+                <span asp-validation-for="OptionName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="OptionValue" class="control-label"></label>
+                <input asp-for="OptionValue" class="form-control" />
+                <span asp-validation-for="OptionValue" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Quantity" class="control-label"></label>
+                <input asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SoldCount" class="control-label"></label>
+                <input asp-for="SoldCount" class="form-control" />
+                <span asp-validation-for="SoldCount" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PriceOld" class="control-label"></label>
+                <input asp-for="PriceOld" class="form-control" />
+                <span asp-validation-for="PriceOld" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PriceNow" class="control-label"></label>
+                <input asp-for="PriceNow" class="form-control" />
+                <span asp-validation-for="PriceNow" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="UseUserAccount" /> @Html.DisplayNameFor(model => model.UseUserAccount)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
