@@ -9,7 +9,6 @@ namespace DACN_DVTRUCTUYEN.Models
         [Key]
         public int FooterId { get; set; }
         public string? ItemText { get; set; }
-        public int Column { get; set; }
         public int ParentID { get; set; }
         public int ItemOrder { get; set; }
         public bool IsActive { get; set; }

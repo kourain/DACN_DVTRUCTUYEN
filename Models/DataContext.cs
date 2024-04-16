@@ -13,6 +13,8 @@ namespace DACN_DVTRUCTUYEN.Models
         public DbSet<User> Users { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Footer> Footers { get; set; }
         public DbSet<ProductOption> ProductOptions { get; set; }
 

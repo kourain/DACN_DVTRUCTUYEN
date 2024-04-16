@@ -2,18 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
-using System.Text.Json.Nodes;
-using System.Text.Json;
 using System.Text;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.IdentityModel.Tokens;
-using NuGet.Protocol;
-using System.Security.Cryptography;
-using System;
-using System.Security.AccessControl;
-using System.Web;
-using Newtonsoft.Json.Linq;
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
 {
     [Area("User")]
@@ -55,6 +46,25 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                              SoldCount = m.SoldCount,
                              UseUserAccount = m.UseUserAccount,
                          });
+            return Ok(query);
+        }
+
+        [Route("/user/product/getProduct/top/{skip:int}")]
+        public IActionResult getproductTop(int skip)
+        {
+            if (skip == null) { skip = 0; }
+            var query = from m in _dataContext.ProductOptions.Skip(skip * 8).OrderByDescending(m => m.SoldCount).Take(8)
+                        select new ProductOption()
+                        {
+                            OptionName = m.OptionName,
+                            OptionValue = m.OptionValue,
+                            ProductID = m.ProductID,
+                            PriceNow = m.PriceNow,
+                            PriceOld = m.PriceOld,
+                            Quantity = m.Quantity,
+                            SoldCount = m.SoldCount,
+                            UseUserAccount = m.UseUserAccount,
+                        };
             return Ok(query);
         }
 

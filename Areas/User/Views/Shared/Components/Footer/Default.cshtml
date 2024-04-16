@@ -1,4 +1,4 @@
-﻿
+﻿@model IList<Footer>
 <footer>
     <div class="Sc">
         <div class="a">
@@ -14,28 +14,19 @@
         <div class="Ad">
             <div class="ta gc nc Je">
                 <div class="ta gc Je">
-                    <div class="Eb">
-                        <div class="Zd _d">Giới thiệu</div>
-                        <div class="ta ec Ce ia">
-                            <a href="https://help.divineshop.vn/gioi-thieu/ly-do-nen-mua-game-ban-quyen" target="_blank" rel="noreferrer">Game bản quyền là gì?</a>
-                            <a href="https://help.divineshop.vn/gioi-thieu/gioi-thieu-divine-shop" target="_blank" rel="noreferrer">Giới thiệu Divine Shop</a>
-                            <a href="https://help.divineshop.vn/gioi-thieu/dieu-khoan-dich-vu" target="_blank" rel="noreferrer">Điều khoản dịch vụ</a>
-                            <a href="https://help.divineshop.vn/gioi-thieu/chinh-sach-bao-mat" target="_blank" rel="noreferrer">Chính sách bảo mật</a>
+                    @foreach (Footer footer in Model.Where(m=>m.ParentID == 0))
+                    {
+                        List<Footer> listchild = Model.Where(m => m.FooterId == footer.ParentID).ToList();
+                        <div class="Eb">
+                            <div class="Zd _d">Giới thiệu</div>
+                        @foreach(Footer childFooter in listchild)
+                            {
+                                <div class="ta ec Ce ia">
+                                    <a href="#"> @childFooter.ItemText </a>
+                                </div>
+                            }
                         </div>
-                    </div>
-                    <div class="Fb">
-                        <div class="Zd _d">Tài khoản</div>
-                        <div class="ta ec Ce ia"><a href="index.html">Đăng nhập</a><a href="index.html">Đăng ký</a></div>
-                    </div>
-                    <div class="Bb">
-                        <div class="Zd _d">Liên hệ</div>
-                        <div class="ta ec Ce ia">
-                            <div>
-                                <div>Hotline tự động <a href="tel:1900 633 305" class="Zd de">1900 633 305</a></div>
-                            </div>
-                            <a href="https://help.divineshop.vn/chinh-sach-bao-hanh/lien-he-va-ho-tro" target="_blank" rel="noreferrer">Liên hệ Hỗ trợ</a><a href="chat.html" target="_blank" rel="noreferrer">Chat với CSKH</a>
-                        </div>
-                    </div>
+                    }
                 </div>
             </div>
         </div>

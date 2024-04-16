@@ -12,30 +12,49 @@
             </div>
         </div>
         <div class="ta ec kc Jc Qd Le">
-            <div class="ta gc Pe">
-                @for (int i = 0; i < 8; i++)
-                {
-                    <div class="_e mg dh">
-                        <a class="lf gf ff ra" tabindex="-1" href="/tai-khoan-netflix-1-thang">
-                            <img loading="lazy" src="https://cdn.divineshop.vn/image/catalog/Anh-SP/Netflix/Divine-Shop-NETFLIX-1-thang-23298258-63925.jpg?hash=1710321229" class="xc" alt="Tài Khoản Netflix Premium 1 tháng - Xem phim chất lượng 4k và Full HD" />
-                            <a class="Ua Ra bf ia rc tc ra" href="/tai-khoan-netflix-1-thang">Tài Khoản Netflix Premium 1 tháng - Xem phim chất lượng 4k và Full HD</a>
-                            <div class="ta Ua ja">
-                                <div class="Vb ta gc De jc">
-                                    <div class="Zd">99.000đ</div>
-                                    <div class="ie Zd me">260.000đ</div>
-                                    <div>
-                                        <small class="Zd aa Id Jd xc _c ke">-62%</small>
-                                    </div>
-                                </div>
-                            </div>
-                    </div>
-                }
+            <div class="ta gc Pe" id="newproduct">
             </div>
             <div class="ta mc" style="margin-top:40px">
-                <button type="button" class="b ta Ee ge Zd">
+                <button type="button" onclick="loadmore()" class="b ta Ee ge Zd">
                     <div>Xem thêm</div>
                 </button>
             </div>
         </div>
     </div>
 </div>
+<script>
+    var productcount = 1;
+    fetch("/user/product/getproduct/top/0")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            // Process the retrieved user data
+            console.log('User Data:', data);
+            data.forEach(function (item) {
+                var htmlval = `
+                        <div class="_e mg dh">
+                                <a class="lf gf ff ra" tabindex="-1" href="/user/product/${item.productID}">
+                                <img src="${item.productImg}" class="xc" alt="${item.optionName}" />
+                                    <a class="Ua Ra bf ia rc tc ra" href="/tai-khoan-netflix-1-thang">${item.optionName}</a>
+                                <div class="ta Ua ja">
+                                    <div class="Vb ta gc De jc">
+                                        <div class="Zd">${item.priceNow} đ</div>
+                                        <div class="ie Zd me">${item.priceOld} đ</div>
+                                        <div>
+                                            <small class="Zd aa Id Jd xc _c ke">Đang giảm giá</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            </div>`;
+                document.getElementById("newproduct").innerHTML += htmlval;
+            });
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+</script>

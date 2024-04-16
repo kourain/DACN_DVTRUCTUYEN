@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdivine_shop_gatsby=self.webpackChunkdivine_shop_gatsby||[]).push([[3577],{3577:function(e,s,n){var t=n(5893);s.Z=e=>{let{__html:s}=e;return(0,t.jsx)("div",{className:"yh",dangerouslySetInnerHTML:{__html:s}})}}}]);

@@ -11,7 +11,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Components
         {
             _context = context;
         }
-
+    
         public async Task<IViewComponentResult> InvokeAsync()
         {
             return await Task.FromResult((IViewComponentResult)View("Default"));

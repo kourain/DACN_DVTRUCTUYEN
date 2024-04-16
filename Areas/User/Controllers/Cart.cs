@@ -29,10 +29,40 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [Route("/User/cart")]
         public async Task<IActionResult> Index()
         {
-
-            Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]);
-            var cart = _dataContext.Carts.Where(m => m.UserID == int.Parse(Request.Cookies["id"])).FirstOrDefault();
-            return View(cart);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0) {
+                Redirect("/user/");
+            }
+            return View(_dataContext);
+        }
+        [Route("/User/cart/add&{productid}&{productoptionvalue}")]
+        public IActionResult AddToCart(string productid,string productoptionvalue)
+        {
+            int.TryParse(Request.Cookies["id"],out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                Redirect("/user/");
+            }
+            if (_dataContext.Carts.Where(m=> m.UserID == userid && m.ProductID == productid && m.ProductOptionValue == productoptionvalue).FirstOrDefault() != null)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Sản phẩm đã tồn tại trong giỏ hàng, vui lòng xác nhận"
+                });
+            }
+            var item = new DACN_DVTRUCTUYEN.Areas.User.Models.Cart()
+            {
+                UserID = userid,
+                ProductID = productid,
+                ProductOptionValue = productoptionvalue,
+                Quantity = 1
+            };
+            _dataContext.Add(item);
+            _dataContext.SaveChanges();
+            return Ok(new{
+                code = 1,
+                messenger = "Đã thêm vào giỏ hàng"
+            });
         }
         [Route("/user/cart/{ProductID}")]
         public async Task<IActionResult> Detail(string ProductID)
@@ -73,6 +103,20 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             }
             ViewBag.ProductOption0 = ProductOptionValue;
             return View(cart);
+        }
+        [Route("/user/cart/get_cart_count")]
+        public IActionResult getcartCount()
+        {
+            int.TryParse(Request.Cookies["id"], out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                return BadRequest();
+            }
+            return Ok(new
+            {
+                code = 1,
+                messenger = _dataContext.Carts.Where(m=>m.UserID == userid).Count(),
+            });
         }
     }
 }

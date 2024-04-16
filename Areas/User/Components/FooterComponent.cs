@@ -14,7 +14,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Components
 
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            return await Task.FromResult((IViewComponentResult)View("Default"));
+            var list = _context.Footers.Where(m => m.IsActive == true).ToList() ;
+            return await Task.FromResult((IViewComponentResult)View("Default",list));
         }
     }
 }
