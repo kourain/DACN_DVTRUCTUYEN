@@ -111,7 +111,7 @@
                             </div>
                             <fieldset class="ta ec kc Ie">
                                 <div class="Td he vc rc tc">Quét QR. Thanh toán ngay!</div>
-                                <button type="button" class="b c ta mc jc bd xf Cf">
+                                <button type="button" class="b c ta mc jc bd xf Cf" onclick="paynow()">
                                     <div class="ta Ee rc">
                                         <img loading="lazy" src="~/QR.svg" class="Db wa" alt="Mua siêu tốc qua Mobile Banking" />
                                         <div>Mua siêu tốc qua Mobile Banking</div>
@@ -125,3 +125,25 @@
         </div>
     </div>
 </div>
+<script>
+    function paynow() {
+        setTimeout(() =>
+            fetch("/user/cart/pay")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // Process the retrieved user data
+                    console.log('User Data:', data);
+                    if (data.code == 1) {
+                        window.location.href = data.messenger;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                }), 1500);
+    }
+</script>

@@ -16,6 +16,7 @@ using System.Web;
 using Newtonsoft.Json.Linq;
 using Microsoft.CodeAnalysis;
 using DACN_DVTRUCTUYEN.Utilities;
+using DACN_DVTRUCTUYEN.Areas.User.Models;
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
 {
     [Area("User")]
@@ -29,20 +30,21 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [Route("/User/cart")]
         public async Task<IActionResult> Index()
         {
-            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0) {
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
                 Redirect("/user/");
             }
             return View(_dataContext);
         }
         [Route("/User/cart/add&{productid}&{productoptionvalue}")]
-        public IActionResult AddToCart(string productid,string productoptionvalue)
+        public IActionResult AddToCart(string productid, string productoptionvalue)
         {
-            int.TryParse(Request.Cookies["id"],out int userid);
+            int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
                 Redirect("/user/");
             }
-            if (_dataContext.Carts.Where(m=> m.UserID == userid && m.ProductID == productid && m.ProductOptionValue == productoptionvalue).FirstOrDefault() != null)
+            if (_dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid && m.ProductOptionValue == productoptionvalue).FirstOrDefault() != null)
             {
                 return Ok(new
                 {
@@ -59,7 +61,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             };
             _dataContext.Add(item);
             _dataContext.SaveChanges();
-            return Ok(new{
+            return Ok(new
+            {
                 code = 1,
                 messenger = "Đã thêm vào giỏ hàng"
             });
@@ -73,6 +76,47 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 return Redirect("/User");
             }
             return View(cart);
+        }
+        [Route("/user/cart/pay")]
+        public IActionResult Pay()
+        {
+            int.TryParse(Request.Cookies["id"], out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                return BadRequest();
+            }
+            var listcart = _dataContext.Carts.Where(m => m.UserID == userid).ToList();
+            int totalpay = 0;
+            var infor = "";
+            foreach (var item in listcart)
+            {
+                totalpay += _dataContext.ProductOptions.Where(m => m.ProductID == item.ProductID && m.OptionValue == item.ProductOptionValue).FirstOrDefault().PriceNow;
+                infor += item.ProductID+ "_" + item.ProductOptionValue;
+            }
+            var now = DateTime.Now;
+            Order neworder = new Order()
+            {
+                UserID = userid,
+                TotalPay = totalpay,
+                Time = now
+            };
+            _dataContext.Add(neworder);
+            _dataContext.SaveChanges();
+            var orderid = _dataContext.Orders.Where(m => m.UserID == userid && m.TotalPay == totalpay).FirstOrDefault().OrderID;
+            var n = from m in listcart
+                    select _dataContext.Add(new OrderDetail()
+                    {
+                        OrderID = orderid,
+                        ProductID = m.ProductID,
+                        ProductOptionValue = m.ProductOptionValue,
+                        OrderStatus = 1,
+                    });
+            _dataContext.SaveChanges();
+            return Ok(new
+            {
+                code = 1,
+                messenger = $"/vnpayapi/{totalpay}00&{infor}&{orderid}2"
+            });
         }
 
         [Route("/user/cart/getProductOption/{ProductID}")]
@@ -115,7 +159,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             return Ok(new
             {
                 code = 1,
-                messenger = _dataContext.Carts.Where(m=>m.UserID == userid).Count(),
+                messenger = _dataContext.Carts.Where(m => m.UserID == userid).Count(),
             });
         }
     }

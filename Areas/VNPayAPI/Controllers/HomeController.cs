@@ -2,7 +2,7 @@
 using System;
 using System.Configuration;
 using System.Web;
-using DACN_DVTRUCTUYEN.Areas.VNPayAPI.Others;
+using DACN_DVTRUCTUYEN.Areas.VNPayAPI.Util;
 
 namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
 {
@@ -17,8 +17,8 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         {
             return View();
         }
-        [Route("/VNPayAPI/{amount}&{infor}")]
-        public ActionResult Payment(string amount,string infor)
+        [Route("/VNPayAPI/{amount}&{infor}&{orderinfor}")]
+        public ActionResult Payment(string amount, string infor, string orderinfor)
         {
             string hostName = System.Net.Dns.GetHostName();
             string clientIPAddress = System.Net.Dns.GetHostAddresses(hostName).GetValue(0).ToString();
@@ -36,10 +36,9 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
             pay.AddRequestData("vnp_OrderInfo", infor); //Thông tin mô tả nội dung thanh toán
             pay.AddRequestData("vnp_OrderType", "other"); //topup: Nạp tiền điện thoại - billpayment: Thanh toán hóa đơn - fashion: Thời trang - other: Thanh toán trực tuyến
             pay.AddRequestData("vnp_ReturnUrl", returnUrl); //URL thông báo kết quả giao dịch khi Khách hàng kết thúc thanh toán
-            pay.AddRequestData("vnp_TxnRef", DateTime.Now.Ticks.ToString()); //mã hóa đơn
-                                                                           
-            string paymentUrl = pay.CreateRequestUrl(url, hashSecret);
+            pay.AddRequestData("vnp_TxnRef", orderinfor); //mã hóa đơn
 
+            string paymentUrl = pay.CreateRequestUrl(url, hashSecret);
             return Redirect(paymentUrl);
         }
         [Route("/VNpayAPI/paymentconfirm")]
@@ -47,44 +46,45 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         {
             if (Request.QueryString.HasValue)
             {
-                var vnpayData = Request.Query.ToList();
-                PayLib pay = new PayLib();
-                //lấy toàn bộ dữ liệu được trả về
-                foreach (var s in vnpayData)
-                {
-                    if (!string.IsNullOrEmpty(s.Key) && s.Value.ToString().StartsWith("vnp_"))
-                    {
-                        pay.AddResponseData(s.Key, s.Value.ToString());
-                    }
-                }
+                //lấy toàn bộ dữ liệu trả về
+                var queryString = Request.QueryString.Value;
+                var json = HttpUtility.ParseQueryString(queryString);
 
-                long orderId = Convert.ToInt64(pay.GetResponseData("vnp_TxnRef")); //mã hóa đơn
-                long vnpayTranId = Convert.ToInt64(pay.GetResponseData("vnp_TransactionNo")); //mã giao dịch tại hệ thống VNPAY
-                string vnp_ResponseCode = pay.GetResponseData("vnp_ResponseCode"); //response code: 00 - thành công, khác 00 - xem thêm https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/
-                string vnp_SecureHash = vnpayData.Where(m=>m.Key == "vnp_SecureHash").FirstOrDefault().Value.ToString(); //hash của dữ liệu trả về
+                long orderId = Convert.ToInt64(json["vnp_TxnRef"]); //mã hóa đơn
+                string orderInfor = json["vnp_OrderInfo"].ToString(); //Thông tin giao dịch
+                long vnpayTranId = Convert.ToInt64(json["vnp_TransactionNo"]); //mã giao dịch tại hệ thống VNPAY
+                string vnp_ResponseCode = json["vnp_ResponseCode"].ToString(); //response code: 00 - thành công, khác 00 - xem thêm https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/
+                string vnp_SecureHash = json["vnp_SecureHash"].ToString(); //hash của dữ liệu trả về
+                var pos = Request.QueryString.Value.IndexOf("&vnp_SecureHash");
 
-                bool checkSignature = pay.ValidateSignature(vnp_SecureHash, hashSecret); //check chữ ký đúng hay không?
-               
-                if (checkSignature)
+                //return Ok(Request.QueryString.Value.Substring(1, pos-1) + "\n" + vnp_SecureHash + "\n"+ PayLib.HmacSHA512(hashSecret, Request.QueryString.Value.Substring(1, pos-1)));
+                bool checkSignature = ValidateSignature(Request.QueryString.Value.Substring(1, pos - 1), vnp_SecureHash, hashSecret); //check chữ ký đúng hay không?
+                if (checkSignature && tmnCode == json["vnp_TmnCode"].ToString())
                 {
                     if (vnp_ResponseCode == "00")
                     {
                         //Thanh toán thành công
-                        ViewBag.Message = "Thanh toán thành công hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId;
+                        return Redirect("LINK");
                     }
                     else
                     {
                         //Thanh toán không thành công. Mã lỗi: vnp_ResponseCode
-                        ViewBag.Message = "Có lỗi xảy ra trong quá trình xử lý hóa đơn " + orderId + " | Mã giao dịch: " + vnpayTranId + " | Mã lỗi: " + vnp_ResponseCode;
+                        return Redirect("LINK");
                     }
                 }
                 else
                 {
-                    ViewBag.Message = "Có lỗi xảy ra trong quá trình xử lý";
+                    //phản hồi không khớp với chữ ký
+                    return Redirect("đường dẫn nếu phản hồi ko hợp lệ");
                 }
             }
-
-            return View();
+            //phản hồi không hợp lệ
+            return Redirect("LINK");
+        }
+        public bool ValidateSignature(string rspraw, string inputHash, string secretKey)
+        {
+            string myChecksum = PayLib.HmacSHA512(secretKey, rspraw);
+            return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

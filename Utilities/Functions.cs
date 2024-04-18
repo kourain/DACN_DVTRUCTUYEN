@@ -35,7 +35,7 @@ namespace DACN_DVTRUCTUYEN.Utilities
 
             var thisval = tokenUser[agg1];
             //lưu token tại hệ thống với thời hạn sử dụng là 6 giờ
-            if (thisval == null)
+            try { 
                 tokenUser.Add(agg1, JsonNode.Parse(JsonSerializer.Serialize(new
                 {
                     //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
@@ -43,8 +43,8 @@ namespace DACN_DVTRUCTUYEN.Utilities
                     UID = agg2,
                     email = agg3
                 })));
-            else
-            {
+            }
+            catch { 
                 //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
                 tokenUser[agg1]["time"] = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd hh:mm:ss");
             }

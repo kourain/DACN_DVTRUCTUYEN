@@ -61,7 +61,7 @@ else
         <header id="header" class="header fixed-top d-flex align-items-center">
 
             <div class="d-flex align-items-center justify-content-between">
-                <a href="\Admin\Home" class="logo d-flex align-items-center">
+                <a href="\Admin\" class="logo d-flex align-items-center">
                     <img src="@jsondata["Logo"]" alt="">
                     <span style="font-size: x-large;font-family: cursive;">
                         Trang quản trị
@@ -230,10 +230,10 @@ else
                     *@
                     </div>
                     <li class="nav-item dropdown pe-3">
-                        <span class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <a class="nav-link nav-profile d-flex align-items-center pe-0" href="" data-bs-toggle="dropdown">
                             <img src="@jsondata["Logo"]" class="rounded-circle">
                             <span class="d-none d-md-block dropdown-toggle ps-2">@username</span>
-                        </span><!-- End Profile Iamge Icon -->
+                        </a><!-- End Profile Iamge Icon -->
 
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                             <li class="dropdown-header">
@@ -270,11 +270,9 @@ else
         </header><!-- End Header -->
         <!-- ======= Sidebar ======= -->
         @await Component.InvokeAsync("AdminMenu")
-        <div id="renderbody">
-            <main id="main" class="main">
-                @RenderBody()
-            </main>
-        </div>
+        <main id="main" class="main">
+            @RenderBody()
+        </main>
 
         <!-- ======= Footer ======= -->
         <footer id="footer" class="footer">
@@ -288,27 +286,21 @@ else
 
         <!-- End Footer -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
         <script>
-            var savemenu = "";
             $('a').click(function (event) {
-                document.querySelector('#menunow').className = 'nav-link collapsed';
+                event.preventDefault(); // ngăn chặn hành vi mặc định của liên kết
+                $('.nav-link').addClass('collapsed');
+
                 var href = $(this).attr('href'); // lấy đường dẫn từ thuộc tính href của liên kết
                 console.log(href);
                 if (href === null) return;
+                if (href === "") return;
                 if (href.includes("/Admin/Logout")) window.location.href = href;
-                if (href.includes("/Admin")) window.location.href = "#";
-                if (href.includes("#")) window.location.href = href;
-                else {
-                    window.location.href = href;
-                }
-                if (savemenu !== "") {
-                    savemenu.className = 'nav-link collapsed';
-                }
+                if (!href.includes("/Admin/")) window.location.href = href;
                 this.className = 'nav-link ';
                 savemenu = this;
-                console.log(href.indexOf("#"));
-                event.preventDefault(); // ngăn chặn hành vi mặc định của liên kết
                 // Gửi yêu cầu GET đến URL
                 fetch(href)
                     .then(response => response.text())
@@ -320,14 +312,13 @@ else
                         let doc = parser.parseFromString(data, 'text/html');
 
                         // Lấy phần có id là 'renderbody'
-                        let renderbody = doc.querySelector('#renderbody');
+                        var renderbody = doc.getElementById('main');
 
                         // In nội dung của phần tử có id là 'renderbody'
-                        console.log("test ok");
                         //console.log(renderbody.innerHTML);
 
                         // Thêm nội dung đã lấy vào phần tử có id là 'renderbody'
-                        $('#renderbody').html(renderbody.innerHTML);
+                        $('#main').html(renderbody.innerHTML);
 
                         history.pushState({}, '', href);
                     })

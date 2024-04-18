@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 namespace DACN_DVTRUCTUYEN
 {
     public class Program
@@ -9,7 +11,7 @@ namespace DACN_DVTRUCTUYEN
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews();
+            builder.Services.AddControllersWithViews().AddNewtonsoftJson();
             var connection = "";
             if (builder.Environment.IsDevelopment())
             {

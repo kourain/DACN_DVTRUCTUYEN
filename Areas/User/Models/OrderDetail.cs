@@ -7,9 +7,10 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
     public class OrderDetail
     {
         [Key]
-        public int OrderID { get; set; }
+        public long OrderID { get; set; }
         public string ProductID { get; set; }
         public string ProductOptionValue { get; set; }
         public int OrderStatus { get; set; }
+        public long Amount { get; set; }
     }
 }
