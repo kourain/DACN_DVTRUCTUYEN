@@ -12,8 +12,6 @@ namespace DACN_DVTRUCTUYEN.Models
         public int ParentID { get; set; }
         public int ItemOrder { get; set; }
         public bool IsActive { get; set; }
-        public string? Icon { get; set; }
-        public string? TextLink { get; set; }
         public string? Link { get; set; }
     }
 }

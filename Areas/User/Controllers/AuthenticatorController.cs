@@ -62,7 +62,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 });
             }
             string token = Functions.MD5Hash("user" + logindata.LoginName + logindata.PassWord);
-            Functions.saveLoginUser(token, check.UserId.ToString(),logindata.LoginName, logindata.savelogin);
+            Functions.saveLoginUser(token, check.UserId.ToString(), logindata.LoginName, logindata.savelogin);
             Response.Cookies.Append("username", check.Name);
             Response.Cookies.Append("id", check.UserId.ToString());
             Response.Cookies.Append("mail", logindata.LoginName);
@@ -160,20 +160,35 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult ChangePass(ChangePass cp)
         {
-            //var check = _dataContext.Users.Where(m => (m.UserId == Functions._UserID) && (m.Password == Functions.MD5Password(cp.oldPass))).FirstOrDefault();
-            //if (check == null)
-            //{
-            //    Functions._Message = "Mật khẩu cũ không chính xác";
-            //    return View();
-            //}
-            //else
-            //{
-            //    check.Password = Functions.MD5Password(cp.newPass);
-            //    _dataContext.Update(check);
-            //    _dataContext.SaveChanges();
-            //}
-            //Functions._Message = "Thành Công!!!";
-            return View();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+            int.TryParse(Request.Cookies["id"], out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                return BadRequest();
+            }
+            var check = _dataContext.Users.Where(m => (m.UserId == userid) && (m.Password == Functions.MD5Hash(cp.oldPass))).FirstOrDefault();
+            if (check == null)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Mật khẩu cũ không chính xác",
+                });
+            }
+            else
+            {
+                check.Password = Functions.MD5Hash(cp.newPass);
+                _dataContext.Update(check);
+                _dataContext.SaveChanges();
+            }
+            return Ok(new
+            {
+                code = 0,
+                messenger = "Thành Công!!!",
+            });
         }
     }
 }

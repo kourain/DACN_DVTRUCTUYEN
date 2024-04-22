@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DACN_DVTRUCTUYEN.Models
 {
     [Table("ProductOption")]
+    [PrimaryKey(nameof(ProductID), nameof(OptionValue))]
     public class ProductOption
     {
         [Key]
@@ -16,5 +17,7 @@ namespace DACN_DVTRUCTUYEN.Models
         public int PriceOld { get; set; }
         public int PriceNow { get; set; }
         public bool UseUserAccount { get; set; }
+        public DateTime? CreateDate { get; set; }
+        public ProductOption() { CreateDate = DateTime.Now; }
     }
 }

@@ -17,6 +17,8 @@ namespace DACN_DVTRUCTUYEN.Models
         public DbSet<OrderDetail> OrderDetails { get; set; }
         public DbSet<Footer> Footers { get; set; }
         public DbSet<ProductOption> ProductOptions { get; set; }
+        public DbSet<ProductView> ProductViews { get; set; }
+        public DbSet<CartView> CartViews { get; set; }
 
     }
 }

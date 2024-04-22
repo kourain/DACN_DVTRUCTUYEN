@@ -30,11 +30,12 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [Route("/User/cart")]
         public async Task<IActionResult> Index()
         {
+            int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
                 Redirect("/user/");
             }
-            return View(_dataContext);
+            return View(_dataContext.CartViews.Where(m=>m.UserID == userid).ToList());
         }
         [Route("/User/cart/add&{productid}&{productoptionvalue}")]
         public IActionResult AddToCart(string productid, string productoptionvalue)
@@ -85,13 +86,13 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return BadRequest();
             }
-            var listcart = _dataContext.Carts.Where(m => m.UserID == userid).ToList();
+            var listcart = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductOptionQuantity >0).ToList();
             int totalpay = 0;
             var infor = "";
             foreach (var item in listcart)
             {
-                totalpay += _dataContext.ProductOptions.Where(m => m.ProductID == item.ProductID && m.OptionValue == item.ProductOptionValue).FirstOrDefault().PriceNow;
-                infor += item.ProductID+ "_" + item.ProductOptionValue;
+                totalpay += item.PriceNow;
+                infor += item.ProductID+ "_" + item.OptionValue;
             }
             var now = DateTime.Now;
             Order neworder = new Order()
@@ -102,20 +103,29 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             };
             _dataContext.Add(neworder);
             _dataContext.SaveChanges();
-            var orderid = _dataContext.Orders.Where(m => m.UserID == userid && m.TotalPay == totalpay).FirstOrDefault().OrderID;
+            var check = _dataContext.Orders.Where(m => m.UserID == userid && m.TotalPay == totalpay && m.Time == now).FirstOrDefault();
+            if(check == null)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Vui lòng cập nhật lại giỏ hàng"
+                });
+            }
+            var orderid = check.OrderID;
             var n = from m in listcart
                     select _dataContext.Add(new OrderDetail()
                     {
                         OrderID = orderid,
                         ProductID = m.ProductID,
-                        ProductOptionValue = m.ProductOptionValue,
+                        ProductOptionValue = m.OptionValue,
                         OrderStatus = 1,
                     });
             _dataContext.SaveChanges();
             return Ok(new
             {
                 code = 1,
-                messenger = $"/vnpayapi/{totalpay}00&{infor}&{orderid}2"
+                messenger = $"/vnpayapi/{totalpay}00&{infor}&{orderid}"
             });
         }
 
@@ -159,7 +169,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             return Ok(new
             {
                 code = 1,
-                messenger = _dataContext.Carts.Where(m => m.UserID == userid).Count(),
+                messenger = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductOptionQuantity>0).Count(),
             });
         }
     }

@@ -23,8 +23,7 @@ namespace DACN_DVTRUCTUYEN
                 connection = Environment.GetEnvironmentVariable("ConnectionStrings");
             }
             string nowpath = Directory.GetCurrentDirectory();
-            builder.Services.AddDbContext<DataContext>(options =>
-                options.UseSqlServer(connection));
+            builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connection));
 
             var app = builder.Build();
 

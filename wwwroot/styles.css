@@ -1516,7 +1516,7 @@ input[type=number] {
 }
 
 .Wc {
-    background-color: #2579f2
+    background-image: linear-gradient(135deg, #243949 10%, #517fa4 100%);
 }
 
 .Vc {

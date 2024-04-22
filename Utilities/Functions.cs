@@ -62,7 +62,6 @@ namespace DACN_DVTRUCTUYEN.Utilities
 
         public static int IsLoginUser(string? posttokenUser, string? uid = "")
         {
-
             if (string.IsNullOrEmpty(posttokenUser)) return 0;
             var thisval = tokenUser[posttokenUser];
             if (thisval == null)
@@ -81,7 +80,6 @@ namespace DACN_DVTRUCTUYEN.Utilities
         }
         public static void saveLoginAdmin(string agg1, string agg2, int agg3)
         {
-
             var thisval = tokenAdmin[agg1];
             //lưu token tại hệ thống với thời hạn sử dụng là 6 giờ
             if (thisval == null)

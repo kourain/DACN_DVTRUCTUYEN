@@ -1,0 +1,147 @@
+﻿@model IList<DACN_DVTRUCTUYEN.Areas.User.Models.Order>;
+@{
+    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+}
+<div style="height: 700.80px; background: #F3F4F6; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+    <div style="height: 700.80px; position: relative">
+        <div style="width: 1200px; height: 700.80px; left: 320px; top: 0px; position: absolute">
+            <div style="height: 448.27px; padding: 0.91px; left: 21px; top: 4px; position: absolute; background: white; border-radius: 5.25px; overflow: hidden; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                <a href="/user/profile" style="align-self: stretch; height: 63.91px; padding-top: 0.91px; border-top: 0.91px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
+                    <div style="align-self: stretch; padding-top: 21px; padding-bottom: 21px; padding-left: 26.45px; padding-right: 21px; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                        <div style="width: 17.50px; height: 17.50px; position: relative">
+                            <svg style="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                <title>Tài khoản</title>
+                                <path d="M256 288c79.5 0 144-64.5 144-144S335.5 0 256 0 112 64.5 112 144s64.5 144 144 144zm128 32h-55.1c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16H128C57.3 320 0 377.3 0 448v16c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48v-16c0-70.7-57.3-128-128-128z"></path>
+                            </svg>
+                        </div>
+                        <div style="padding-left: 10.50px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                            <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
+                                <div style="color: #6B7280; font-size: 14px; font-family: Roboto; font-weight: 500; line-height: 21px; word-wrap: break-word">Tài khoản</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+                <a href="/user/OrdersHistory" style="align-self: stretch;border-top: 0.91px rgba(156, 163, 175, 0.25) solid; padding-top: 21px; padding-bottom: 21px;  padding-left: 26.45px; padding-right: 21px; border-left: 5.45px #2579F2 solid; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                    <div style="width: 19.69px; height: 17.50px; position: relative">
+                        <svg class="Xb" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <title>Lịch sử đơn hàng</title>
+                            <path d="M528.12 301.319l47.273-208C578.806 78.301 567.391 64 551.99 64H159.208l-9.166-44.81C147.758 8.021 137.93 0 126.529 0H24C10.745 0 0 10.745 0 24v16c0 13.255 10.745 24 24 24h69.883l70.248 343.435C147.325 417.1 136 435.222 136 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-15.674-6.447-29.835-16.824-40h209.647C430.447 426.165 424 440.326 424 456c0 30.928 25.072 56 56 56s56-25.072 56-56c0-22.172-12.888-41.332-31.579-50.405l5.517-24.276c3.413-15.018-8.002-29.319-23.403-29.319H218.117l-6.545-32h293.145c11.206 0 20.92-7.754 23.403-18.681z"></path>
+                        </svg>
+                    </div>
+                    <div style="padding-left: 10.50px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                        <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
+                            <div style="color: black; font-size: 14px; font-family: Roboto; font-weight: 500; line-height: 21px; word-wrap: break-word">Lịch sử đơn hàng</div>
+                        </div>
+                    </div>
+                </a>
+                <a href="/user/password" style="align-self: stretch; height: 63.91px; padding-top: 0.91px; border-top: 0.91px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
+                    <div style="align-self: stretch; padding-top: 21px; padding-bottom: 21px; padding-left: 26.45px; padding-right: 21px; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                        <div style="width: 21.88px; height: 17.50px; position: relative">
+                            <svg class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512">
+                                <title>Mật khẩu và bảo mật</title>
+                                <path d="M224 256A128 128 0 1 0 96 128a128 128 0 0 0 128 128zm96 64a63.08 63.08 0 0 1 8.1-30.5c-4.8-.5-9.5-1.5-14.5-1.5h-16.7a174.08 174.08 0 0 1-145.8 0h-16.7A134.43 134.43 0 0 0 0 422.4V464a48 48 0 0 0 48 48h280.9a63.54 63.54 0 0 1-8.9-32zm288-32h-32v-80a80 80 0 0 0-160 0v80h-32a32 32 0 0 0-32 32v160a32 32 0 0 0 32 32h224a32 32 0 0 0 32-32V320a32 32 0 0 0-32-32zM496 432a32 32 0 1 1 32-32 32 32 0 0 1-32 32zm32-144h-64v-80a32 32 0 0 1 64 0z"></path>
+                            </svg>
+                        </div>
+                        <div style="padding-left: 10.50px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                            <div style="flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
+                                <div style="color: #6B7280; font-size: 14px; font-family: Roboto; font-weight: 500; line-height: 21px; word-wrap: break-word">Mật khẩu và bảo mật</div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div style="width: 942.39px; height: 700.80px; left: 276px; top: 0px; position: absolute">
+                <div style="padding: 35.91px; left: -0.28px; top: 0px; position: absolute; background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12.20px; display: inline-flex">
+                    <div style="width: 947.62px; height: 600px; padding-top: 35.91px; padding-bottom: 115.14px; padding-left: 35.91px; padding-right: 35.91px; background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 21px; display: inline-flex">
+                        <div style="align-self: stretch; height: 55.94px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 6.93px; display: flex">
+                            <div style="align-self: stretch; height: 28px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
+                                <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Lịch sử đơn hàng</div>
+                            </div>
+                            <div style="color: #374151; font-size: 14px; font-family: Roboto; font-weight: 400; line-height: 21px; word-wrap: break-word">Hiển thị thông tin các sản phẩm bạn đã mua tại DB Shop</div>
+                        </div>
+                        <div style="align-self: stretch; height: 1px; border-top: 0.91px rgba(156, 163, 175, 0.25) solid"></div>
+                        <table class="table tbborder">
+                            <thread>
+                                <tr>
+                                    <th>
+                                        Mã đơn hàng
+                                    </th>
+                                    <th>
+                                        Thời gian
+                                    </th>
+                                    <th>
+                                        Sản phẩm
+                                    </th>
+                                    <th>
+                                        Tổng tiền
+                                    </th>
+                                    <th>
+                                        Trạng thái
+                                    </th>
+                                </tr>
+                            </thread>
+                            <tbody>
+                                @if (Model.Count == 0)
+                                {
+                                    <tr>
+                                        <td class="rowdata">
+                                        </td>
+                                        <td class="rowdata">
+                                        </td>
+                                        <td class="rowdata">
+                                            <center>
+                                                <h5>Không có đơn hàng  nào</h5>
+                                            </center>
+                                        </td>
+                                        <td class="rowdata">
+                                        </td>
+                                        <td class="rowdata">
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td class="">
+                                                @Html.DisplayFor(modelItem => item.OrderID)
+                                            </td>
+                                            <td class="">
+                                                @Html.DisplayFor(modelItem => item.Time)
+                                            </td>
+                                            <td class="">
+                                                @Html.DisplayFor(modelItem => item.Time)
+                                            </td>
+                                            <td class="">
+                                                @Html.DisplayFor(modelItem => item.TotalPay)
+                                            </td>
+                                            <td class="">
+                                                @Html.DisplayFor(modelItem => item.PayStatus)
+                                            </td>
+                                        </tr>
+                                    }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    td {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        border: 1px rgba(156, 163, 175, 0.25) solid;
+    }
+    .rowdata {
+        border: 0px rgba(156, 163, 175, 0.25) solid;
+    }
+    th {
+        flex-direction: column;
+        text-align: center;
+        width: 10%;
+        border: 1px rgba(156, 163, 175, 0.25) solid;
+    }
+</style>

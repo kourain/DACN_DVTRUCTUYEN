@@ -1,21 +1,20 @@
-﻿<div class="je Od md nd zh" style="padding-top:11rem;background-color:#000d21;background-image:url('/static/0de2668c294edf9d5fd8a8647b2c65b6.png')">
+﻿<div class="je Od md nd zh" style="padding-top:11rem;background-color:#000d21;background-image:url(' ')">
     <div class="a Re" style="margin-bottom:10px">
         <div class="Ce" style="margin-top:-90px">
             <div class="ta nc Ke">
                 <h4>
                     <div class="ta jc qa Fc Pc Bd Ed zc ed Ee">
-                        <img loading="lazy" src="https://cdn.divineshop.vn/static/1478de4bf059d759990c4849f3c3e8ce.svg" class="bb wa" alt="Sản phẩm bán chạy nhất">
-                        <div class="vc rc tc">#<!-- -->Sản phẩm bán chạy nhất</div>
+                        <img loading="lazy" src="~/assets/images/stonk.svg" class="bb wa" alt="Sản phẩm bán chạy nhất">
+                        <div class="vc rc tc">Những sản phẩm bán chạy nhất</div>
                     </div>
                 </h4>
-                <a class="b c ta jc Gd Ga" href="/search/trending">Khám phá</a>
             </div>
         </div>
         <div class="ta ec kc Jc Qd Le">
             <div class="ta gc Pe" id="newproduct">
             </div>
-            <div class="ta mc" style="margin-top:40px">
-                <button type="button" onclick="loadmore()" class="b ta Ee ge Zd">
+            <div class="ta mc clearbutton" style="margin-top:40px">
+                <button type="button" onclick="topSoldProduct_loadmore()" class="b ta Ee ge Zd">
                     <div>Xem thêm</div>
                 </button>
             </div>
@@ -23,23 +22,23 @@
     </div>
 </div>
 <script>
-    var productcount = 1;
-    fetch("/user/product/getproduct/top/0")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            // Process the retrieved user data
-            console.log('User Data:', data);
-            data.forEach(function (item) {
-                var htmlval = `
+    var topSoldProductCount = 0;
+    function topSoldProduct_loadmore() {
+        if (topSoldProductCount == 3) $(".ta.mc.clearbutton").html("");
+        fetch('/user/product/getproduct/top/' + topSoldProductCount)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                data.forEach(function (item) {
+                    var htmlval = `
                         <div class="_e mg dh">
-                                <a class="lf gf ff ra" tabindex="-1" href="/user/product/${item.productID}">
+                                <a class="lf gf ff ra" tabindex="-1" href="/user/product/${item.productID}/${item.optionValue}">
                                 <img src="${item.productImg}" class="xc" alt="${item.optionName}" />
-                                    <a class="Ua Ra bf ia rc tc ra" href="/tai-khoan-netflix-1-thang">${item.optionName}</a>
+                                    <a class="Ua Ra bf ia rc tc ra" href="/user/product/${item.productID}">${item.productName} - ${item.optionName}</a>
                                 <div class="ta Ua ja">
                                     <div class="Vb ta gc De jc">
                                         <div class="Zd">${item.priceNow} đ</div>
@@ -51,10 +50,16 @@
                                 </div>
                             </a>
                             </div>`;
-                document.getElementById("newproduct").innerHTML += htmlval;
+                    document.getElementById("newproduct").innerHTML += htmlval;
+                });
+                if (data.length == 0) {
+                    topSoldProductCount = 3;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
+        topSoldProductCount++;
+    }
+    topSoldProduct_loadmore();
 </script>

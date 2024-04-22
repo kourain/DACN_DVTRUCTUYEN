@@ -3,26 +3,31 @@
     <div class="Sc">
         <div class="a">
             <a class="ta jc xd He uf" href="#topup">
-                <img loading="lazy" src="#img" class="Db wa" alt="NAME" title="NAME" />
-                <img loading="lazy" src="#img" class="Db wa" alt="NAME" title="NAME" />
-                <small>và nhiều hình thức thanh toán khác</small>
+                <medium>Phương thức thanh toán: </medium>
+                <img style="width:20px" src="https://mecsu.vn/img/vnpay-icon.jpg" class="Db wa" alt="VNPAY" title="VNPAY" />
+                @* <img loading="lazy" src="#img" class="Db wa" alt="NAME" title="NAME" />
+                <small>và nhiều hình thức thanh toán khác</small>*@
             </a>
         </div>
     </div>
-    <div class="a">
+    <center class="a" style="    display: flex;
+    justify-content: space-evenly;
+">
         <div class="f"></div>
         <div class="Ad">
             <div class="ta gc nc Je">
                 <div class="ta gc Je">
-                    @foreach (Footer footer in Model.Where(m=>m.ParentID == 0))
+                    @foreach (Footer footer in Model.Where(m => m.ParentID == 0).OrderBy(n => n.ItemOrder))
                     {
-                        List<Footer> listchild = Model.Where(m => m.FooterId == footer.ParentID).ToList();
+                        List<Footer> listchild = Model.Where(p => p.ParentID == footer.FooterId).OrderBy(p => p.ItemOrder).ToList();
                         <div class="Eb">
-                            <div class="Zd _d">Giới thiệu</div>
-                        @foreach(Footer childFooter in listchild)
+                            <div class="Zd _d">@footer.ItemText</div>
+                            @foreach (Footer childFooter in listchild)
                             {
+                                string link = "#";
+                                if (!string.IsNullOrEmpty(childFooter.Link)) link = childFooter.Link;
                                 <div class="ta ec Ce ia">
-                                    <a href="#"> @childFooter.ItemText </a>
+                                    <a href="@link"> @childFooter.ItemText </a>
                                 </div>
                             }
                         </div>
@@ -30,5 +35,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </center>
+
+    <center>
+        <p class="mt-3 small">
+            © DB Shop | Mai Văn Quyến |
+        </p>
+    </center>
 </footer>

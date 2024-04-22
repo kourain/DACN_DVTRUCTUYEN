@@ -10,7 +10,7 @@
             <div class="ta nc jc Pe">
                 <a class="Ub m va Og He jc je uf" title="Trang chủ" href="/User">
                     <img loading="lazy" src="~/Logo.png" class="b lb Ha Ff">
-                    <h4 class="va Ng vc">MAO FAC</h4>
+                    <h4 class="va Ng vc"> DB Shop </h4>
                 </a>
                 <div class="ra Pg">
                     <button type="button" class="b zd xc" title="Trình đơn">
@@ -30,7 +30,7 @@
                     </form>
                 </div>
                 <div class="Ub" style="margin-left:100px">
-                    <a class="b c ta mc jc Ee Fc Pc Wc xc" href="/user/cart">
+                    <a class="ta b c mc jc Ee Fc Pc Wc xc" href="/user/cart">
                         <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
                             <path d="M551.991 64H144.28l-8.726-44.608C133.35 8.128 123.478 0 112 0H12C5.373 0 0 5.373 0 12v24c0 6.627 5.373 12 12 12h80.24l69.594 355.701C150.796 415.201 144 430.802 144 448c0 35.346 28.654 64 64 64s64-28.654 64-64a63.681 63.681 0 0 0-8.583-32h145.167a63.681 63.681 0 0 0-8.583 32c0 35.346 28.654 64 64 64 35.346 0 64-28.654 64-64 0-18.136-7.556-34.496-19.676-46.142l1.035-4.757c3.254-14.96-8.142-29.101-23.452-29.101H203.76l-9.39-48h312.405c11.29 0 21.054-7.869 23.452-18.902l45.216-208C578.695 78.139 567.299 64 551.991 64zM208 472c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm256 0c-13.234 0-24-10.766-24-24s10.766-24 24-24 24 10.766 24 24-10.766 24-24 24zm23.438-200H184.98l-31.31-160h368.548l-34.78 160z"></path>
                         </svg><div class="va ug">Giỏ hàng</div><div class="Fc Kd yc le Sc" id="cartcount">CARTCOUNT</div>
@@ -39,15 +39,15 @@
                 <div class="Ub va vg mc nb vc">
                     <div class="Nb ta jc He">
                         <div class="z db za" onclick="userprofilehover()">
-                            <button type="button" class="Nb ta jc He Zd dd"><img loading="lazy" src="~/avatar-kh.png" class="tb La zc te" alt="Ảnh đại diện"><div class="rc tc">@username</div></button><div class="y B H Aa U" id="userprofilehovercss"></div>
+                            <button type="button" class="Nb ta jc He Zd dd"><img loading="lazy" src="~/avatar-kh.png" class="tb La zc te" alt="Ảnh đại diện"><div class="rc tc">@username</div></button><div class="y B H Aa U" id="userprofileclick"></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="va Ng Jc Ed Sc">
-        <div class="a">
+    <div class="va Ng Jc Ed Sc" style="height:15px">
+        @* <div class="a">
             <div class="ta Qe nc jc">
                 <div>
                     <div class="z db za">
@@ -61,24 +61,28 @@
                 </div>
                 <div class="ta Qe">
                     <a href="/User/chinh-sach-vip" target="_blank" rel="noreferrer" class="ta jc He Zd">
-                        <img loading="lazy" src="https://cdn.divineshop.vn/image/catalog/Anh/Icon svg/Uu-dai-khach-vip-79547.svg?hash=1640449820" class="Ub ob Ja yc" alt="Ưu đãi khách hàng VIP">
+                        <img loading="lazy" src="~/assets/images/VIP-User.svg" class="Ub ob Ja yc" alt="Ưu đãi khách hàng VIP">
                         <div>Ưu đãi khách hàng VIP</div>
                     </a>
                 </div>
             </div>
-        </div>
+        </div> *@
     </div>
 </header>
 <script>
     var clickmenu = 0;
     function userprofilehover() {
         if (clickmenu == 0) {
-            $("#userprofilehovercss").html('<div class="ta mc Rd le" style="margin-top:-40px"><div class="ta yb Nb lc"><div class="Lb sd xc Ie Sc we"><div><div>Số dư tài khoản</div><div class="ta jc"><h6>0đ</h6><a class="b vd ge ra" href="/topup"><svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M384 240v32c0 6.6-5.4 12-12 12h-88v88c0 6.6-5.4 12-12 12h-32c-6.6 0-12-5.4-12-12v-88h-88c-6.6 0-12-5.4-12-12v-32c0-6.6 5.4-12 12-12h88v-88c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v88h88c6.6 0 12 5.4 12 12zm120 16c0 137-111 248-248 248S8 393 8 256 119 8 256 8s248 111 248 248zm-48 0c0-110.5-89.5-200-200-200S56 145.5 56 256s89.5 200 200 200 200-89.5 200-200z"></path></svg></a></div></div><div><div class="V"><a class="ra qd xc uf rf" href="/user/profile">Quản lý tài khoản</a><a class="ra qd xc uf rf" href="/user/orders">Lịch sử đơn hàng</a><a class="ra qd xc uf rf" href="/user/wishlist">Sản phẩm yêu thích</a><a href="/user/logout"><button type="submit" class="db"><div class="ta db qd xc uf rf">Đăng xuất</div></button></a></div></div></div></div></div>');
+            $("#userprofileclick").html(`<div class="ta mc Rd le" style="margin-top:-40px"><div class="ta yb Nb lc"><div class="Lb sd xc Ie Sc we">`+
+            `<div><div>Số tiền đã sử dụng</div><div class="ta jc"><h6>0đ</h6></div></div><div><div class="V">`+
+            `<a class="ra qd xc uf rf" href="/user/profile">Quản lý tài khoản</a>` + 
+            `<a class="ra qd xc uf rf" href="/user/ordershistory">Lịch sử đơn hàng</a>` +
+            `<a class="ta db qd xc uf rf" href="/user/logout">Đăng xuất</a></a></div></div></div></div></div>`);
             clickmenu = 1;
         }
         else {
             clickmenu = 0;
-            $("#userprofilehovercss").html('');
+            $("#userprofileclick").html('');
         }
     }
     function resetcart() {
@@ -91,7 +95,7 @@
             })
             .then(data => {
                 // Process the retrieved user data
-                console.log('User Data:', data);
+                // console.log('User Data:', data);
                 if (data.code == 1) {
                     $("#cartcount").html(data.messenger);
                 }
@@ -101,4 +105,5 @@
             });
     }
     resetcart();
+    setInterval(resetcart, 10000);
 </script>
