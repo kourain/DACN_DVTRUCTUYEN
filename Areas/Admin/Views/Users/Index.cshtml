@@ -1,66 +1,51 @@
-﻿@model IEnumerable<DACN_DVTRUCTUYEN.Areas.User.Models.User>
-
+﻿@model IList<User>
 @{
-    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
+<div class="pagetitle">
+    <h2>Danh sách User</h2>
+</div>
 
-<h1>Index</h1>
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th class="col-1 text-center">#</th>
+                                <th class="col-3 text-center">Tên hiển thị</th>
+                                <th class="col-1 text-center">Email</th>
+                                <th class="col-1 text-center">Ngày tạo</th>
+                                <th class="col-1 text-center">Trạng thái cấm</th>
+                                <th class="col-2 text-center">Chức năng</th>
+                            </tr>
+                        </thead>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Email)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Password)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ban)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UserId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Email)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Password)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Ban)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreateDate)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.UserId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.UserId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.UserId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="text-center">@item.UserId</td>
+                                    <td class="text-center">@item.Name</td>
+                                    <td class="text-center">@item.Email</td>
+                                    <td class="text-center">@item.CreateDate.ToString("hh:mm:ss dd/MM/yyyy")</td>
+                                    <td class="text-center">@item.Ban</td>
+                                    <td class="text-center">
+                                        <a asp-area="Admin" asp-controller="Users" asp-action="ResetPassWord" asp-route-id="@item.UserId" title="Đặt lại mật khẩu cho người dùng này" style="width:30px; height:30px">
+                                            <img src="https://cdn-icons-png.flaticon.com/512/11135/11135322.png" style="width:30px; height:30px" />
+                                        </a>
+                                        <a asp-area="Admin" asp-controller="Users" asp-action="Ban" asp-route-id="@item.UserId" title="Cấm người dùng này">
+                                            <img src="https://cdn-icons-png.flaticon.com/512/6380/6380092.png " style="width:30px; height:30px" />
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

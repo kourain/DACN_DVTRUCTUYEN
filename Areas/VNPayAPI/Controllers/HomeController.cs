@@ -64,7 +64,7 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
                     if (vnp_ResponseCode == "00")
                     {
                         //Thanh toán thành công
-                        return Redirect("LINK");
+                        return Redirect("/user/OrdersHistory");
                     }
                     else
                     {

@@ -20,14 +20,19 @@
                     </button>
                 </div>
                 <div class="mb">
-                    <form id="productsearch">
-                        <div class="z">
-                            <div class="z ta">
-                                <input type="search" class="g border-none Cc le" name="q" placeholder="Tìm kiếm sản phẩm" autocomplete="off" value="">
-                                <button type="submit" class="b c Vc Dc xe" aria-label="Search"><svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z"></path></svg></button>
+                    <div class="z">
+                        <div class="ta">
+                            <input type="search" class="g border-none Cc le searchbox" onchange="textchange();" onpaste="this.onchange();" oninput="this.onchange();" placeholder="Tìm kiếm sản phẩm" autocomplete="off" value="">
+                            <button type="button" class="b c Vc Dc xe" aria-label="Search"><svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M508.5 468.9L387.1 347.5c-2.3-2.3-5.3-3.5-8.5-3.5h-13.2c31.5-36.5 50.6-84 50.6-136C416 93.1 322.9 0 208 0S0 93.1 0 208s93.1 208 208 208c52 0 99.5-19.1 136-50.6v13.2c0 3.2 1.3 6.2 3.5 8.5l121.4 121.4c4.7 4.7 12.3 4.7 17 0l22.6-22.6c4.7-4.7 4.7-12.3 0-17zM208 368c-88.4 0-160-71.6-160-160S119.6 48 208 48s160 71.6 160 160-71.6 160-160 160z"></path></svg></button>
+                        </div>
+
+                        <div class="y B U">
+                            <div class="ra" style="border-radius:10px; background-color:white;">
+                                <div class="fe" style="display:flex;align-items: baseline;flex-direction: column;" id="resultsearch"></div>
                             </div>
                         </div>
-                    </form>
+                    </div>
+
                 </div>
                 <div class="Ub" style="margin-left:100px">
                     <a class="ta b c mc jc Ee Fc Pc Wc xc" href="/user/cart">
@@ -48,36 +53,62 @@
     </div>
     <div class="va Ng Jc Ed Sc" style="height:15px">
         @* <div class="a">
-            <div class="ta Qe nc jc">
-                <div>
-                    <div class="z db za">
-                        <button type="button" class="ta He jc">
-                            <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path>
-                            </svg>
-                            <div class="Zd">Danh mục sản phẩm</div>
-                        </button>
-                    </div>
-                </div>
-                <div class="ta Qe">
-                    <a href="/User/chinh-sach-vip" target="_blank" rel="noreferrer" class="ta jc He Zd">
-                        <img loading="lazy" src="~/assets/images/VIP-User.svg" class="Ub ob Ja yc" alt="Ưu đãi khách hàng VIP">
-                        <div>Ưu đãi khách hàng VIP</div>
-                    </a>
-                </div>
-            </div>
+        <div class="ta Qe nc jc">
+        <div>
+        <div class="z db za">
+        <button type="button" class="ta He jc">
+        <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+        <path d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path>
+        </svg>
+        <div class="Zd">Danh mục sản phẩm</div>
+        </button>
+        </div>
+        </div>
+        <div class="ta Qe">
+        <a href="/User/chinh-sach-vip" target="_blank" rel="noreferrer" class="ta jc He Zd">
+        <img loading="lazy" src="~/assets/images/VIP-User.svg" class="Ub ob Ja yc" alt="Ưu đãi khách hàng VIP">
+        <div>Ưu đãi khách hàng VIP</div>
+        </a>
+        </div>
+        </div>
         </div> *@
     </div>
 </header>
 <script>
+    let timeoutId;
+    function textchange(event) {
+        clearTimeout(timeoutId); // Xóa timeout hiện tại (nếu có)
+        timeoutId = setTimeout(() => {
+            // Gọi hàm sau 0.3 giây
+            console.log('Người dùng đã dừng gõ.');
+            // Thay thế dòng trên bằng hàm hoặc logic của bạn
+
+            var result = document.getElementById("resultsearch");
+            result.innerHTML = "";
+            // Gửi yêu cầu GET đến URL
+            fetch("/user/product/like/" + $(".g.border-none.Cc.le.searchbox").val())
+                .then(response => response.json())
+                .then(data => {
+                    // Thêm nội dung đã lấy vào phần tử có id là 'resultsearch'
+                    data.forEach(function (item) {
+                        var productImg = item.productImg;
+                        if (!productImg.toLowerCase().startsWith("http")) productImg = "/" + productImg;
+                        result.innerHTML += `<a href="/user/product/${item.productID}" class="xd " style="padding-left:8%;display: flex;width:99%;flex-direction: row;justify-content: flex-start;"><img style="max-width:50px;max-heigh:50px;margin-right:4%;" class="onerror-img kourain-img" src="${productImg}"></img> ${item.productName}</a>`;
+                    });
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }, 400); // 300 ms = 0.3 giây
+    }
     var clickmenu = 0;
     function userprofilehover() {
         if (clickmenu == 0) {
-            $("#userprofileclick").html(`<div class="ta mc Rd le" style="margin-top:-40px"><div class="ta yb Nb lc"><div class="Lb sd xc Ie Sc we">`+
-            `<div><div>Số tiền đã sử dụng</div><div class="ta jc"><h6>0đ</h6></div></div><div><div class="V">`+
-            `<a class="ra qd xc uf rf" href="/user/profile">Quản lý tài khoản</a>` + 
-            `<a class="ra qd xc uf rf" href="/user/ordershistory">Lịch sử đơn hàng</a>` +
-            `<a class="ta db qd xc uf rf" href="/user/logout">Đăng xuất</a></a></div></div></div></div></div>`);
+            $("#userprofileclick").html(`<div class="ta mc Rd le" style="margin-top:-40px"><div class="ta yb Nb lc"><div class="Lb sd xc Ie Sc we">` +
+                `<div><div>Số tiền đã sử dụng</div><div class="ta jc"><h6>0đ</h6></div></div><div><div class="V">` +
+                `<a class="ra qd xc uf rf" href="/user/profile">Quản lý tài khoản</a>` +
+                `<a class="ra qd xc uf rf" href="/user/ordershistory">Lịch sử đơn hàng</a>` +
+                `<a class="ta db qd xc uf rf" href="/user/logout">Đăng xuất</a></a></div></div></div></div></div>`);
             clickmenu = 1;
         }
         else {

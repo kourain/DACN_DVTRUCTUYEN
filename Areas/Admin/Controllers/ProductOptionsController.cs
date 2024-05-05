@@ -66,7 +66,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
 
         // GET: Admin/ProductOptions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
@@ -137,7 +137,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // POST: Admin/ProductOptions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var productOption = await _context.ProductOptions.FindAsync(id);
             if (productOption != null)

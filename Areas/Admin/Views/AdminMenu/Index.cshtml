@@ -40,23 +40,23 @@
                             @foreach (var item in Model)
                             {
                                 <tr>
-                                    <th class="text-center" scope="row">@item.AdminMenuId</th>
-                                    <th class="text-primary">@item.ItemName </th>
-                                    <th class="text-center">@item.ParentLevel</th>
-                                    <th class="text-center">@item.ItemOrder</th>
-                                    <th class="text-center">@item.ControllerName</th>
-                                    <th class="text-center">@item.ActionName</th>
-                                    <th class="text-center">@item.Icon</th>
-                                    <th class="text-center">@item.ItemDropDown</th>
-                                    <th class="text-center">@item.IsActive</th>
-                                    <th class="text-center">
+                                    <td class="text-center" scope="row">@item.AdminMenuId</td>
+                                    <td class="text-primary">@item.ItemName </td>
+                                    <td class="text-center">@item.ParentLevel</td>
+                                    <td class="text-center">@item.ItemOrder</td>
+                                    <td class="text-center">@item.ControllerName</td>
+                                    <td class="text-center">@item.ActionName</td>
+                                    <td class="text-center">@item.Icon</td>
+                                    <td class="text-center">@item.ItemDropDown</td>
+                                    <td class="text-center">@item.IsActive</td>
+                                    <td class="text-center">
                                         <a asp-area="Admin" asp-controller="AdminMenu" asp-action="Edit" asp-route-id="@item.AdminMenuId" class="btn btn-primary btn-sm" title="Sửa nội dung bài viết">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <a asp-area="Admin" asp-controller="AdminMenu" asp-action="Delete" asp-route-id="@item.AdminMenuId" class="btn btn-danger btn-sm" title="Xoá thông tin bài viết">
                                             <i class="bi bi-trash"></i>
                                         </a>
-                                    </th>
+                                    </td>
                                 </tr>
                             }
                         </tbody>

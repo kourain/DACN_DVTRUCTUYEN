@@ -1,29 +1,15 @@
 ﻿using DACN_DVTRUCTUYEN.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
-using System.Text.Json.Nodes;
-using System.Text.Json;
-using System.Text;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.IdentityModel.Tokens;
-using NuGet.Protocol;
-using System.Security.Cryptography;
-using System;
-using System.Security.AccessControl;
-using System.Web;
-using Newtonsoft.Json.Linq;
 using Microsoft.CodeAnalysis;
 using DACN_DVTRUCTUYEN.Utilities;
 using DACN_DVTRUCTUYEN.Areas.User.Models;
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
 {
     [Area("User")]
-    public class Cart : Controller
+    public class CartController : Controller
     {
         private readonly DataContext _dataContext;
-        public Cart(DataContext dataContext)
+        public CartController(DataContext dataContext)
         {
             _dataContext = dataContext;
         }

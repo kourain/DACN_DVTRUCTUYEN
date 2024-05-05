@@ -1,60 +1,64 @@
-﻿@model IEnumerable<DACN_DVTRUCTUYEN.Models.Footer>
-
+﻿@model IList<Footer>
 @{
-    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
-
-<h1>Index</h1>
+<div class="pagetitle">
+    <h2>Danh sách Footer</h2>
+</div>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a type="button" class="btn btn-success" asp-area="Admin" asp-controller="Footers" asp-action="Create">
+        <i class="bi bi-file-earmark-text me-1">
+            Thêm Footer
+        </i>
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ItemText)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParentID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ItemOrder)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Link)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ItemText)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ParentID)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ItemOrder)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.IsActive)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Link)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.FooterId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.FooterId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.FooterId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th class="col-1 text-center">#</th>
+                                <th class="col-3 text-center">Tiêu đề</th>
+                                <th class="col-1 text-center">Footer cha</th>
+                                <th class="col-1 text-center">Thứ tự</th>
+                                <th class="col-1 text-center">Ẩn/Hiện</th>
+                                <th class="col-1 text-center">Link</th>
+                                <th class="col-2 text-center">Chức năng</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="text-center">@item.FooterId</td>
+                                    <td class="text-primary">@item.ItemText</td>
+                                    <td class="text-center">@item.ParentID</td>
+                                    <td class="text-center">@item.ItemOrder</td>
+                                    <td class="text-center">@item.IsActive</td>
+                                    <td class="text-center">@item.Link</td>
+
+                                    <td class="text-center">
+                                        <a asp-area="Admin" asp-controller="Footers" asp-action="Edit" asp-route-id="@item.FooterId" class="btn btn-primary btn-sm" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a asp-area="Admin" asp-controller="Footers" asp-action="Delete" asp-route-id="@item.FooterId" class="btn btn-danger btn-sm" title="Xoá">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

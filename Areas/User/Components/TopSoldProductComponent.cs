@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DACN_DVTRUCTUYEN.Areas.User.Components
 {
-    [ViewComponent(Name = "TopProduct")]
-    public class TopProductComponent : ViewComponent
+    [ViewComponent(Name = "TopSoldProduct")]
+    public class TopSoldProductComponent : ViewComponent
     {
         private readonly DataContext _context;
-        public TopProductComponent(DataContext context)
+        public TopSoldProductComponent(DataContext context)
         {
             _context = context;
         }

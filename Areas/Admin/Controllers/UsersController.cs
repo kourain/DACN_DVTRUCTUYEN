@@ -7,152 +7,77 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Areas.User.Models;
 using DACN_DVTRUCTUYEN.Models;
+using DACN_DVTRUCTUYEN.Utilities;
 
 namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class UsersController : Controller
     {
-        private readonly DataContext _context;
-
+        private readonly DataContext _Context;
         public UsersController(DataContext context)
         {
-            _context = context;
+            _Context = context;
         }
-
-        // GET: Admin/Users
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Users.ToListAsync());
-        }
 
-        // GET: Admin/Users/Details/5
-        public async Task<IActionResult> Details(int? id)
+            var mnlist = _Context.Users.OrderBy(m => m.UserId).ToList();
+            return View(mnlist);
+        }
+        public async Task<IActionResult> Ban(int? id)
         {
-            if (id == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
+            var mn = _Context.Users.Find(id);
+            if (mn == null)
             {
                 return NotFound();
             }
-
-            return View(user);
+            return View(mn);
         }
-
-        // GET: Admin/Users/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Admin/Users/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,Name,Email,Password,Ban,CreateDate")] DACN_DVTRUCTUYEN.Areas.User.Models.User user)
+        public async Task<IActionResult> Ban(int id)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(user);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
-        // GET: Admin/Users/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
+            var deleUser = _Context.Users.Find(id);
+            if (deleUser == null)
             {
                 return NotFound();
             }
-
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
+            deleUser.Ban = !deleUser.Ban;
+            _Context.Users.Update(deleUser);
+            _Context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+        public async Task<IActionResult> ResetPassWord(int? id)
+        {
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-            return View(user);
+            var mn = _Context.Users.Find(id);
+            if (mn == null)
+            {
+                return NotFound();
+            }
+            return View(mn);
         }
-
-        // POST: Admin/Users/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("UserId,Name,Email,Password,Ban,CreateDate")] DACN_DVTRUCTUYEN.Areas.User.Models.User user)
+        public async Task<IActionResult> ResetPassWord(User.Models.User mn)
         {
-            if (id != user.UserId)
+            var resetUser = _Context.Users.Find(mn.UserId);
+            if (resetUser == null)
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(user);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!UserExists(user.UserId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(user);
-        }
-
-        // GET: Admin/Users/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(m => m.UserId == id);
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            return View(user);
-        }
-
-        // POST: Admin/Users/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var user = await _context.Users.FindAsync(id);
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool UserExists(int id)
-        {
-            return _context.Users.Any(e => e.UserId == id);
+            resetUser.Password = Functions.MD5Hash("12345678");
+            _Context.Users.Update(resetUser);
+            _Context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

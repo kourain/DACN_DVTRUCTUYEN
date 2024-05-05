@@ -66,14 +66,14 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = _context.Products.Where(m=> m.ProductID == id).FirstOrDefault();
             if (product == null)
             {
                 return NotFound();

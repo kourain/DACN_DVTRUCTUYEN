@@ -12,146 +12,110 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
     [Area("Admin")]
     public class FootersController : Controller
     {
-        private readonly DataContext _context;
-
+        private readonly DataContext _Context;
         public FootersController(DataContext context)
         {
-            _context = context;
+            _Context = context;
         }
-
-        // GET: Admin/Footers
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await _context.Footers.ToListAsync());
+
+            var mnlist = _Context.Footers.OrderBy(m => m.FooterId).ToList();
+            return View(mnlist);
         }
-
-        // GET: Admin/Footers/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Delete(int? id)
         {
-            if (id == null)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-
-            var footer = await _context.Footers
-                .FirstOrDefaultAsync(m => m.FooterId == id);
-            if (footer == null)
+            var mn = _Context.Footers.Find(id);
+            if (mn == null)
             {
                 return NotFound();
             }
-
-            return View(footer);
+            return View(mn);
+        }
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var deleFooter = _Context.Footers.Find(id);
+            if (deleFooter == null)
+            {
+                return NotFound();
+            }
+            _Context.Footers.Remove(deleFooter);
+            _Context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
-        // GET: Admin/Footers/Create
         public IActionResult Create()
         {
+            var mnlist = (from m in _Context.Footers.Where(m => m.ParentID == 0)
+                          select new SelectListItem()
+                          {
+                              Text = m.ItemText,
+                              Value = m.FooterId.ToString()
+                          }
+                          ).ToList();
+            mnlist.Insert(0, new SelectListItem()
+            {
+                Text = "Default",
+                Value = "0"
+            });
+            ViewBag.mnlist = mnlist;
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Create(Footer mn)
+        {
+            if (ModelState.IsValid)
+            {
+                _Context.Footers.Add(mn);
+                _Context.SaveChanges();
+                return RedirectToAction("Index");
+            }
             return View();
         }
 
-        // POST: Admin/Footers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        public IActionResult Edit(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            var mn = _Context.Footers.Find(id);
+            if (mn == null)
+            {
+                return NotFound();
+            }
+            var mnlist = (from m in _Context.Footers.Where(m => m.ParentID == 0)
+                          select new SelectListItem()
+                          {
+                              Text = m.ItemText,
+                              Value = m.FooterId.ToString()
+                          }
+                        ).ToList();
+            mnlist.Insert(0, new SelectListItem()
+            {
+                Text = "Default",
+                Value = "0"
+            });
+            ViewBag.mnlist = mnlist;
+            return View(mn);
+        }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FooterId,ItemText,Column,ParentID,ItemOrder,IsActive,Icon,TextLink,Link")] Footer footer)
+        public IActionResult Edit(Footer mn)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(footer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                _Context.Footers.Update(mn);
+                _Context.SaveChanges();
+                return RedirectToAction("Index");
             }
-            return View(footer);
-        }
-
-        // GET: Admin/Footers/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var footer = await _context.Footers.FindAsync(id);
-            if (footer == null)
-            {
-                return NotFound();
-            }
-            return View(footer);
-        }
-
-        // POST: Admin/Footers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FooterId,ItemText,Column,ParentID,ItemOrder,IsActive,Icon,TextLink,Link")] Footer footer)
-        {
-            if (id != footer.FooterId)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(footer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FooterExists(footer.FooterId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(footer);
-        }
-
-        // GET: Admin/Footers/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var footer = await _context.Footers
-                .FirstOrDefaultAsync(m => m.FooterId == id);
-            if (footer == null)
-            {
-                return NotFound();
-            }
-
-            return View(footer);
-        }
-
-        // POST: Admin/Footers/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var footer = await _context.Footers.FindAsync(id);
-            if (footer != null)
-            {
-                _context.Footers.Remove(footer);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool FooterExists(int id)
-        {
-            return _context.Footers.Any(e => e.FooterId == id);
+            return View();
         }
     }
 }

@@ -1,11 +1,11 @@
 ﻿using DACN_DVTRUCTUYEN.Areas.User.Models;
 using DACN_DVTRUCTUYEN.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 using System.Runtime.CompilerServices;
-using System.Text;
+using System.Linq;
+using Microsoft.CodeAnalysis;
+using System.Text.RegularExpressions;
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
 {
     [Area("User")]
@@ -83,6 +83,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             ViewBag.ProductOption0 = ProductOptionValue;
             return View(product);
         }
+        //tăng view count
         [Route("/user/product/inc/{ProductID}")]
         public IActionResult INC(string ProductID)
         {
@@ -92,6 +93,20 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 return BadRequest();
             }
             var num = _dataContext.Database.ExecuteSql(FormattableStringFactory.Create($"EXEC [dbo].[INC_PRODUCT_VIEWCOUNT] '{ProductID}'"));
+            return Ok(num);
+        }
+        //Search
+        [Route("/user/product/like/{like}")]
+        public IActionResult SearchBoxAPI(string like)
+        {
+
+            if (string.IsNullOrEmpty(like))
+            {
+                return BadRequest();
+            }
+            if(like.IndexOf("'")  != -1 ) { return BadRequest(); } //SQL inject
+            var num = _dataContext.Products.FromSql(FormattableStringFactory.Create($"SELECT * FROM [DBO].[PRODUCT] WHERE PRODUCTID LIKE '%{like}%' OR " +
+                $"PRODUCTNAME LIKE N'%{like}%'")).ToList();
             return Ok(num);
         }
     }

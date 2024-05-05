@@ -20,6 +20,30 @@ else
         <meta charset="utf-8" />
         <link rel="stylesheet" href="~/styles.css" />
         <title>@ViewData["Title"]</title>
+        <style>
+            /* onErrorImg.css */
+            .onerror-img {
+                width: 50px;
+                height: 50px;
+                position: relative; /* Cần thiết cho onerror-img */
+            }
+
+
+                .onerror-img::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 50px;
+                    height: 50px;
+                    background-image: url('\\logo.png'); /* Đường dẫn mặc định */
+                    background-repeat: no-repeat;
+                    background-position: center;
+                    background-size: cover;
+                    opacity: 1; /* Ẩn ảnh mặc định */
+                    transition: opacity 0.5s ease; /* Tùy chỉnh hiệu ứng chuyển tiếp */
+                }
+        </style>
     </head>
     <body>
         <div id="___gatsby">
