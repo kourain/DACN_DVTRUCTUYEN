@@ -50,7 +50,7 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
                 var queryString = Request.QueryString.Value;
                 var json = HttpUtility.ParseQueryString(queryString);
 
-                long orderId = Convert.ToInt64(json["vnp_TxnRef"]); //mã hóa đơn
+                string orderId = json["vnp_TxnRef"].ToString(); //mã hóa đơn
                 string orderInfor = json["vnp_OrderInfo"].ToString(); //Thông tin giao dịch
                 long vnpayTranId = Convert.ToInt64(json["vnp_TransactionNo"]); //mã giao dịch tại hệ thống VNPAY
                 string vnp_ResponseCode = json["vnp_ResponseCode"].ToString(); //response code: 00 - thành công, khác 00 - xem thêm https://sandbox.vnpayment.vn/apis/docs/bang-ma-loi/
@@ -64,22 +64,22 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
                     if (vnp_ResponseCode == "00")
                     {
                         //Thanh toán thành công
-                        return Redirect("/user/OrdersHistory");
+                        return Redirect($"/user/Orders/OK/{orderId}&{vnpayTranId}&{orderInfor}");
                     }
                     else
                     {
                         //Thanh toán không thành công. Mã lỗi: vnp_ResponseCode
-                        return Redirect("LINK");
+                        return Redirect($"/user/Orders/ERROR/{orderId}&{vnpayTranId}&{orderInfor}");
                     }
                 }
                 else
                 {
                     //phản hồi không khớp với chữ ký
-                    return Redirect("đường dẫn nếu phản hồi ko hợp lệ");
+                    return BadRequest();
                 }
             }
             //phản hồi không hợp lệ
-            return Redirect("LINK");
+            return BadRequest();
         }
         public bool ValidateSignature(string rspraw, string inputHash, string secretKey)
         {

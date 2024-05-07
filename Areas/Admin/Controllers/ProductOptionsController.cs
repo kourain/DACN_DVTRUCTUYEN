@@ -46,6 +46,13 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // GET: Admin/ProductOptions/Create
         public IActionResult Create()
         {
+            ViewBag.productList = (from m in _context.Products
+                          select new SelectListItem()
+                          {
+                              Text = m.ProductName,
+                              Value = m.ProductID
+                          }
+                          ).ToList();
             return View();
         }
 
@@ -54,7 +61,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductID,OptionName,OptionValue,Quantity,SoldCount,PriceOld,PriceNow,UseUserAccount")] ProductOption productOption)
+        public async Task<IActionResult> Create(ProductOption productOption)
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +79,13 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.productList = (from m in _context.Products
+                                   select new SelectListItem()
+                                   {
+                                       Text = m.ProductName,
+                                       Value = m.ProductID
+                                   }
+                          ).ToList();
             var productOption = await _context.ProductOptions.FindAsync(id);
             if (productOption == null)
             {
@@ -86,13 +99,8 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ProductID,OptionName,OptionValue,Quantity,SoldCount,PriceOld,PriceNow,UseUserAccount")] ProductOption productOption)
+        public async Task<IActionResult> Edit(ProductOption productOption)
         {
-            if (id != productOption.ProductID)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try

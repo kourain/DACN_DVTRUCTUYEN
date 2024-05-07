@@ -43,6 +43,11 @@ else
                     opacity: 1; /* Ẩn ảnh mặc định */
                     transition: opacity 0.5s ease; /* Tùy chỉnh hiệu ứng chuyển tiếp */
                 }
+
+            table {
+                overflow-y: scroll;
+                display: block;
+            }
         </style>
     </head>
     <body>
@@ -54,9 +59,7 @@ else
                 </div>
                 @await Component.InvokeAsync("Footer")
             </div>
-            <div id="gatsby-announcer" style="position: absolute; top: 0; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;" aria-live="assertive" aria-atomic="true"></div>
         </div>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
             $('a').click(function (event) {
@@ -67,6 +70,7 @@ else
                 if (href === null) return;
                 if (href === "") return;
                 if (href.toLowerCase().includes("/user/logout")) window.location.href = href;
+                if (href.toLowerCase().includes("/user/orders/cancel/")) window.location.href = href;
                 if (!href.toLowerCase().includes("/user/")) window.location.href = href;
                 // Gửi yêu cầu GET đến URL
                 fetch(href)
@@ -92,11 +96,37 @@ else
                     .catch((error) => {
                         console.error('Error:', error);
                     });
-
             });
         </script>
-        <div id="__popup"><h3></h3></div>
-        <a id="fb-messenger" target="_blank" rel="noreferrer"><img title="Messenger" class="w L M cc zc" loading="lazy" /></a>
+        <div id="__popup">
+        </div>
+        <script>
+            function sendPopUp(htmlstr) {
+                var template = `
+                            <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
+                                <div style="width: 992px;height:500px;background-color:white;">
+
+                                </div>
+                            </div>`;
+                $("#__popup").html(htmlstr);
+            };
+            $(document).keydown(function (e) {
+                // ESCAPE key pressed
+                if (e.keyCode == 27) {
+                    $("#__popup").html('');
+                }
+            });
+            $(document).click(function (e) {
+                const profileButton = document.querySelector('.prfbutton.z.db.za');
+                const profileContent = document.getElementById('userprofileclick');
+
+                if (profileButton && !profileButton.contains(e.target)) {
+                    profileContent.innerHTML = '';
+                }
+            });
+
+        </script>
+        <a id="fb-messenger" target="_blank" rel="noreferrer">@* <img title="Messenger" class="w L M cc zc" loading="lazy" /> *@</a>
         <div id="fb-root"></div>
         <div id="fb-customer-chat" class="fb-customerchat" attribution="biz_inbox"></div>
         <div id="__dialog"></div>

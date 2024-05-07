@@ -14,12 +14,16 @@
 <!--Begin form-->
 <form asp-action="Ban" method="post">
     <input type="hidden" asp-for="UserId" />
+    <div class="form-group">
+        <label asp-for="BanReason" class="control-label"></label>
+        <input asp-for="BanReason" class="form-control" />
+        <span asp-validation-for="BanReason" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-lg btn-danger p-2">
+        <img src="https://cdn-icons-png.flaticon.com/512/6380/6380092.png " style="width:30px; height:30px" />Cấm người dùng
+    </button>
     <a class="btn btn-lg btn-warning p-2 mr-5" href="javascript:history.back()">
         <i class="bi bi-arrow-left-circle"></i>Quay lại
     </a>
-    <button type="submit" class="btn btn-lg btn-danger p-2">
-        <i class="bi bi-trash-fill"></i>Cấm người dùng
-
-    </button>
 
 </form>

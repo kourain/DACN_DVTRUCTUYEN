@@ -1,6 +1,17 @@
 ﻿@model DACN_DVTRUCTUYEN.Areas.User.Models.User;
 @{
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    string topricestr(long number)
+    {
+        string result = number.ToString();
+        int num = result.Length;
+        while (num > 3)
+        {
+            result = result.Insert(num - 3, ".");
+            num -= 3;
+        }
+        return result;
+    }
 }
 <div style="background: #F3F4F6;">
     <div style="width: 1200px; height: 700.80px; margin: auto;">
@@ -49,7 +60,7 @@
                 </div>
             </a>
         </div>
-        <div style="padding: 35.91px; left: -0.28px; top: 0px;background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12.20px; display: inline-flex">
+        <div style="padding: 35.91px;max-height:950px;max-width:auto; left: -0.28px; top: 0px;background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12.20px; display: inline-flex">
             <div style="align-self: stretch; height: 169.75px; flex-direction: column; justify-content: flex-start; align-items: flex-end; gap: 8.74px; display: flex">
                 <div style="align-self: stretch; height: 28px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                     <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Tổng quan</div>
@@ -76,7 +87,7 @@
                             <div style="width: 219.83px; height: 73.49px; left: -3.50px; top: -3.50px; position: absolute">
                                 <div style="width: 65.14px; height: 21px; left: 12.25px; top: 12.19px; position: absolute; color: #374151; font-size: 14px; font-family: Roboto; font-weight: 400; line-height: 21px; word-wrap: break-word">Đã tích lũy</div>
                                 <div style="height: 28px; padding: 3.50px; left: 8.75px; top: 36.74px; position: absolute; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
-                                    <div style="color: black; font-size: 14px; font-family: Roboto; font-weight: 500; line-height: 21px; word-wrap: break-word">@Model.TotalPaid</div>
+                                    <div style="color: black; font-size: 14px; font-family: Roboto; font-weight: 500; line-height: 21px; word-wrap: break-word">@topricestr(Model.TotalPaid)đ</div>
                                 </div>
                             </div>
                         </div>
@@ -92,8 +103,20 @@
                 </div>
             </div>
             <div style="align-self: stretch; height: 9.78px; border-top: 0.91px rgba(156, 163, 175, 0.25) solid"></div>
-            <div style="height: 380.89px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
-                <form style="align-self: stretch; height: 350.89px; margin-left:320px; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 14px; display: flex">
+            <div style="height: 50%;width:100%;flex-direction: row;flex-wrap:wrap;display: flex;justify-content: space-evenly;">
+                <div style="align-self: stretch;padding-top:5%; height: 350.89px;width:40%;flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 14px; display: flex">
+                    <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Liên kết telegram: </div>
+                    <div class="form-group col-md-6">
+                        <button type="button" class="form-control mb-3 g border-none Cc" style="color:green;font-weight: 300;font-size:125%" disable>@Model.TelegramName</button>
+                    </div>
+                    <a href="https://t.me/db_kr_shop_bot?start=@Context.Request.Cookies["token"]">
+                        <button style="height: 41.99px; padding-top: 10.44px; padding-bottom: 10.56px; padding-left: 14.91px; padding-right: 14.91px; background: #2579F2; border-radius: 5.25px; justify-content: flex-start; align-items: flex-start; display: inline-flex">
+                            <div style="text-align: center; color: white; font-size: 14px; font-family: Roboto; font-weight: 500; line-height: 21px; word-wrap: break-word">Liên kết lại</div>
+                        </button>
+                    </a>
+                </div>
+                <div style="align-self: stretch; height: 300px;margin:auto; width:1px; border-left:0.91px rgba(156, 163, 175, 0.25) solid"></div>
+                <form style="align-self: stretch;padding-top:5%; height: 350.89px;width:40%;flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 14px; display: flex">
                     <div style="align-self: stretch; height: 28px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                         <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Cá nhân</div>
                     </div>

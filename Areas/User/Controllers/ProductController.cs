@@ -87,11 +87,12 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [Route("/user/product/inc/{ProductID}")]
         public IActionResult INC(string ProductID)
         {
-            var product = _dataContext.ProductViews.Where(m => m.ProductID == ProductID).ToList();
-            if (product == null || product.Count == 0)
+            var product = _dataContext.Products.Where(m => m.ProductID == ProductID).FirstOrDefault();
+            if (product == null )
             {
                 return BadRequest();
             }
+            //Stored Procedure
             var num = _dataContext.Database.ExecuteSql(FormattableStringFactory.Create($"EXEC [dbo].[INC_PRODUCT_VIEWCOUNT] '{ProductID}'"));
             return Ok(num);
         }
@@ -106,7 +107,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             }
             if(like.IndexOf("'")  != -1 ) { return BadRequest(); } //SQL inject
             var num = _dataContext.Products.FromSql(FormattableStringFactory.Create($"SELECT * FROM [DBO].[PRODUCT] WHERE PRODUCTID LIKE '%{like}%' OR " +
-                $"PRODUCTNAME LIKE N'%{like}%'")).ToList();
+                $"PRODUCTNAME LIKE N'%{like}%' ;")).ToList();// OR ProductDescription LIKE N'%{like}%'
             return Ok(num);
         }
     }

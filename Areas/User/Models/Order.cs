@@ -8,10 +8,11 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
     {
         public Order() { Time = DateTime.Now; }
         [Key]
-        public long OrderID { get; set; }
+        public string OrderID { get; set; }
         public int UserID { get; set; }
         public DateTime Time { get; set; }
         public int TotalPay { get; set; }
         public int PayStatus { get; set; }
+        public long? TransactionNo { get; set; }
     }
 }

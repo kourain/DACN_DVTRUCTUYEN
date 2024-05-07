@@ -140,7 +140,7 @@
 </div>
 <script>
     function addcart() {
-        fetch("/User/cart/add&@Model[0].ProductID&" + now.optionValue)
+        fetch("/User/cart/add&@Model[0].ProductID&@now.OptionValue")
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');

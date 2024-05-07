@@ -59,6 +59,15 @@ namespace DACN_DVTRUCTUYEN.Utilities
             if (thisval != null)
                 tokenUser[agg1]["time"] = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
         }
+        public static int GetUIDFromToken(string? posttokenUser)
+        {
+            if (string.IsNullOrEmpty(posttokenUser)) return 0;
+            var thisval = tokenUser[posttokenUser];
+            if (thisval == null)
+                return 0;
+            return int.Parse(thisval["UID"].ToString());
+            
+        }
 
         public static int IsLoginUser(string? posttokenUser, string? uid = "")
         {

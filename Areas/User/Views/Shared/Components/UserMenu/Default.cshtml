@@ -3,6 +3,17 @@
     string? now = Context.Request.Path.Value;
     Context.Request.Cookies.TryGetValue("username", out string username);
     username = HttpUtility.UrlDecode(username);
+    string topricestr(int number)
+    {
+        string result = number.ToString();
+        int num = result.Length;
+        while (num > 3)
+        {
+            result = result.Insert(num - 3, ".");
+            num -= 3;
+        }
+        return result;
+    }
 }
 <header>
     <div class="Ad Wc je" style="max-height:120px;">
@@ -43,8 +54,8 @@
                 </div>
                 <div class="Ub va vg mc nb vc">
                     <div class="Nb ta jc He">
-                        <div class="z db za" onclick="userprofilehover()">
-                            <button type="button" class="Nb ta jc He Zd dd"><img loading="lazy" src="~/avatar-kh.png" class="tb La zc te" alt="Ảnh đại diện"><div class="rc tc">@username</div></button><div class="y B H Aa U" id="userprofileclick"></div>
+                        <div class="prfbutton z db za">
+                            <button type="button" class="Nb ta jc He Zd dd" onclick="userprofilehover()"><img loading="lazy" src="~/avatar-kh.png" class="tb La zc te" alt="Ảnh đại diện"><div class="rc tc">@username</div></button><div class="y B H Aa U" id="userprofileclick"></div>
                         </div>
                     </div>
                 </div>
@@ -103,18 +114,27 @@
     }
     var clickmenu = 0;
     function userprofilehover() {
-        if (clickmenu == 0) {
-            $("#userprofileclick").html(`<div class="ta mc Rd le" style="margin-top:-40px"><div class="ta yb Nb lc"><div class="Lb sd xc Ie Sc we">` +
-                `<div><div>Số tiền đã sử dụng</div><div class="ta jc"><h6>0đ</h6></div></div><div><div class="V">` +
-                `<a class="ra qd xc uf rf" href="/user/profile">Quản lý tài khoản</a>` +
-                `<a class="ra qd xc uf rf" href="/user/ordershistory">Lịch sử đơn hàng</a>` +
-                `<a class="ta db qd xc uf rf" href="/user/logout">Đăng xuất</a></a></div></div></div></div></div>`);
-            clickmenu = 1;
-        }
-        else {
-            clickmenu = 0;
-            $("#userprofileclick").html('');
-        }
+        fetch("/user/totalpaid")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Process the retrieved user data
+                // console.log('User Data:', data);
+                if (data.code == 1) {
+                    $("#userprofileclick").html(`<div class="ta mc Rd le" style="margin-top:-40px"><div class="ta yb Nb lc"><div class="Lb sd xc Ie Sc we">` +
+                        `<div><div>Số tiền đã sử dụng</div><div class="ta jc"><h6>${data.messenger.toLocaleString()}đ</h6></div></div><div><div class="V">` +
+                        `<a class="ra qd xc uf rf" href="/user/profile">Quản lý tài khoản</a>` +
+                        `<a class="ra qd xc uf rf" href="/user/ordershistory">Lịch sử đơn hàng</a>` +
+                        `<a class="ta db qd xc uf rf" href="/user/logout">Đăng xuất</a></a></div></div></div></div></div>`);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
     function resetcart() {
         fetch("/user/cart/get_cart_count")

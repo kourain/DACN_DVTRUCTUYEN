@@ -1,9 +1,68 @@
 ﻿@model IList<DACN_DVTRUCTUYEN.Areas.User.Models.Order>;
 @{
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
+    string paystatus_str(int paystatus)
+    {
+        switch (paystatus)
+        {
+            case -2:
+                return "Hủy thanh toán";
+            case -1:
+                return "Thanh toán thất bại";
+            case 0:
+                return "Chờ thanh toán";
+            case 1:
+                return "Thanh toán thành công";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
+    string actionname(int paystatus)
+    {
+        switch (paystatus)
+        {
+            case -2:
+                return "";
+            case -1:
+                return "";
+            case 0:
+                return "Hủy thanh toán";
+            case 1:
+                return "Xem đơn hàng";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
+    string actionlink(int paystatus,string orderid)
+    {
+        switch (paystatus)
+        {
+            case -2:
+                return "";
+            case -1:
+                return "";
+            case 0:
+                return $"/user/orders/cancel/{orderid}";
+            case 1:
+                return $"/user/orders/view/{orderid}";
+            default:
+                return "";
+        }
+    }
+    string topricestr(long number)
+    {
+        string result = number.ToString();
+        int num = result.Length;
+        while (num > 3)
+        {
+            result = result.Insert(num - 3, ".");
+            num -= 3;
+        }
+        return result;
+    }
 }
 <div style="background: #F3F4F6;">
-    <div style="width: 1200px; height: 700.80px; margin:auto">
+    <div style="width: 1200px; height: 750.80px; margin:auto">
         <div style="height: 445.27px; padding: 0.91px; left: 21px; top: 4px; background: white; border-radius: 5.25px; overflow: hidden; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
             <a href="/user/profile" style="align-self: stretch; height: 63.91px; padding-top: 0.91px; border-top: 0.91px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                 <div style="align-self: stretch; padding-top: 21px; padding-bottom: 21px; padding-left: 26.45px; padding-right: 21px; justify-content: flex-start; align-items: flex-start; display: inline-flex">
@@ -50,7 +109,7 @@
             </a>
         </div>
         <div style="padding: 35.91px; left: -0.28px; top: 0px; background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12.20px; display: inline-flex">
-            <div style="width: 900.62px; height: 600px;position:relative;background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; ">
+            <div style="width: 900.62px; height: 650px;position:relative;background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; ">
                 <div style="height:100px; left: 35.91px; top: 35.91px; position:relative; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 6.93px; display: inline-flex">
                     <div style="align-self: stretch; height: 28px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                         <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Lịch sử đơn hàng</div>
@@ -59,23 +118,26 @@
                 </div>
                 <div style="width: 85%; height: 1px; margin-left:8%; border-top: 0.91px rgba(156, 163, 175, 0.25) solid"></div>
 
-                <table class="table tbborder" style="margin-top:10px;">
+                <table class="table tbborder" style="margin-top:10px; max-height:80%">
                     <thread>
                         <tr>
-                            <th>
+                            <th style="width:5%">
                                 Mã đơn hàng
                             </th>
-                            <th>
+                            <th style="width:10%">
                                 Thời gian
                             </th>
                             <th>
                                 Sản phẩm
                             </th>
-                            <th>
+                            <th style="width:5%">
                                 Tổng tiền
                             </th>
                             <th>
                                 Trạng thái
+                            </th>
+                            <th style="width:7%">
+                                Tác vụ
                             </th>
                         </tr>
                     </thread>
@@ -96,12 +158,14 @@
                                 </td>
                                 <td class="rowdata">
                                 </td>
+                                <td class="rowdata">
+                                </td>
                             </tr>
                         }
                         else
                             foreach (var item in Model)
                             {
-                                <tr>
+                                <tr style="height:30px">
                                     <td class="">
                                         @Html.DisplayFor(modelItem => item.OrderID)
                                     </td>
@@ -112,10 +176,13 @@
                                         @Html.DisplayFor(modelItem => item.Time)
                                     </td>
                                     <td class="">
-                                        @Html.DisplayFor(modelItem => item.TotalPay)
+                                        @topricestr(item.TotalPay)đ
                                     </td>
                                     <td class="">
-                                        @Html.DisplayFor(modelItem => item.PayStatus)
+                                        @paystatus_str(item.PayStatus)
+                                    </td>
+                                    <td class="">
+                                        <a href="@actionlink(item.PayStatus,item.OrderID)" style="color:green;font-weight: 500;"><i>@actionname(item.PayStatus)</i></a>
                                     </td>
                                 </tr>
                             }

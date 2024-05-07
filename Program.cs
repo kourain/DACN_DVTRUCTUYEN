@@ -1,7 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
 using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+using Hangfire;
+using DACN_DVTRUCTUYEN.Areas.TelegramBot;
 namespace DACN_DVTRUCTUYEN
 {
     public class Program
@@ -11,7 +12,8 @@ namespace DACN_DVTRUCTUYEN
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
-            builder.Services.AddControllersWithViews().AddNewtonsoftJson();
+            builder.Services.AddControllersWithViews();
+            // ... your other services
             var connection = "";
             if (builder.Environment.IsDevelopment())
             {
@@ -24,6 +26,13 @@ namespace DACN_DVTRUCTUYEN
             }
             string nowpath = Directory.GetCurrentDirectory();
             builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connection));
+
+            //hangfire
+            builder.Services.AddHangfire(configuration => configuration
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UseSqlServerStorage(connection)); // Replace with your connection string
 
             var app = builder.Build();
 
@@ -46,7 +55,7 @@ namespace DACN_DVTRUCTUYEN
                   name: "areas",
                   pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                 );
-
+            var temp = new TelegramBotStatic();
             app.Run();
         }
     }

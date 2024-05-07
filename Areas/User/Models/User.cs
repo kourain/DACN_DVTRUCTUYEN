@@ -14,7 +14,10 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public string? Phone { get; set; }
         public string Password { get; set; }
         public bool? Ban { get; set; }
+        public string? BanReason { get; set; }
         public DateTime CreateDate { get; set; }
         public long TotalPaid { get; set; }
+        public long? TelegramChatID { get; set; }
+        public string? TelegramName { get; set; }
     }
 }

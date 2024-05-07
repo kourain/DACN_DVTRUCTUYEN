@@ -28,14 +28,36 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [Route("/user/OrdersHistory")]
         public IActionResult OrdersHistory()
         {
-
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
                 return BadRequest();
             }
-            var us = _dataContext.Orders.Where(m => m.UserID == userid).ToList();
+            var us = _dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m=> m.Time).ToList();
+            //test scroll table
+            //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
+            //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
+            //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
+            //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
+            //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
+            //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
             return View(us);
+        }
+        [Route("/user/totalpaid")]
+        [HttpGet]
+        public IActionResult totalpaid()
+        {
+            int.TryParse(Request.Cookies["id"], out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                return BadRequest();
+            }
+            var us = _dataContext.Users.Where(m => m.UserId == userid).FirstOrDefault();
+            return Ok(new
+            {
+                code = 1,
+                messenger = us.TotalPaid
+            });
         }
         [Route("/user/password")]
         [HttpGet]
