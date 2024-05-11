@@ -25,24 +25,6 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             return View(await _context.ProductOptions.ToListAsync());
         }
 
-        // GET: Admin/ProductOptions/Details/5
-        public async Task<IActionResult> Details(string? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var productOption = await _context.ProductOptions
-                .FirstOrDefaultAsync(m => m.ProductID == id);
-            if (productOption == null)
-            {
-                return NotFound();
-            }
-
-            return View(productOption);
-        }
-
         // GET: Admin/ProductOptions/Create
         public IActionResult Create()
         {
@@ -73,9 +55,14 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
 
         // GET: Admin/ProductOptions/Edit/5
-        public async Task<IActionResult> Edit(string? id)
+        [HttpGet]
+        [Route("/admin/ProductOptions/edit/{productid}/{optionvalue}")]
+        public async Task<IActionResult> Edit(string productid,string optionvalue)
         {
-            if (id == null)
+            productid = productid.ToLower();
+            optionvalue = optionvalue.ToLower();
+            var productOption = _context.ProductOptions.Where(m=>m.ProductID == productid && m.OptionValue == optionvalue).FirstOrDefault();
+            if (productOption == null)
             {
                 return NotFound();
             }
@@ -86,11 +73,6 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                                        Value = m.ProductID
                                    }
                           ).ToList();
-            var productOption = await _context.ProductOptions.FindAsync(id);
-            if (productOption == null)
-            {
-                return NotFound();
-            }
             return View(productOption);
         }
 
@@ -99,12 +81,14 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(ProductOption productOption)
+        [Route("/admin/productoptions/edit/{productid}/{optionvalue}")]
+        public async Task<IActionResult> Edit(string productid, string optionvalue,ProductOption productOption)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    productOption.CreateDate = DateTime.Now;
                     _context.Update(productOption);
                     await _context.SaveChangesAsync();
                 }
@@ -125,15 +109,14 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
 
         // GET: Admin/ProductOptions/Delete/5
-        public async Task<IActionResult> Delete(string? id)
+        [HttpGet]
+        [Route("/admin/ProductOptions/Delete/{productid}/{optionvalue}")]
+        public async Task<IActionResult> Delete(string productid, string optionvalue)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            productid = productid.ToLower();
+            optionvalue = optionvalue.ToLower();
             var productOption = await _context.ProductOptions
-                .FirstOrDefaultAsync(m => m.ProductID == id);
+                .FirstOrDefaultAsync(m => m.ProductID == productid && m.OptionValue == optionvalue);
             if (productOption == null)
             {
                 return NotFound();

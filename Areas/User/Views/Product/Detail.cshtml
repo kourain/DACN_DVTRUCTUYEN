@@ -2,7 +2,7 @@
 @{
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
     DACN_DVTRUCTUYEN.Areas.User.Models.ProductView now = Model.Where(m => m.OptionValue == ViewBag.ProductOption0).FirstOrDefault();
-    ViewData["Title"] = Model[0].ProductName + " | " + now.OptionName;
+    ViewData["Title"] = Model[0].ProductName + " - " + now.OptionName;
     string topricestr(int number)
     {
         string result = number.ToString();

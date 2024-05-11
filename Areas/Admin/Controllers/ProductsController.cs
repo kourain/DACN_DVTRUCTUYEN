@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
+using System.Runtime.CompilerServices;
 
 namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
 {
@@ -66,19 +66,19 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products/Edit/5
+        [HttpGet]
         public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var product = _context.Products.Where(m=> m.ProductID == id).FirstOrDefault();
-            if (product == null)
+            var data = _context.Products.Where(m => m.ProductID == id).FirstOrDefault();
+            if (data == null)
             {
                 return NotFound();
             }
-            return View(product);
+            return View(data);
         }
 
         // POST: Admin/Products/Edit/5
@@ -86,33 +86,39 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ProductID,ProductName,ProductDescription,CreateDate,ProductImg")] Product product)
+        [Route("/admin/products/edit")]
+        public async Task<IActionResult> Edit(Product product, IFormFile FormFile)
         {
-            if (id != product.ProductID)
-            {
-                return NotFound();
-            }
-
+            ModelState.Remove(nameof(FormFile));
             if (ModelState.IsValid)
             {
-                try
+                if (FormFile != null)
                 {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.ProductID))
+                    string extension = Path.GetExtension(FormFile.FileName);
+                    if (string.IsNullOrEmpty(extension))
                     {
-                        return NotFound();
+                        extension = ".png"; //đặt mặc định .png
                     }
-                    else
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Product/img", $"{product.ProductID}{extension}");
+                    using (var stream = System.IO.File.Create(filePath))
                     {
-                        throw;
+                        await FormFile.CopyToAsync(stream);
                     }
+
+                    // Lưu đường dẫn tệp vào cơ sở dữ liệu
+                    product.ProductImg = $"/Product/img/{product.ProductID}{extension}";
                 }
-                return RedirectToAction(nameof(Index));
+                //nếu sử dụng Linq hay entiframework sẽ khiến viewcount trong thời gian admin chỉnh sửa không được lưu vào csdl
+                _context.Database.ExecuteSql(FormattableStringFactory.Create($"UPDATE [dbo].[PRODUCT] SET " +
+                    $"PRODUCTID = '{product.ProductID}', " +
+                    $"PRODUCTNAME= N'{product.ProductName}'," +
+                    $"ProductDescription = N'{product.ProductDescription}'" +
+                    $" WHERE PRODUCTID = '{product.ProductID}'"));
+
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
+
             return View(product);
         }
 
