@@ -37,6 +37,7 @@ namespace DACN_DVTRUCTUYEN.Areas.TelegramBot.Controllers
                             var us = _dataContext.Users.Where(m => m.UserId == usid).FirstOrDefault();
                             us.TelegramChatID = (long)data["chat"]["id"];
                             us.TelegramName = data["from"]["firstName"].ToString() + " " + data["from"]["lastName"].ToString();
+                            us.TelegramUserName = data["from"]["username"].ToString();
                             _dataContext.Update(us);
                             _dataContext.SaveChanges();
                             return Ok($"Bạn đã liên kết thành công với tài khoản: {us.Name} bằng tài khoản Telegram: @{data["from"]["username"]}");

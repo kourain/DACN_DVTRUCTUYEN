@@ -4,50 +4,66 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="pagetitle">
+    <h2>Danh sách sản phẩm</h2>
+</div>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a type="button" class="btn btn-success" asp-area="Admin" asp-controller="Products" asp-action="Create">
+        <i class="bi bi-file-earmark-text me-1">
+            Thêm sản phẩm
+        </i>
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductDescription)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreateDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductImg)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductDescription)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreateDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductImg)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ProductID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ProductID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ProductID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th class="col-1 ">Mã SP</th>
+                                <th class="col-1 ">Tên sản phẩm</th>
+                                <th class="col-3 ">Mô tả</th>
+                                <th class="col-1 ">Số lượt xem</th>
+                                <th class="col-1 ">Thời gian thêm</th>
+                                <th class="col-2 ">Đường dẫn hình ảnh</th>
+                                <th class="col-2 ">Chức năng</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)    
+                            {
+                                <tr>
+                                    <td class="" scope="row">@item.ProductID</td>
+                                    <td class="">@item.ProductName</td>
+                                    <td class=""><textarea style="padding:0;width:100%;" readonly disabled>@item.ProductDescription</textarea></td>
+                                    <td class="">@item.ViewCount</td>
+                                    <td class="">@item.CreateDate.ToString("HH:mm:ss dd/MM/yyyy")</td>
+                                    <td class=""><textarea style="padding:0;width:100%;" readonly disabled>@item.ProductImg</textarea></td>
+                                    <td class="">
+                                        <a href="/admin/products/edit?id=@item.ProductID" class="btn btn-primary btn-sm" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="/admin/products/details?id=@item.ProductID" class="btn btn-primary btn-sm" title="Chi tiết">
+                                            <i class="bi bi-ticket-detailed"></i>
+                                        </a>
+                                        <a href="/admin/products/delete?id=@item.ProductID" class="btn btn-danger btn-sm" title="Xoá">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

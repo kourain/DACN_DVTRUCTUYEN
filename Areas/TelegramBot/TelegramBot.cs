@@ -42,6 +42,7 @@ namespace DACN_DVTRUCTUYEN.Areas.TelegramBot
 
             var chatId = message.Chat.Id;
             var client = new HttpClient();
+            
             var request = new HttpRequestMessage(HttpMethod.Post, $"{localurl}/telegrambot/api/messenger")
             {
                 Content = JsonContent.Create(message)

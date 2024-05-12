@@ -4,39 +4,45 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>Chi tiết sản phẩm</h1>
 
 <div>
-    <h4>Product</h4>
+    <h4>Mã sản phẩm: @Model.ProductID</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductName)
+            Tên sản phẩm
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ProductName)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductDescription)
+            Mô tả sản phẩm
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ProductDescription)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreateDate)
+            Ngày thêm
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.CreateDate)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ProductImg)
+            Đường dẫn hình ảnh 
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ProductImg)
         </dd>
+        <dt class="col-sm-2">
+            Xem trước hình ảnh
+        </dt>
+        <dd class="col-sm-10">
+            <img style="max-width:200px; max-height:200px;" src="@Model.ProductImg"/>
+        </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ProductID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.ProductID">Chỉnh sửa</a> |
+    <a asp-action="Index">Quay lại</a>
 </div>

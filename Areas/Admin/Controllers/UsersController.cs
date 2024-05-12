@@ -25,13 +25,14 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             var mnlist = _Context.Users.OrderBy(m => m.UserId).ToList();
             return View(mnlist);
         }
+        [HttpGet]
         public async Task<IActionResult> Ban(int? id)
         {
-            if (id == null || id == 0)
+            if (id == null)
             {
                 return NotFound();
             }
-            var mn = _Context.Users.Find(id);
+            var mn = _Context.Users.FirstOrDefault(m => m.UserId == id);
             if (mn == null)
             {
                 return NotFound();
@@ -40,15 +41,28 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Ban(int id)
+        public async Task<IActionResult> Ban(User.Models.User us)
         {
-            var deleUser = _Context.Users.Find(id);
-            if (deleUser == null)
+            var banuser = _Context.Users.FirstOrDefault(m=> m.UserId == us.UserId);
+            if (banuser == null)
             {
                 return NotFound();
             }
-            deleUser.Ban = !deleUser.Ban;
-            _Context.Users.Update(deleUser);
+            if(banuser.Ban == true)
+            {
+                TelegramBot.TelegramBotStatic.SendStaticMess(banuser.TelegramChatID, $"Chào {banuser.Name}:\n" +
+                    $"\tTài khoản DB Shop {banuser.Email} của bạn vừa được gỡ trạng thái cấm\n" +
+                    $"\tHãy tới trang web mua hàng ngay nào!");
+            }
+            else
+            {
+                TelegramBot.TelegramBotStatic.SendStaticMess(banuser.TelegramChatID, $"Chào {banuser.Name}:\n" +
+                    $"\tTài khoản DB Shop {banuser.Email} của bạn vừa bị cấm\n" +
+                    $"\tLý do: {us.BanReason}");
+            }
+            banuser.Ban = !banuser.Ban;
+            banuser.BanReason = us.BanReason;
+            _Context.Users.Update(banuser);
             _Context.SaveChanges();
             return RedirectToAction("Index");
         }

@@ -5,6 +5,7 @@ using DACN_DVTRUCTUYEN.Utilities;
 using DACN_DVTRUCTUYEN.Areas.User.Models;
 using Hangfire;
 using System.Runtime.CompilerServices;
+using Microsoft.EntityFrameworkCore;
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
 {
     [Area("User")]
@@ -79,6 +80,23 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return BadRequest();
             }
+            var userinf = _dataContext.Users.FirstOrDefault(m => m.UserId == userid);
+            if (userinf == null)
+            {
+                return BadRequest();
+            }
+            if (userinf.Ban == true)
+            {
+                return BadRequest();
+            }
+            if (userinf.TelegramChatID == null || string.IsNullOrEmpty(userinf.TelegramName))
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = $"Vui lòng liên kết với tài khoản Telegram để nhận thông báo!!!"
+                });
+            }
             //còn đơn chưa thanh toán
             var orderold = _dataContext.Orders.Where(m => m.UserID == userid && m.PayStatus == 0).FirstOrDefault();
             if (orderold != null)
@@ -93,6 +111,14 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             var now = DateTime.Now;
             string orderid = now.ToString("yyyyMMddhhmmss") + "_" + userid.ToString();
             var listcart = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductOptionQuantity > 0).ToList();
+            if (listcart.Count == 0)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = $"Không có sản phẩm nào hợp lệ trong giỏ hàng của bạn!"
+                });
+            }
             int totalpay = 0;
             var infor = "";
             foreach (var item in listcart)
@@ -152,6 +178,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     value.PayStatus = -2;
                 _dataContext.Update(value);
                 _dataContext.SaveChanges();
+                TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.FirstOrDefault(m => m.UserId == value.UserID).TelegramChatID, $"Bạn đã hủy thanh toán đối với đơn hàng đơn hàng {value.OrderID}");
             }
             return Redirect("/user/OrdersHistory");
         }
@@ -216,6 +243,19 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 code = 1,
                 messenger = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductOptionQuantity > 0).Count(),
             });
+        }
+        [Route("/user/cart/delproduct/{productid}")]
+        public async Task<IActionResult> delproduct(string productid)
+        {
+            int.TryParse(Request.Cookies["id"], out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                return BadRequest();
+            }
+            if (string.IsNullOrEmpty(productid)) { return BadRequest(); }
+            _dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid).ExecuteDelete();
+            _dataContext.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

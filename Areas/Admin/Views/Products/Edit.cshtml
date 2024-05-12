@@ -38,9 +38,9 @@
                 <span asp-validation-for="ViewCount" class=" alert-danger"></span>
             </div>
             <div class="form-group col-md-6">
-                <label>Hình ảnh sản phẩm, nhập đường dẫn hoặc chọn 1 tệp để tải lên</label>
+                <label>Hình ảnh sản phẩm, nhập đường dẫn hoặc chọn 1 tệp để tải lên(tối đa 5MB)</label>
                 <input type="text" class="form-control mb-3" asp-for="ProductImg" placeholder="Link tới hình ảnh">
-                <input type="file" class="form-control mb-3" name="FormFile" id="FormFile" accept="image/*">
+                <input type="file" class="form-control mb-3" name="FormFile" id="FormFile" accept="image/*" maxlength="5242880">
             </div>
         </div>
         <button type="submit" class="btn btn-lg btn-primary p-2"><i class="bi bi-file-plus-fill"></i>Lưu</button>

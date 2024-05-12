@@ -20,6 +20,7 @@ else
         <meta charset="utf-8" />
         <link rel="stylesheet" href="~/styles.css" />
         <title>@ViewData["Title"] | DB Shop</title>
+        @await Component.InvokeAsync("CheckBan")
         <link rel="icon" type="image/x-icon" href="/Logo.png">
         <style>
             /* onErrorImg.css */

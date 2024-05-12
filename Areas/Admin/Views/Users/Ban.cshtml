@@ -3,24 +3,36 @@
     Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
 }
 <div class="pagetitle">
-    <h2>Xác nhận cấm User</h2>
-</div>
-<div class="form-row">
-    <div class="form-group col-md-6">
-        <label asp-for="UserId">UserId</label>
-        <input type="text" class="form-control mb-3" asp-for="UserId" disabled>
-    </div>
+    <h2>Xác nhận @((Model.Ban == true) ? "bỏ" : "") cấm người dùng</h2>
 </div>
 <!--Begin form-->
 <form asp-action="Ban" method="post">
+    <div asp-validation-summary="All"></div>
+    <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
     <input type="hidden" asp-for="UserId" />
-    <div class="form-group">
-        <label asp-for="BanReason" class="control-label"></label>
-        <input asp-for="BanReason" class="form-control" />
-        <span asp-validation-for="BanReason" class="text-danger"></span>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label asp-for="UserId">Mã người dùng</label>
+            <input type="text" class="form-control mb-3" asp-for="UserId" disabled>
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="Name">Tên hiển thị</label>
+            <input type="text" class="form-control mb-3" asp-for="Name" disabled>
+        </div>
+        <div class="form-group col-md-6">
+            <label asp-for="BanReason" class="control-label">Lý do</label>
+            @if (Model.Ban == true)
+            {
+                <textarea asp-for="BanReason" class="form-control mb-3" type="text" disabled readonly></textarea>
+            }
+            else
+            {
+                <textarea asp-for="BanReason" class="form-control mb-3" type="text"></textarea>
+            }
+        </div>
     </div>
     <button type="submit" class="btn btn-lg btn-danger p-2">
-        <img src="https://cdn-icons-png.flaticon.com/512/6380/6380092.png " style="width:30px; height:30px" />Cấm người dùng
+        <img src="https://cdn-icons-png.flaticon.com/512/6380/6380092.png " style="width:30px; height:30px" />@((Model.Ban == true) ? "Bỏ cấm" : "Cấm") người dùng
     </button>
     <a class="btn btn-lg btn-warning p-2 mr-5" href="javascript:history.back()">
         <i class="bi bi-arrow-left-circle"></i>Quay lại

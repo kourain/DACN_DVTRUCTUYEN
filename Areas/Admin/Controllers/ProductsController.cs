@@ -25,19 +25,21 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             return View(await _context.Products.ToListAsync());
         }
 
+        [HttpGet]
+        [Route("/admin/products/details")]
         // GET: Admin/Products/Details/5
         public async Task<IActionResult> Details(string? id)
         {
             if (id == null)
             {
-                return NotFound();
+                RedirectToAction("Index");
             }
 
             var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.ProductID == id);
             if (product == null)
             {
-                return NotFound();
+                RedirectToAction("Index");
             }
 
             return View(product);
@@ -54,17 +56,33 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductID,ProductName,ProductDescription,CreateDate,ProductImg")] Product product)
+        [Route("/admin/products/create")]
+        public async Task<IActionResult> Create(Product product, IFormFile FormFile)
         {
+            ModelState.Remove(nameof(FormFile));
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (FormFile != null)
+                {
+                    string extension = Path.GetExtension(FormFile.FileName);
+                    if (string.IsNullOrEmpty(extension))
+                    {
+                        extension = ".png"; //đặt mặc định .png
+                    }
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Product/img", $"{product.ProductID}{extension}");
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        await FormFile.CopyToAsync(stream);
+                    }
+                    // Lưu đường dẫn tệp vào cơ sở dữ liệu
+                    product.ProductImg = $"/Product/img/{product.ProductID}{extension}";
+                }
+                _context.Products.Add(product);
+                _context.SaveChanges();
+                return RedirectToAction("Index");
             }
             return View(product);
         }
-
         // GET: Admin/Products/Edit/5
         [HttpGet]
         public async Task<IActionResult> Edit(string? id)
@@ -104,7 +122,6 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                     {
                         await FormFile.CopyToAsync(stream);
                     }
-
                     // Lưu đường dẫn tệp vào cơ sở dữ liệu
                     product.ProductImg = $"/Product/img/{product.ProductID}{extension}";
                 }
@@ -112,9 +129,9 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 _context.Database.ExecuteSql(FormattableStringFactory.Create($"UPDATE [dbo].[PRODUCT] SET " +
                     $"PRODUCTID = '{product.ProductID}', " +
                     $"PRODUCTNAME= N'{product.ProductName}'," +
-                    $"ProductDescription = N'{product.ProductDescription}'" +
+                    $"ProductDescription = N'{product.ProductDescription}'," +
+                    $"ProductImg = '{product.ProductImg}'" +
                     $" WHERE PRODUCTID = '{product.ProductID}'"));
-
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }

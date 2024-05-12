@@ -1,0 +1,98 @@
+﻿@model ((IList<OrderView>, int), (IList<OrderView>, int), (string, string))
+@{
+    string topricestr(int number)
+    {
+        string result = number.ToString();
+        int num = result.Length;
+        while (num > 3)
+        {
+            result = result.Insert(num - 3, ".");
+            num -= 3;
+        }
+        return result;
+    }
+}
+<!-- Sales Card -->
+<div class="col-xxl-4 col-md-12" style="width:25%">
+    <div class="card info-card sales-card">
+        <div class="card-body">
+            <h5 class="card-title">Doanh số <span>| Tháng này</span></h5>
+
+            <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-cart"></i>
+                </div>
+                <div class="ps-3">
+                    <h6>@Model.Item1.Item1.Count đơn hàng</h6>
+                    <span class="text-muted small pt-2 ps-1">Tháng trước </span><span class="text-danger small pt-1 fw-bold">@Model.Item1.Item1.Count đơn hàng</span>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div><!-- End Sales Card -->
+<!-- Revenue Card -->
+<div class="col-xxl-4 col-md-12" style="width:25%">
+    <div class="card info-card revenue-card">
+        <div class="card-body">
+            <h5 class="card-title">Doanh thu <span>| Tháng này</span></h5>
+
+            <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-currency-dollar"></i>
+                </div>
+                <div class="ps-3">
+                    <h6>@topricestr(Model.Item1.Item2)đ</h6>
+                    <span class="text-muted small pt-2 ps-1">Tháng trước </span><span class="text-danger small pt-1 fw-bold">@topricestr(Model.Item2.Item2)đ</span>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div><!-- End Revenue Card -->
+<!-- Customers Card -->
+<div class="col-xxl-4 col-md-6" style="width:25%">
+
+    <div class="card info-card customers-card">
+        <div class="card-body">
+            <h5 class="card-title">Lượng khách hàng <span>| Tháng này</span></h5>
+
+            <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="ps-3">
+                    <h6>@Model.Item1.Item1.GroupBy(m => m.UserID).Select(g => g.First()).Count() người</h6>
+                    <span class="text-muted small pt-2 ps-1">Tháng trước </span><span class="text-danger small pt-1 fw-bold">@Model.Item2.Item1.GroupBy(m => m.UserID).Select(g => g.First()).Count() người</span>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div><!-- End Customers Card -->
+<!-- Customers Card -->
+<div class="col-xxl-4 col-md-6" style="width:25%">
+
+    <div class="card info-card customers-card">
+        <div class="card-body">
+            <h5 class="card-title">Bán chạy nhất <span>| Tháng này</span></h5>
+
+            <div class="d-flex align-items-center">
+                <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                    <i class="bi bi-people"></i>
+                </div>
+                <div class="ps-3">
+                    <h6>@Model.Item3.Item1</h6>
+                    <span class="text-muted small pt-2 ps-1">Tháng trước </span><span class="text-danger small pt-1 fw-bold">@(string.IsNullOrEmpty(Model.Item3.Item2)?"Không có":Model.Item3.Item2)</span>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div><!-- End Customers Card -->

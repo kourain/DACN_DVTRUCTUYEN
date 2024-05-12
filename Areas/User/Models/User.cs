@@ -19,5 +19,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public long TotalPaid { get; set; }
         public long? TelegramChatID { get; set; }
         public string? TelegramName { get; set; }
+        public string? TelegramUserName { get; set; }
     }
 }

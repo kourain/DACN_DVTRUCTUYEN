@@ -62,6 +62,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 return BadRequest();
             value.PayStatus = -1;
             value.TransactionNo = trans_no;
+            TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.FirstOrDefault(m=> m.UserId == value.UserID).TelegramChatID,$"Thanh toán thất bại tại đơn hàng {value.OrderID}");
             _dataContext.Update(value);
             _dataContext.SaveChanges();
             return Redirect("/user/ordershistory");

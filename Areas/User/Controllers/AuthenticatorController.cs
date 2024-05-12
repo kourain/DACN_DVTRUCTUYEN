@@ -58,7 +58,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 return Ok(new
                 {
                     code = 0,
-                    messenger = "Tài khoản này đã bị cấm, vui lòng sử dụng 1 tài khoản khác"
+                    messenger = $"Tài khoản này đã bị cấm, lý do: {check.BanReason} "
                 });
             }
             string token = Functions.MD5Hash("user" + logindata.LoginName + logindata.PassWord);

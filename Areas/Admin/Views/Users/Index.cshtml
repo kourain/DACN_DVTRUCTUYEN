@@ -32,8 +32,8 @@
                                     <td class="text-center">@item.Name</td>
                                     <td class="text-center">@item.Email</td>
                                     <td class="text-center">@item.CreateDate.ToString("hh:mm:ss dd/MM/yyyy")</td>
-                                    <td class="text-center">@item.TelegramName</td>
-                                    <td class="text-center">@item.Ban</td>
+                                    <td class="text-center">@(item.TelegramName)(@@@item.TelegramUserName)</td>
+                                    <td class="text-center">@((item.Ban ==true)?"Bị cấm":"Không")</td>
                                     <td class="text-center">
                                         <a asp-area="Admin" asp-controller="Users" asp-action="ResetPassWord" asp-route-id="@item.UserId" title="Đặt lại mật khẩu cho người dùng này" style="width:30px; height:30px">
                                             <img src="https://cdn-icons-png.flaticon.com/512/11135/11135322.png" style="width:30px; height:30px" />

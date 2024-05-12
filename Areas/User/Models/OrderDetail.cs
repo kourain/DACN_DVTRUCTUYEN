@@ -10,7 +10,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public string OrderID { get; set; }
         public string ProductID { get; set; }
         public string ProductOptionValue { get; set; }
-        public int OrderStatusID { get; set; }
+        public Int16 OrderStatusID { get; set; }
         public long Amount { get; set; }
     }
 }
