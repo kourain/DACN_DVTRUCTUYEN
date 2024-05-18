@@ -3,57 +3,8 @@
     ViewData["Title"] = "Trang chủ";
 }
 
-<div class="Nd Od Se">
-    @* <div class="a">
-        <div class="ta gc Pe">
-            <div class="Ye va Ng"><div class="ta ec za Fc qd Vd xc Sc"></div></div>
-            <div class="af gh">
-                <div class="lf kf jf xc rc">
-                    <div class="m z rc">
-                        <div class="ta db za" style="transform: translateX(-100%);">
-                            <div class="af Ub">
-                                <a target="_blank" rel="noreferrer" data-ea="home_slide_click__0"><img class="db za" /></a>
-                            </div>
-                            <div class="af Ub">
-                                <a target="_blank" rel="noreferrer" data-ea="home_slide_click__0"><img class="db za" /></a>
-                            </div>
-                            <div class="af Ub">
-                                <a target="_blank" rel="noreferrer" data-ea="home_slide_click__0"><img class="db za" /></a>
-                            </div>
-                        </div>
-                        <button type="button" class="q I"><div class="fb Ba hd jd ld nd of sa"></div></button><button type="button" class="q J"><div class="fb Ba id jd ld nd of sa"></div></button>
-                        <div class="y I J K ta mc"><div class="r gb pe"></div></div>
-                    </div>
-                </div>
-            </div>
-            <div class="af dh">
-                <div class="ta gc Pe">
-                    <div class="_e kh ra">
-                        <a target="_blank" rel="noreferrer" class="lf if hf ra" data-ea="home_banner_click__0"><img class="xc" /></a>
-                    </div>
-                    <div class="_e kh ra">
-                        <a target="_blank" rel="noreferrer" class="lf if hf ra" data-ea="home_banner_click__1"><img class="xc" /></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="Nd">
-            <div class="ta gc Pe">
-                <div class="_e kg">
-                    <a target="_blank" rel="noreferrer" class="lf if hf ra" data-ea="home_banner_click__2"><img class="xc" /></a>
-                </div>
-                <div class="_e kg">
-                    <a target="_blank" rel="noreferrer" class="lf if hf ra" data-ea="home_banner_click__3"><img class="xc" /></a>
-                </div>
-                <div class="_e kg">
-                    <a target="_blank" rel="noreferrer" class="lf if hf ra" data-ea="home_banner_click__4"><img class="xc" /></a>
-                </div>
-                <div class="_e kg">
-                    <a target="_blank" rel="noreferrer" class="lf if hf ra" data-ea="home_banner_click__5"><img class="xc" /></a>
-                </div>
-            </div>
-        </div>
-    </div> *@
+<div class="Od Se">
+    @await Component.InvokeAsync("Carousel")
     @await Component.InvokeAsync("NewProduct")
     @await Component.InvokeAsync("TopSoldProduct")
     @await Component.InvokeAsync("TopViewProduct")

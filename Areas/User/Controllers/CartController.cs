@@ -214,7 +214,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                              PriceOld = m.PriceOld,
                              Quantity = m.Quantity,
                              SoldCount = m.SoldCount,
-                             UseUserAccount = m.UseUserAccount,
+                             Type = m.Type,
                          });
             return Ok(query);
         }

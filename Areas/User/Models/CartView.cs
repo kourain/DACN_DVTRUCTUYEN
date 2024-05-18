@@ -26,6 +26,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public int ProductOptionQuantity { get; set; }
         public int PriceOld { get; set; }
         public int PriceNow { get; set; }
-        public bool UseUserAccount { get; set; }
+        public int Type { get; set; }
     }
 }

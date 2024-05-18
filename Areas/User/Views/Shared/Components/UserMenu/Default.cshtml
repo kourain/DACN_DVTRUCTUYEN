@@ -15,6 +15,16 @@
         return result;
     }
 }
+<style>
+    .searchboxitem {
+        height:65px;
+    }
+
+        .searchboxitem:hover {
+            background-color: #D2D6DC;
+            color: black;
+        }
+</style>
 <header>
     <div class="Ad Wc je" style="max-height:120px;">
         <div class="a Oe" style="margin-top:-30px">
@@ -62,28 +72,6 @@
             </div>
         </div>
     </div>
-    <div class="va Ng Jc Ed Sc" style="height:15px">
-        @* <div class="a">
-        <div class="ta Qe nc jc">
-        <div>
-        <div class="z db za">
-        <button type="button" class="ta He jc">
-        <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-        <path d="M436 124H12c-6.627 0-12-5.373-12-12V80c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12zm0 160H12c-6.627 0-12-5.373-12-12v-32c0-6.627 5.373-12 12-12h424c6.627 0 12 5.373 12 12v32c0 6.627-5.373 12-12 12z"></path>
-        </svg>
-        <div class="Zd">Danh mục sản phẩm</div>
-        </button>
-        </div>
-        </div>
-        <div class="ta Qe">
-        <a href="/User/chinh-sach-vip" target="_blank" rel="noreferrer" class="ta jc He Zd">
-        <img loading="lazy" src="~/assets/images/VIP-User.svg" class="Ub ob Ja yc" alt="Ưu đãi khách hàng VIP">
-        <div>Ưu đãi khách hàng VIP</div>
-        </a>
-        </div>
-        </div>
-        </div> *@
-    </div>
 </header>
 <script>
     let timeoutId;
@@ -103,9 +91,12 @@
                     // Thêm nội dung đã lấy vào phần tử có id là 'resultsearch'
                     data.forEach(function (item) {
                         var productImg = item.productImg;
-                        if (!productImg.toLowerCase().startsWith("http")) productImg = "/" + productImg;
-                        result.innerHTML += `<a href="/user/product/${item.productID}" class="xd " style="padding-left:8%;display: flex;width:99%;flex-direction: row;justify-content: flex-start;"><img style="max-width:50px;max-heigh:50px;margin-right:4%;" class="onerror-img kourain-img" src="${productImg}"></img> ${item.productName}</a>`;
+                        if (!productImg.toLowerCase().startsWith("http") && !productImg.startsWith("/")) productImg = "/" + productImg;
+                        result.innerHTML += `<a href="/user/product/${item.productID}" class="xd searchboxitem" style="padding-left:8%;display: flex;width:100%;flex-direction: row;align-items: center;justify-content: flex-start;"><img style="width:70px;max-heigh:50px;margin-right:4%;" class="onerror-img kourain-img" src="${productImg}"></img> ${item.productName}</a>`;
                     });
+                    if (Object.keys(data).length == 0) {
+                        result.innerHTML += `<button class="xd searchboxitem" style="padding-left:8%;display: flex;width:100%;flex-direction: row;align-items: center;justify-content: flex-start;">Không tìm thấy sản phẩm nào</button>`;
+                    }
                 })
                 .catch((error) => {
                     console.error('Error:', error);
@@ -125,7 +116,7 @@
                 // console.log('User Data:', data);
                 if (data.code == 1) {
                     $("#userprofileclick").html(`<div class="ta mc Rd le" style="margin-top:-40px"><div class="ta yb Nb lc"><div class="Lb sd xc Ie Sc we">` +
-                        `<div><div>Số tiền đã sử dụng</div><div class="ta jc"><h6>${data.messenger.toLocaleString()}đ</h6></div></div><div><div class="V">` +
+                        `<div><div>Số tiền đã sử dụng</div><div class="ta jc"><h6 style="display: flex;align-items: center;"><img style="width:20%; height:20%" src="https://cdn-icons-png.flaticon.com/512/126/126229.png"/> ${data.messenger.toLocaleString()}đ</h6></div></div><div><div class="V">` +
                         `<a class="ra qd xc uf rf" href="/user/profile">Quản lý tài khoản</a>` +
                         `<a class="ra qd xc uf rf" href="/user/ordershistory">Lịch sử đơn hàng</a>` +
                         `<a class="ta db qd xc uf rf" href="/user/logout">Đăng xuất</a></a></div></div></div></div></div>`);

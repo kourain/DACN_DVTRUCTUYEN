@@ -89,6 +89,7 @@ else
                 event.preventDefault(); // ngăn chặn hành vi mặc định của liên kết
 
                 var href = $(this).attr('href'); // lấy đường dẫn từ thuộc tính href của liên kết
+                if (href == null) return;
                 console.log(href);
                 if (href === null) return;
                 if (href === "") return;

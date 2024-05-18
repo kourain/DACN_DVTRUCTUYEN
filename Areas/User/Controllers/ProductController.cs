@@ -25,16 +25,17 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         public async Task<IActionResult> Detail(string ProductID)
         {
             var product = _dataContext.Products.Where(m => m.ProductID == ProductID).FirstOrDefault();
-            if (product == null )
+            if (product == null)
             {
                 return Redirect("/User");
             }
             var productoption = _dataContext.ProductOptions.Where(m => m.ProductID == ProductID).ToList();
             if (productoption == null || productoption.Count == 0)
             {
-                return Redirect("/User");
+                ViewBag.ProductOption0 = "";
             }
-            ViewBag.ProductOption0 = productoption[0].OptionValue;
+            else
+                ViewBag.ProductOption0 = productoption[0].OptionValue;
             return View((product, productoption, _dataContext.Product_Questions.Where(m => m.ProductID == ProductID).ToList()));
         }
 
@@ -49,9 +50,9 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             var productoption = _dataContext.ProductOptions.Where(m => m.ProductID == ProductID).ToList();
             if (productoption == null || productoption.Count == 0)
             {
-                return Redirect("/User");
+                ViewBag.ProductOption0 = "";
             }
-            if (string.IsNullOrEmpty(ProductOptionValue))
+            else if (string.IsNullOrEmpty(ProductOptionValue))
             {
                 ViewBag.ProductOption0 = productoption[0].OptionValue;
             }
@@ -72,7 +73,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                              PriceOld = m.PriceOld,
                              Quantity = m.Quantity,
                              SoldCount = m.SoldCount,
-                             UseUserAccount = m.UseUserAccount,
+                             Type = m.Type,
                              CreateDate = m.CreateDate
                          });
             return Ok(query);
