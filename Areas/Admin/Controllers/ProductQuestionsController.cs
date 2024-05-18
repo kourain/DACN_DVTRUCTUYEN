@@ -10,27 +10,27 @@ using DACN_DVTRUCTUYEN.Models;
 namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class ProductOptionsController : Controller
+    public class ProductQuestionsController : Controller
     {
         private readonly DataContext _context;
 
-        public ProductOptionsController(DataContext context)
+        public ProductQuestionsController(DataContext context)
         {
             _context = context;
         }
 
-        // GET: Admin/ProductOptions
+        // GET: Admin/ProductQuestions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.ProductOptions.ToListAsync());
+            return View(await _context.Product_Questions.ToListAsync());
         }
 
-        // GET: Admin/ProductOptions/Create
+        // GET: Admin/ProductQuestions/Create
         [HttpGet]
-        [Route("/admin/productoptions/create")]
+        [Route("/admin/ProductQuestions/create")]
         public IActionResult Create(string? productid)
         {
-            var product = new ProductOption();
+            var product = new Product_Question();
             if (string.IsNullOrEmpty(productid))
             {
                 productid = "";
@@ -57,31 +57,31 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             return View(product);
         }
 
-        // POST: Admin/ProductOptions/Create
+        // POST: Admin/ProductQuestions/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(ProductOption productOption)
+        [Route("/admin/ProductQuestions/create")]
+        public async Task<IActionResult> Create(Product_Question productquestion)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(productOption);
+                _context.Add(productquestion);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(productOption);
+            return View(productquestion);
         }
 
-        // GET: Admin/ProductOptions/Edit/5
+        // GET: Admin/ProductQuestions/Edit/5
         [HttpGet]
-        [Route("/admin/ProductOptions/edit/{productid}/{optionvalue}")]
-        public async Task<IActionResult> Edit(string productid, string optionvalue)
+        [Route("/admin/ProductQuestions/edit")]
+        public async Task<IActionResult> Edit(string productid, int questionid)
         {
             productid = productid.ToLower();
-            optionvalue = optionvalue.ToLower();
-            var productOption = _context.ProductOptions.Where(m => m.ProductID == productid && m.OptionValue == optionvalue).FirstOrDefault();
-            if (productOption == null)
+            var productquestion = _context.Product_Questions.Where(m => m.ProductID == productid && m.QuestionId == questionid).FirstOrDefault();
+            if (productquestion == null)
             {
                 return NotFound();
             }
@@ -92,28 +92,27 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                                        Value = m.ProductID
                                    }
                           ).ToList();
-            return View(productOption);
+            return View(productquestion);
         }
 
-        // POST: Admin/ProductOptions/Edit/5
+        // POST: Admin/ProductQuestions/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Route("/admin/productoptions/edit/{productid}/{optionvalue}")]
-        public async Task<IActionResult> Edit(string productid, string optionvalue, ProductOption productOption)
+        [Route("/admin/ProductQuestions/edit")]
+        public async Task<IActionResult> Edit(Product_Question productquestion)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    productOption.CreateDate = DateTime.Now;
-                    _context.Update(productOption);
+                    _context.Update(productquestion);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ProductOptionExists(productOption.ProductID))
+                    if (!ProductQuestionExists(productquestion.ProductID))
                     {
                         return NotFound();
                     }
@@ -124,44 +123,44 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(productOption);
+            return View(productquestion);
         }
 
-        // GET: Admin/ProductOptions/Delete/5
+        // GET: Admin/ProductQuestions/Delete/5
         [HttpGet]
-        [Route("/admin/ProductOptions/Delete/{productid}/{optionvalue}")]
-        public async Task<IActionResult> Delete(string productid, string optionvalue)
+        [Route("/admin/ProductQuestions/Delete/{productid}/{questionid:int}")]
+        public async Task<IActionResult> Delete(string productid, int questionid)
         {
             productid = productid.ToLower();
-            optionvalue = optionvalue.ToLower();
-            var productOption = await _context.ProductOptions
-                .FirstOrDefaultAsync(m => m.ProductID == productid && m.OptionValue == optionvalue);
-            if (productOption == null)
+            var productquestion = await _context.Product_Questions
+                .FirstOrDefaultAsync(m => m.ProductID == productid && m.QuestionId == questionid);
+            if (productquestion == null)
             {
                 return NotFound();
             }
 
-            return View(productOption);
+            return View(productquestion);
         }
 
-        // POST: Admin/ProductOptions/Delete/5
+        // POST: Admin/ProductQuestions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(ProductOption option)
+        [Route("/admin/ProductQuestions/Delete/{productid}/{questionid:int}")]
+        public async Task<IActionResult> DeleteConfirmed(string productid, int questionid)
         {
-            var productOption = await _context.ProductOptions.FirstOrDefaultAsync(m => m.OptionValue == option.OptionValue && m.ProductID == option.ProductID);
-            if (productOption != null)
+            var productquestion = await _context.Product_Questions.FirstOrDefaultAsync(m => m.ProductID == productid && m.QuestionId == questionid);
+            if (productquestion != null)
             {
-                _context.ProductOptions.Remove(productOption);
+                _context.Product_Questions.Remove(productquestion);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductOptionExists(string id)
+        private bool ProductQuestionExists(string id)
         {
-            return _context.ProductOptions.Any(e => e.ProductID == id);
+            return _context.Product_Questions.Any(e => e.ProductID == id);
         }
     }
 }

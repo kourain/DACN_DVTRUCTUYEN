@@ -1,0 +1,38 @@
+﻿@model DACN_DVTRUCTUYEN.Models.Product_Question
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="container shadow p-5">
+    <div class="row pb-2">
+        <h2>Thêm mới lựa chọn của sản phẩm</h2>
+    </div>
+    <form method="post">
+        <div asp-validation-summary="All"></div>
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
+                <label asp-for="ProductID">Tên sản phẩm</label>
+                <select asp-for="ProductID"
+                        class="form-control"
+                        asp-items="@(new SelectList(ViewBag.productList, "Value", "Text"))">
+                </select>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Question">Câu hỏi</label>
+                <input type="text" class="form-control mb-3" asp-for="Question" placeholder="Nhập Câu hỏi" required>
+                <span asp-validation-for="Question" class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label asp-for="Answer">Câu trả lời</label>
+                <input type="text" class="form-control mb-3" asp-for="Answer" placeholder="Nhập Câu trả lời" required>
+                <span asp-validation-for="Answer" class=" alert-danger"></span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-lg btn-primary p-2"><i class="bi bi-file-plus-fill"></i>Lưu</button>
+        <a asp-controller="Footers" asp-action="Index" class="btn btn-lg btn-warning p-2">Quay lại</a>
+    </form>
+
+</div>
+

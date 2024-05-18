@@ -11,9 +11,10 @@
     <form method="post" asp-action="Edit" enctype="multipart/form-data">
         <div asp-validation-summary="All"></div>
         <div class="alert-danger" asp-validation-summary="ModelOnly"></div>
+        <input name="productidold" id="productidold" class="form-control mb-3" class="form-control" value="@Model.ProductID" hidden />
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label asp-for="ProductID">Mã sản phẩm</label>
+                <label asp-for="ProductID">Mã sản phẩm(chú ý: sẽ thay đổi các lựa chọn của sản phẩm tương ứng)</label>
                 <input asp-for="ProductID" class="form-control mb-3" class="form-control" required />
                 <span asp-validation-for="ProductID" class=" alert-danger"></span>
             </div>
@@ -42,6 +43,12 @@
                 <input type="text" class="form-control mb-3" asp-for="ProductImg" placeholder="Link tới hình ảnh">
                 <input type="file" class="form-control mb-3" name="FormFile" id="FormFile" accept="image/*" maxlength="5242880">
             </div>
+            @if (!string.IsNullOrEmpty(ViewBag.error))
+            {
+                <div class="form-group col-md-6" style="color:red">
+                    @ViewBag.error
+                </div>
+            }
         </div>
         <button type="submit" class="btn btn-lg btn-primary p-2"><i class="bi bi-file-plus-fill"></i>Lưu</button>
         <a asp-controller="Products" asp-action="Index" class="btn btn-lg btn-warning p-2">Quay lại</a>

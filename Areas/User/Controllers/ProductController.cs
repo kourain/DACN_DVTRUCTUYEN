@@ -24,15 +24,41 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [Route("/user/product/{ProductID}")]
         public async Task<IActionResult> Detail(string ProductID)
         {
-            var product = _dataContext.ProductViews.Where(m => m.ProductID == ProductID).ToList(); 
-            if (product == null || product.Count ==0)
+            var product = _dataContext.Products.Where(m => m.ProductID == ProductID).FirstOrDefault();
+            if (product == null )
             {
                 return Redirect("/User");
             }
-            ViewBag.ProductOption0 = product[0].OptionValue;
-            return View(product);
+            var productoption = _dataContext.ProductOptions.Where(m => m.ProductID == ProductID).ToList();
+            if (productoption == null || productoption.Count == 0)
+            {
+                return Redirect("/User");
+            }
+            ViewBag.ProductOption0 = productoption[0].OptionValue;
+            return View((product, productoption, _dataContext.Product_Questions.Where(m => m.ProductID == ProductID).ToList()));
         }
 
+        [Route("/user/product/{ProductID}/{ProductOptionValue}")]
+        public async Task<IActionResult> Detail(string ProductID, string ProductOptionValue)
+        {
+            var product = _dataContext.Products.Where(m => m.ProductID == ProductID).FirstOrDefault();
+            if (product == null)
+            {
+                return Redirect("/User");
+            }
+            var productoption = _dataContext.ProductOptions.Where(m => m.ProductID == ProductID).ToList();
+            if (productoption == null || productoption.Count == 0)
+            {
+                return Redirect("/User");
+            }
+            if (string.IsNullOrEmpty(ProductOptionValue))
+            {
+                ViewBag.ProductOption0 = productoption[0].OptionValue;
+            }
+            else
+                ViewBag.ProductOption0 = ProductOptionValue;
+            return View((product, productoption, _dataContext.Product_Questions.Where(m => m.ProductID == ProductID).ToList()));
+        }
         [Route("/user/product/getProductOption/{ProductID}")]
         public IActionResult getproductOption(string ProductID)
         {
@@ -72,23 +98,12 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             return Ok(list);
         }
 
-        [Route("/user/product/{ProductID}/{ProductOptionValue}")]
-        public async Task<IActionResult> Detail(string ProductID, string ProductOptionValue)
-        {
-            var product = _dataContext.ProductViews.Where(m => m.ProductID == ProductID).ToList();
-            if (product == null || product.Count == 0)
-            {
-                return Redirect("/User");
-            }
-            ViewBag.ProductOption0 = ProductOptionValue;
-            return View(product);
-        }
         //tăng view count
         [Route("/user/product/inc/{ProductID}")]
         public IActionResult INC(string ProductID)
         {
             var product = _dataContext.Products.Where(m => m.ProductID == ProductID).FirstOrDefault();
-            if (product == null )
+            if (product == null)
             {
                 return BadRequest();
             }
@@ -105,7 +120,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return BadRequest();
             }
-            if(like.IndexOf("'")  != -1 ) { return BadRequest(); } //SQL inject
+            if (like.IndexOf("'") != -1) { return BadRequest(); } //SQL inject
             var num = _dataContext.Products.FromSql(FormattableStringFactory.Create($"SELECT * FROM [DBO].[PRODUCT] WHERE PRODUCTID LIKE '%{like}%' OR " +
                 $"PRODUCTNAME LIKE N'%{like}%' ;")).ToList();// OR ProductDescription LIKE N'%{like}%'
             return Ok(num);

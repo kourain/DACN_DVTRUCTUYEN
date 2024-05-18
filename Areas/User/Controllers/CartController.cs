@@ -155,7 +155,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 $"\n\tID đơn hàng: {neworder.OrderID} " +
                 $"\n\tThời điểm phát sinh: {neworder.Time.ToString("dd/MM/yyyy hh:mm:ss")}" +
                 $"\n\tTổng số tiền cần thanh toán: {neworder.TotalPay}vnđ");
-            _backgroundJobClient.Schedule(neworder.OrderID, () => Pay_Cancel(orderid), TimeSpan.FromHours(7.25));
+            _backgroundJobClient.Schedule(neworder.OrderID, () => Pay_Cancel(orderid), TimeSpan.FromHours(0.25));
             _dataContext.SaveChanges();
             return Ok(new
             {

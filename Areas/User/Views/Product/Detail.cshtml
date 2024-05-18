@@ -1,8 +1,8 @@
-﻿@model IList<DACN_DVTRUCTUYEN.Areas.User.Models.ProductView>
+﻿@model (Product,List<ProductOption>,List<Product_Question>)
 @{
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
-    DACN_DVTRUCTUYEN.Areas.User.Models.ProductView now = Model.Where(m => m.OptionValue == ViewBag.ProductOption0).FirstOrDefault();
-    ViewData["Title"] = Model[0].ProductName + " - " + now.OptionName;
+    ProductOption now = Model.Item2.Where(m => m.OptionValue == ViewBag.ProductOption0).FirstOrDefault();
+    ViewData["Title"] = Model.Item1.ProductName + " - " + now.OptionName;
     string topricestr(int number)
     {
         string result = number.ToString();
@@ -21,7 +21,7 @@
             <div class="Ig" style="margin:auto">
                 <div class="Le">
                     <div class="lf gf ff">
-                        <img src="@Model[0].ProductImg" class="xc" style="height:130%;width:auto; margin-top:-30px" alt="@Model[0].ProductName">
+                        <img src="@Model.Item1.ProductImg" class="xc" style="height:130%;width:auto; margin-top:-30px" alt="@Model.Item1.ProductName">
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@
                     <div class="Le">
                         <div class="Fe">
                             <a class="fe ra">Sản phẩm </a>
-                            <h3>@Model[0].ProductName</h3>
+                            <h3>@Model.Item1.ProductName</h3>
                         </div>
                         <div class="Ie">
                             <div class="ta Ee fe">
@@ -52,7 +52,7 @@
                         <h6>Gói cước khác</h6>
                         <div>
                             <div class="ta gc Ge" id="productOption">
-                                @foreach (var item in Model)
+                                @foreach (var item in Model.Item2)
                                 {
                                     if (item.OptionValue == ViewBag.ProductOption0)
                                     {
@@ -69,13 +69,13 @@
                     <fieldset class="Oe">
                         <div class="ta gc Ge">
                             @* <div class="Tb">
-                                <button type="submit" class="db b c ta Ee mc jc" onclick="buy()" alt="Mua siêu tốc qua Mobile Banking" @(now.Quantity > 0 ? "" : "disabled")>
-                                    <img style="max-height:22px" src="/QR.svg" class="Db wa">
-                                    <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                                        <path d="M0 432c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V256H0v176zm192-68c0-6.6 5.4-12 12-12h136c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-40zm-128 0c0-6.6 5.4-12 12-12h72c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM576 80v48H0V80c0-26.5 21.5-48 48-48h480c26.5 0 48 21.5 48 48z"></path>
-                                    </svg>
-                                    <div>Mua ngay</div>
-                                </button>
+                            <button type="submit" class="db b c ta Ee mc jc" onclick="buy()" alt="Mua siêu tốc qua Mobile Banking" @(now.Quantity > 0 ? "" : "disabled")>
+                            <img style="max-height:22px" src="/QR.svg" class="Db wa">
+                            <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                            <path d="M0 432c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V256H0v176zm192-68c0-6.6 5.4-12 12-12h136c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-40zm-128 0c0-6.6 5.4-12 12-12h72c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM576 80v48H0V80c0-26.5 21.5-48 48-48h480c26.5 0 48 21.5 48 48z"></path>
+                            </svg>
+                            <div>Mua ngay</div>
+                            </button>
                             </div> *@
                             <div class="Tb">
                                 <button type="submit" class="db b d ta Ee mc jc" onclick="addcart(); resetcart();" @(now.Quantity > 0 ? "" : "disabled")>
@@ -102,11 +102,11 @@
                         <div class="yh">
                             <p style="text-align: center;">&nbsp;</p>
 
-                            <p style="text-align: center;"><img src="@Model[0].ProductImg" /></p>
+                            <p style="text-align: center;"><img src="@Model.Item1.ProductImg" /></p>
 
                             <p style="text-align: justify;">
-                                <strong>@Model[0].ProductName</strong>
-                                @Model[0].ProductDescription
+                                <strong>@Model.Item1.ProductName</strong>
+                                @Model.Item1.ProductDescription
                             </p>
                         </div>
                     </div>
@@ -118,12 +118,9 @@
                     <div class="Vb">
                         <div class="yh">
                             <hr />
-                            <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5;">Thời gian bảo hành, chúng tôi cam kết bảo hành trong 40% thời gian sử dụng kể từ thời điểm bạn thanh toán</h3>
-
-                            <p style="margin-left: 40px;" id="baohanhtime">- Thời hạn bảo hành</p>
-
+                            <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5;">Thời gian bảo hành:</h3>
+                            <p style="margin-left: 40px;" id="baohanhtime">- Chúng tôi cam kết bảo hành trong 15 ngày kể từ thời điểm đơn hàng hoàn thành</p>
                             <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5;">Cách thức bảo hành</h3>
-
                             <p style="margin-left: 40px;">- Đổi mới code/tài khoản/gói đăng ký khác nếu lỗi trong quá trình sử dụng hoặc hoàn tiền theo thời gian bạn đã sử dụng tối đa 80% nếu không có sản phẩm bảo hành.</p>
                         </div>
                     </div>
@@ -133,6 +130,14 @@
                 <div class="vg Je Xa">
                     <h4 class="Ub vb">Câu hỏi thường gặp</h4>
                     <div class="Vb">
+                        <div class="yh">
+                            <hr />
+                            @foreach(var item in Model.Item3)
+                            {
+                                <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5;">@item.Question</h3>
+                                <p style="margin-left: 40px;" id="baohanhtime">- @item.Answer</p>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -141,7 +146,7 @@
 </div>
 <script>
     function addcart() {
-        fetch("/User/cart/add&@Model[0].ProductID&@now.OptionValue")
+        fetch("/User/cart/add&@Model.Item1.ProductID&@now.OptionValue")
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -153,11 +158,11 @@
                 if (data.code == 1) {
                     resetcart();
                 }
-                alert(data.messenger);
+                shownoti(data.messenger);
             })
             .catch(error => {
                 console.error('Error:', error);
             });
     }
-    setTimeout(fetch("/User/product/inc/@Model[0].ProductID"), 3000);
+    setTimeout(fetch("/User/product/inc/@Model.Item1.ProductID"), 3000);
 </script>

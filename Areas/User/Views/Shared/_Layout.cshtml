@@ -46,10 +46,31 @@ else
                     transition: opacity 0.5s ease; /* Tùy chỉnh hiệu ứng chuyển tiếp */
                 }
 
+
             table {
                 overflow-y: scroll;
                 display: block;
             }
+
+            .notification-banner {
+                max-width:500px;
+                margin:auto;
+                background-color: #333; /* Màu nền */
+                color: white; /* Màu chữ */
+                padding: 15px;
+                position: fixed; /* Cố định vị trí trên màn hình */
+                top: -50px; /* Ban đầu ẩn ở trên màn hình */
+                left: 0;
+                right: 0;
+                text-align: center;
+                z-index: 1000; /* Đảm bảo thông báo nằm trên các phần tử khác */
+                transition: top 0.5s ease; /* Hiệu ứng trượt */
+            }
+
+                .notification-banner.show {
+                    top: 10px; /* Hiển thị thông báo */
+                }
+
         </style>
     </head>
     <body>
@@ -102,15 +123,33 @@ else
         </script>
         <div id="__popup">
         </div>
+        <div id="notification-banner" class="notification-banner">
+            Đây là nội dung thông báo của bạn.
+        </div>
         <script>
+            var shownoti_timeout = '';
+            function shownoti(show) {
+                var banner = document.getElementById("notification-banner");
+                //banner.classList.remove("show");
+                if (shownoti_timeout != '') clearTimeout(shownoti_timeout);
+                banner.innerHTML = show;
+                banner.classList.add("show");
+                shownoti_timeout = setTimeout(function () {
+                    banner.classList.remove("show");
+                }, 3000); // xóa sau 3 giây
+                
+            }
             function sendPopUp(htmlstr) {
                 var template = `
-                            <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
-                                <div style="width: 992px;height:500px;background-color:white;">
+            <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
+                <div style="width: 992px;height:500px;background-color:white;">
 
-                                </div>
-                            </div>`;
+                </div>
+            </div>`;
                 $("#__popup").html(htmlstr);
+            };
+            function clearPopUp() {
+                $("#__popup").html();
             };
             $(document).keydown(function (e) {
                 // ESCAPE key pressed

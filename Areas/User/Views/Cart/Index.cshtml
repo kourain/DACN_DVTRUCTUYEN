@@ -203,23 +203,29 @@
 </div>
 <script>
     function paynow() {
-        setTimeout(() =>
-            fetch("/user/cart/pay")
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Process the retrieved user data
-                    console.log('User Data:', data);
-                    if (data.code == 1) {
-                        window.location.href = data.messenger;
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                }), 1500);
+        sendPopUp(`
+                <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
+                    <div style="width: 992px;height:500px;background-color:white;">
+
+                    </div>
+                </div>`);
+        fetch("/user/cart/pay")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Process the retrieved user data
+                console.log('User Data:', data);
+                if (data.code == 1) {
+                    window.location.href = data.messenger;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        clearPopUp();
     }
 </script>

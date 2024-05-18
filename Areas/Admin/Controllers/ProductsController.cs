@@ -1,11 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
 using System.Runtime.CompilerServices;
+using System.Reflection;
+using static System.Net.Mime.MediaTypeNames;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
+using SixLabors.ImageSharp;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using Microsoft.Data.SqlClient;
 
 namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
 {
@@ -34,7 +36,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             {
                 RedirectToAction("Index");
             }
-
+            id = id.ToLower();
             var product = await _context.Products
                 .FirstOrDefaultAsync(m => m.ProductID == id);
             if (product == null)
@@ -42,7 +44,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 RedirectToAction("Index");
             }
 
-            return View(product);
+            return View((product, _context.ProductOptions.Where(m => m.ProductID == id).ToList()));
         }
 
         // GET: Admin/Products/Create
@@ -62,23 +64,52 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             ModelState.Remove(nameof(FormFile));
             if (ModelState.IsValid)
             {
+                product.ProductID = product.ProductID.ToLower();
+                if (_context.Products.FirstOrDefault(m => m.ProductID == product.ProductID) != null)
+                {
+                    ViewBag.error = $"Trùng lặp mã sản phẩm : {product.ProductID}";
+                    return View(product);
+                }
+                int img_upload_ok = 1;
                 if (FormFile != null)
                 {
-                    string extension = Path.GetExtension(FormFile.FileName);
-                    if (string.IsNullOrEmpty(extension))
+                    //giới hạn tải lên 5MB
+                    if (FormFile.Length <= 5242880)
                     {
-                        extension = ".png"; //đặt mặc định .png
+                        string extension = Path.GetExtension(FormFile.FileName);
+                        if (string.IsNullOrEmpty(extension))
+                        {
+                            extension = ".png"; //đặt mặc định .png
+                        }
+                        try
+                        {
+                            SixLabors.ImageSharp.Image.DetectFormat(FormFile.OpenReadStream());
+                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Product/img", $"{product.ProductID}{extension}");
+                            using (var stream = System.IO.File.Create(filePath))
+                            {
+                                await FormFile.CopyToAsync(stream);
+                            }
+                            // Lưu đường dẫn tệp vào cơ sở dữ liệu
+                            product.ProductImg = $"/Product/img/{product.ProductID}{extension}";
+                        }
+                        catch (UnknownImageFormatException)
+                        {
+                            img_upload_ok = 0;
+                        }
                     }
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Product/img", $"{product.ProductID}{extension}");
-                    using (var stream = System.IO.File.Create(filePath))
+                    else
                     {
-                        await FormFile.CopyToAsync(stream);
+                        img_upload_ok = 0;
                     }
-                    // Lưu đường dẫn tệp vào cơ sở dữ liệu
-                    product.ProductImg = $"/Product/img/{product.ProductID}{extension}";
                 }
+                product.ProductID = product.ProductID.ToLower();
                 _context.Products.Add(product);
                 _context.SaveChanges();
+                if (img_upload_ok == 0)
+                {
+                    ViewBag.error = "Tệp hình ảnh không được chấp nhận, vui lòng thử 1 tệp khác";
+                    return View(product);
+                }
                 return RedirectToAction("Index");
             }
             return View(product);
@@ -105,37 +136,81 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Route("/admin/products/edit")]
-        public async Task<IActionResult> Edit(Product product, IFormFile FormFile)
+        public async Task<IActionResult> Edit(Product product, IFormFile FormFile, string productidold)
         {
+            if (!string.IsNullOrEmpty(productidold) && productidold.IndexOf("'") != -1)
+            {
+                return BadRequest();
+            }
+            if (!string.IsNullOrEmpty(product.ProductID) && product.ProductID.IndexOf("'") != -1)
+            {
+                return BadRequest();
+            }
             ModelState.Remove(nameof(FormFile));
             if (ModelState.IsValid)
             {
+                product.ProductID = product.ProductID.ToLower();
+                productidold = productidold.ToLower();
+                if (product.ProductID != productidold)
+                    if (_context.Products.FirstOrDefault(m => m.ProductID == product.ProductID) != null)
+                    {
+                        ViewBag.error = $"Trùng lặp mã sản phẩm : {product.ProductID}";
+                        return View(product);
+                    }
+                int img_upload_ok = 1;
                 if (FormFile != null)
                 {
-                    string extension = Path.GetExtension(FormFile.FileName);
-                    if (string.IsNullOrEmpty(extension))
+                    //giới hạn tải lên 5MB
+                    if (FormFile.Length <= 5242880)
                     {
-                        extension = ".png"; //đặt mặc định .png
+                        string extension = Path.GetExtension(FormFile.FileName);
+                        if (string.IsNullOrEmpty(extension))
+                        {
+                            extension = ".png"; //đặt mặc định .png
+                        }
+                        try
+                        {
+                            SixLabors.ImageSharp.Image.DetectFormat(FormFile.OpenReadStream());
+                            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Product/img", $"{product.ProductID}{extension}");
+                            using (var stream = System.IO.File.Create(filePath))
+                            {
+                                await FormFile.CopyToAsync(stream);
+                            }
+                            // Lưu đường dẫn tệp vào cơ sở dữ liệu
+                            product.ProductImg = $"/Product/img/{product.ProductID}{extension}";
+                        }
+                        catch (UnknownImageFormatException)
+                        {
+                            img_upload_ok = 0;
+                        }
                     }
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Product/img", $"{product.ProductID}{extension}");
-                    using (var stream = System.IO.File.Create(filePath))
+                    else
                     {
-                        await FormFile.CopyToAsync(stream);
+                        img_upload_ok = 0;
                     }
-                    // Lưu đường dẫn tệp vào cơ sở dữ liệu
-                    product.ProductImg = $"/Product/img/{product.ProductID}{extension}";
                 }
                 //nếu sử dụng Linq hay entiframework sẽ khiến viewcount trong thời gian admin chỉnh sửa không được lưu vào csdl
-                _context.Database.ExecuteSql(FormattableStringFactory.Create($"UPDATE [dbo].[PRODUCT] SET " +
-                    $"PRODUCTID = '{product.ProductID}', " +
-                    $"PRODUCTNAME= N'{product.ProductName}'," +
-                    $"ProductDescription = N'{product.ProductDescription}'," +
-                    $"ProductImg = '{product.ProductImg}'" +
-                    $" WHERE PRODUCTID = '{product.ProductID}'"));
+                try
+                {
+                    if (product.ProductID != productidold)
+                        _context.Database.ExecuteSql(FormattableStringFactory.Create($"UPDATE [dbo].[PRODUCT] SET " +
+                            $"PRODUCTID = '{product.ProductID}', " +
+                            $" WHERE PRODUCTID = '{productidold}'"));
+                    _context.Update(product);
+                }
+                catch (SqlException)
+                {
+                    ViewBag.error = "Sản phẩm đã và đang được sử dụng, không thể thay đổi dữ liệu!!!";
+                    return View(product);
+                }
                 _context.SaveChanges();
+                if (img_upload_ok == 0)
+                {
+                    ViewBag.error = "Tệp hình ảnh không được chấp nhận, vui lòng thử 1 tệp khác";
+                    return View(product);
+                }
                 return RedirectToAction("Index");
             }
-
             return View(product);
         }
 

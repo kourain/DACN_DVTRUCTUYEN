@@ -1,4 +1,4 @@
-﻿@model DACN_DVTRUCTUYEN.Models.Product
+﻿@model (Product,List<ProductOption>)
 
 @{
     ViewData["Title"] = "Details";
@@ -7,42 +7,102 @@
 <h1>Chi tiết sản phẩm</h1>
 
 <div>
-    <h4>Mã sản phẩm: @Model.ProductID</h4>
+    <h4>Mã sản phẩm: @Model.Item1.ProductID</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
             Tên sản phẩm
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductName)
+            @Html.DisplayFor(model => model.Item1.ProductName)
         </dd>
         <dt class = "col-sm-2">
             Mô tả sản phẩm
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductDescription)
+            @Html.DisplayFor(model => model.Item1.ProductDescription)
         </dd>
         <dt class = "col-sm-2">
             Ngày thêm
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreateDate)
+            @Html.DisplayFor(model => model.Item1.CreateDate)
         </dd>
         <dt class = "col-sm-2">
             Đường dẫn hình ảnh 
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ProductImg)
+            @Html.DisplayFor(model => model.Item1.ProductImg)
         </dd>
         <dt class="col-sm-2">
             Xem trước hình ảnh
         </dt>
         <dd class="col-sm-10">
-            <img style="max-width:200px; max-height:200px;" src="@Model.ProductImg"/>
+            <img style="max-width:200px; max-height:200px;" src="@Model.Item1.ProductImg"/>
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ProductID">Chỉnh sửa</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Item1?.ProductID">Chỉnh sửa</a> |
     <a asp-action="Index">Quay lại</a>
 </div>
+
+<section class="section dashboard">
+    <h4>Danh sách các lựa chọn của sản phẩm này </h4>
+    <p>
+        <a type="button" class="btn btn-success" asp-area="Admin" asp-controller="ProductOptions" asp-action="Create">
+            <i class="bi bi-file-earmark-text me-1">
+                Thêm lựa chọn của sản phẩm
+            </i>
+        </a>
+    </p>
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th class="col-1 ">Mã SP</th>
+                                <th class="col-1 ">Tên lựa chọn</th>
+                                <th class="col-1 ">Mã lựa chọn</th>
+                                <th class="col-1 ">Giá cũ</th>
+                                <th class="col-1 ">Giá mới</th>
+                                <th class="col-1 ">Còn lại</th>
+                                <th class="col-1 ">Đã bán</th>
+                                <th class="col-1 ">Loại sản phẩm</th>
+                                <th class="col-3 ">Thời gian cập nhật</th>
+                                <th class="col-2 ">Chức năng</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model.Item2)
+                            {
+                                <tr>
+                                    <td class="" scope="row">@item.ProductID</td>
+                                    <td class="">@item.OptionName</td>
+                                    <td class="">@item.OptionValue</td>
+                                    <td class="">@item.PriceOld</td>
+                                    <td class="">@item.PriceNow</td>
+                                    <td class="">@item.Quantity</td>
+                                    <td class="">@item.SoldCount</td>
+                                    <td class="">@item.Type</td>
+                                    <td class="">@item.CreateDate</td>
+                                    <td class="">
+                                        <a href="/admin/productoptions/edit/@item.ProductID/@item.OptionValue" class="btn btn-primary btn-sm" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="/admin/productoptions/delete/@item.ProductID/@item.OptionValue" class="btn btn-danger btn-sm" title="Xoá">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

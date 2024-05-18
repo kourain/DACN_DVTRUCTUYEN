@@ -1,0 +1,58 @@
+﻿@model IEnumerable<DACN_DVTRUCTUYEN.Models.Product_Question>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="pagetitle">
+    <h2>Danh sách câu hỏi thường gặp của sản phẩm</h2>
+</div>
+
+<p>
+    <a type="button" class="btn btn-success" asp-area="Admin" asp-controller="ProductQuestions" asp-action="Create">
+        <i class="bi bi-file-earmark-text me-1">
+            Thêm câu hỏi thường gặp của sản phẩm
+        </i>
+    </a>
+</p>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th class="col-1 ">Mã SP</th>
+                                <th class="col-1 ">Mã câu hỏi</th>
+                                <th class="col-3 ">Câu hỏi</th>
+                                <th class="col-3 ">Câu trả lời</th>
+                                <th class="col-2 ">Chức năng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="" scope="row">@item.ProductID</td>
+                                    <td class="">@item.QuestionId</td>
+                                    <td class="">@item.Question</td>
+                                    <td class="">@item.Answer</td>
+                                    <td class="">
+                                        <a href="/admin/productquestions/edit?productid=@item.ProductID&questionid=@item.QuestionId" class="btn btn-primary btn-sm" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="/admin/productquestions/delete/@item.ProductID/@item.QuestionId" class="btn btn-danger btn-sm" title="Xoá">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

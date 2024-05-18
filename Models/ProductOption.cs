@@ -16,7 +16,7 @@ namespace DACN_DVTRUCTUYEN.Models
         public int SoldCount { get; set; }
         public int PriceOld { get; set; }
         public int PriceNow { get; set; }
-        public bool UseUserAccount { get; set; }
+        public int Type { get; set; }
         public DateTime? CreateDate { get; set; }
         public ProductOption() { CreateDate = DateTime.Now; }
     }

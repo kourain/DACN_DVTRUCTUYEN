@@ -17,8 +17,8 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Components
         }
         public async Task<IViewComponentResult> InvokeAsync()
         {
-            var thismonth = _context.Orders.FromSql(System.Runtime.CompilerServices.FormattableStringFactory.Create($"SELECT * FROM [DBO].[ORDER] WHERE MONTH(TIME) = {DateTime.Now.Month} AND YEAR(TIME) = {DateTime.Now.Year} "));
-            var lastmonth = _context.Orders.FromSql(System.Runtime.CompilerServices.FormattableStringFactory.Create($"SELECT * FROM [DBO].[ORDER] WHERE MONTH(TIME) = {DateTime.Now.AddMonths(-1).Month} AND YEAR(TIME) = {DateTime.Now.AddMonths(-1).Year} "));
+            var thismonth = _context.Orders.FromSql(System.Runtime.CompilerServices.FormattableStringFactory.Create($"SELECT * FROM [DBO].[ORDER] WHERE MONTH(TIME) = {DateTime.Now.Month} AND YEAR(TIME) = {DateTime.Now.Year} AND PAYSTATUS=1"));
+            var lastmonth = _context.Orders.FromSql(System.Runtime.CompilerServices.FormattableStringFactory.Create($"SELECT * FROM [DBO].[ORDER] WHERE MONTH(TIME) = {DateTime.Now.AddMonths(-1).Month} AND YEAR(TIME) = {DateTime.Now.AddMonths(-1).Year}  AND PAYSTATUS=1"));
             var total_thismonth = thismonth.Sum(m => m.TotalPay);
             var total_lastmonth = lastmonth.Sum(m => m.TotalPay);
             //iqueriable join, tuple
