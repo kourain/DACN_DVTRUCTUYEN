@@ -44,7 +44,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 RedirectToAction("Index");
             }
 
-            return View((product, _context.ProductOptions.Where(m => m.ProductID == id).ToList()));
+            return View((product, _context.ProductOptions.Where(m => m.ProductID == id).ToList(),_context.Product_Questions.Where(m=> m.ProductID == id).ToList()));
         }
 
         // GET: Admin/Products/Create
@@ -215,6 +215,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
 
         // GET: Admin/Products/Delete/5
+        [HttpGet]
         public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
@@ -235,9 +236,9 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // POST: Admin/Products/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
+        public async Task<IActionResult> DeleteConfirmed(string ProductID)
         {
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.FirstOrDefaultAsync(m=> m.ProductID == ProductID);
             if (product != null)
             {
                 _context.Products.Remove(product);

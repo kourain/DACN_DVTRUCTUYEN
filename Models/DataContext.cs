@@ -20,6 +20,7 @@ namespace DACN_DVTRUCTUYEN.Models
         public DbSet<ProductView> ProductViews { get; set; }
         public DbSet<CartView> CartViews { get; set; }
         public DbSet<Product_Question> Product_Questions { get; set; }
+        public DbSet<Product_Key> Product_Keys { get; set; }
     }
 }
  

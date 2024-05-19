@@ -53,8 +53,8 @@ else
             }
 
             .notification-banner {
-                max-width:500px;
-                margin:auto;
+                max-width: 500px;
+                margin: auto;
                 background-color: #333; /* Màu nền */
                 color: white; /* Màu chữ */
                 padding: 15px;
@@ -85,6 +85,32 @@ else
         </div>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
+            function ajax_page(url) {
+                // Gửi yêu cầu GET đến URL
+                fetch(url)
+                    .then(response => response.text())
+                    .then(data => {
+                        // Tạo một DOM Parser
+                        let parser = new DOMParser();
+
+                        // Phân tích chuỗi HTML
+                        let doc = parser.parseFromString(data, 'text/html');
+
+                        // Lấy phần có id là 'renderbody'
+                        var renderbody = doc.getElementById('renderbody');
+
+                        // In nội dung của phần tử có id là 'renderbody'
+                        //console.log(renderbody.innerHTML);
+
+                        // Thêm nội dung đã lấy vào phần tử có id là 'renderbody'
+                        $('#renderbody').html(renderbody.innerHTML);
+
+                        history.pushState({}, '', url);
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            };
             $('a').click(function (event) {
                 event.preventDefault(); // ngăn chặn hành vi mặc định của liên kết
 
@@ -138,15 +164,15 @@ else
                 shownoti_timeout = setTimeout(function () {
                     banner.classList.remove("show");
                 }, 3000); // xóa sau 3 giây
-                
+
             }
             function sendPopUp(htmlstr) {
                 var template = `
-            <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
-                <div style="width: 992px;height:500px;background-color:white;">
+                                <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
+                                    <div style="width: 992px;height:500px;background-color:white;">
 
-                </div>
-            </div>`;
+                                    </div>
+                                </div>`;
                 $("#__popup").html(htmlstr);
             };
             function clearPopUp() {

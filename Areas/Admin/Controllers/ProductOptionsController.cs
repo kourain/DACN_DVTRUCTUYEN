@@ -25,6 +25,24 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             return View(await _context.ProductOptions.ToListAsync());
         }
 
+        [HttpGet]
+        [Route("/admin/ProductOptions/details")]
+        // GET: Admin/ProductOptions/Details/5
+        public async Task<IActionResult> Details(string id,string option)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(option))
+            {
+                return RedirectToAction("Index");
+            }
+            id = id.ToLower();
+            var productoption = _context.ProductOptions
+                .FirstOrDefault(m => m.ProductID == id && m.OptionValue == option);
+            if (productoption == null)
+            {
+                return RedirectToAction("Index");
+            }
+            return View((productoption, _context.Product_Keys.Where(m => m.ProductID == id && m.OptionValue == option).ToList()));
+        }
         // GET: Admin/ProductOptions/Create
         [HttpGet]
         [Route("/admin/productoptions/create")]
@@ -147,6 +165,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // POST: Admin/ProductOptions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Route("/admin/ProductOptions/Delete/{productid}/{optionvalue}")]
         public async Task<IActionResult> DeleteConfirmed(ProductOption option)
         {
             var productOption = await _context.ProductOptions.FirstOrDefaultAsync(m => m.OptionValue == option.OptionValue && m.ProductID == option.ProductID);

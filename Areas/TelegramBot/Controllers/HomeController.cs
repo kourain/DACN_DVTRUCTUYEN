@@ -31,19 +31,26 @@ namespace DACN_DVTRUCTUYEN.Areas.TelegramBot.Controllers
                 switch (textarr[0])
                 {
                     case "/start":
-                        int? usid = Functions.GetUIDFromToken(textarr[1]);
-                        if (usid != 0 && usid != null)
+                        if (textarr.Length > 1)
                         {
-                            var us = _dataContext.Users.Where(m => m.UserId == usid).FirstOrDefault();
-                            us.TelegramChatID = (long)data["chat"]["id"];
-                            us.TelegramName = data["from"]["firstName"].ToString() + " " + data["from"]["lastName"].ToString();
-                            us.TelegramUserName = data["from"]["username"].ToString();
-                            _dataContext.Update(us);
-                            _dataContext.SaveChanges();
-                            return Ok($"Bạn đã liên kết thành công với tài khoản: {us.Name} bằng tài khoản Telegram: @{data["from"]["username"]}");
+                            int? usid = Functions.GetUIDFromToken(textarr[1]);
+                            if (usid != 0 && usid != null)
+                            {
+                                var us = _dataContext.Users.Where(m => m.UserId == usid).FirstOrDefault();
+                                us.TelegramChatID = (long)data["chat"]["id"];
+                                us.TelegramName = data["from"]["firstName"].ToString() + " " + data["from"]["lastName"].ToString();
+                                us.TelegramUserName = data["from"]["username"].ToString();
+                                _dataContext.Update(us);
+                                _dataContext.SaveChanges();
+                                return Ok($"Bạn đã liên kết thành công với tài khoản: {us.Name} bằng tài khoản Telegram: @{data["from"]["username"]}");
+                            }
+                        }
+                        else
+                        {
+                            return Ok($"Vui lòng sử dụng nút liên kết Telegram từ trang thông tin cá nhân của trang web!");
                         }
                         break;
-                    default: 
+                    default:
                         break;
                 }
                 Console.WriteLine(rawRequestBody);

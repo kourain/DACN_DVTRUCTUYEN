@@ -1,60 +1,132 @@
-﻿@model DACN_DVTRUCTUYEN.Models.ProductOption
+﻿@model (ProductOption,List<Product_Key>)
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Chi tiết";
+    string producttype(int type)
+    {
+        switch (type)
+        {
+            case 0:
+                return "Tạo tài khoản";
+            case 1:
+                return "Có sẵn";
+            case 2:
+                return "Đăng ký/mua chính chủ";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
 }
 
-<h1>Details</h1>
+<h1>Chi tiết</h1>
 
 <div>
-    <h4>ProductOption</h4>
+    <h4>Lựa chọn của sản phẩm</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OptionName)
+        <dt class="col-sm-2">
+            Mã sản phẩm
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OptionName)
+        <dd class="col-sm-10">
+            @Model.Item1.ProductID
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.OptionValue)
+        <dt class="col-sm-2">
+            Mã lựa chọn
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.OptionValue)
+        <dd class="col-sm-10">
+            @Model.Item1.OptionValue
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Quantity)
+        <dt class="col-sm-2">
+            Tên lựa chọn
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Quantity)
+        <dd class="col-sm-10">
+            @Model.Item1.OptionName
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SoldCount)
+        <dt class="col-sm-2">
+            Số lượng còn
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SoldCount)
+        <dd class="col-sm-10">
+            @Model.Item1.Quantity
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PriceOld)
+        <dt class="col-sm-2">
+            Đã bán
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PriceOld)
+        <dd class="col-sm-10">
+            @Model.Item1.SoldCount
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PriceNow)
+        <dt class="col-sm-2">
+            Giá gốc
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PriceNow)
+        <dd class="col-sm-10">
+            @Model.Item1.PriceOld
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            Giá hiện tại
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Item1.PriceNow
+        </dd>
+        <dt class="col-sm-2">
             Loại
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Type)
+        <dd class="col-sm-10">
+            @producttype(Model.Item1.Type)
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ProductID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Edit" asp-route-id="@Model.Item1?.ProductID">Chỉnh sửa</a> |
+    <a asp-action="Index">Quay lại</a>
 </div>
+
+<div class="pagetitle">
+</div>
+
+<p>
+    <h2>Danh sách khóa/tài khoản bán của sản phẩm</h2>
+</p>
+<section class="section dashboard">
+    <p>
+        <a type="button" class="btn btn-success" href="/admin/productkeys/create?id=@(Model.Item1.ProductID)&optionvalue=@Model.Item1.OptionValue">
+            <i class="bi bi-file-earmark-text me-1">
+                Thêm mới
+            </i>
+        </a>
+    </p>
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <thead>
+                            <tr>
+                                <th class="col-1 ">Mã SP</th>
+                                <th class="col-1 ">Mã lựa chọn</th>
+                                <th class="col-3 ">Key1</th>
+                                <th class="col-2 ">Chức năng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.Item2)
+                            {
+                                <tr>
+                                    <td class="" scope="row">@item.ProductID</td>
+                                    <td class="">@item.OptionValue</td>
+                                    <td class="">@item.Key1</td>
+                                    <td class="">
+                                        <a href="/admin/productkeys/edit?productid=@item.ProductID&optionvalue=@item.OptionValue&key1=@item.Key1" class="btn btn-primary btn-sm" title="Sửa">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="/admin/productkeys/delete/@item.ProductID/@item.OptionValue/@item.Key1" class="btn btn-danger btn-sm" title="Xoá">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

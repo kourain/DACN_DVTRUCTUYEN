@@ -6,7 +6,7 @@
 
 <div class="container shadow p-5">
     <div class="row pb-2">
-        <h2>sửa câu hỏi thường gặp của sản phẩm sản phẩm </h2>
+        <h2>sửa câu hỏi thường gặp của sản phẩm </h2>
     </div>
     <form method="post" asp-action="Edit">
         <div asp-validation-summary="All"></div>
@@ -31,7 +31,7 @@
             </div>
         </div>
         <button type="submit" class="btn btn-lg btn-primary p-2"><i class="bi bi-file-plus-fill"></i>Lưu</button>
-        <a asp-controller="ProductOptions" asp-action="Index" class="btn btn-lg btn-warning p-2">Quay lại</a>
+        <button onclick="history.back()" class="btn btn-lg btn-warning p-2">Quay lại</button>
     </form>
 </div>
 

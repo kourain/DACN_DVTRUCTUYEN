@@ -14,6 +14,20 @@
         }
         return result;
     }
+    string producttype(int type)
+    {
+        switch (type)
+        {
+            case 0:
+                return "Tạo tài khoản";
+            case 1:
+                return "Có sẵn";
+            case 2:
+                return "Đăng ký/mua chính chủ";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
 }
 <div class="Mg W Re">
     <div class="ta jc Bd _f Ke">
@@ -41,10 +55,10 @@
                 </div>
                 <div class="Fc sd xc">
                     <div class="zd">@Model.Where(m => m.ProductOptionQuantity > 0).Count() sản phẩm có thể mua</div>
-                    <div class="f" style="margin-bottom:10px"></div>
                     @foreach (var cartitem in Model.Where(m => m.ProductOptionQuantity > 0))
                     {
-                        total += cartitem.PriceNow;
+                        total += cartitem.PriceNow * cartitem.Quantity;
+                        <div style="border:solid 1px;margin-top:12px;margin-bottom:12px"></div>
                         <div class="Mf Me">
                             <div class="mg fh">
                                 <a class="lf gf ff ra" href="/user/product/@cartitem.ProductID/@cartitem.OptionValue">
@@ -61,6 +75,7 @@
                                             <div class="ng ea Ce">
                                                 <h6><a href="/user/product/@cartitem.ProductID/@cartitem.OptionValue"></a>@cartitem.ProductName</h6>
                                                 <div class="fe"><a>@cartitem.OptionName</a></div>
+                                                <div class="fe"><a>@producttype(cartitem.Type)</a></div>
                                             </div>
                                             <div class="lg If Ub ta Uf Vf De">
                                                 <h5>@topricestr(cartitem.PriceNow) đ</h5>
@@ -71,9 +86,16 @@
                                             </div>
                                             <div class="kg Jf ta Wf ga">
                                                 <div class="ta Ga Fc Mc yc ge Zd">
-                                                    @* <button type="button" class="b Ub kb Hc Mc fe ra">-</button> *@
-                                                    <input name="quantity" type="number" required="" min="1" max="1" step="1" placeholder="Số lượng" class="kb Zd Td Ac Ah" value="@cartitem.Quantity" disabled />
-                                                    @* <button type="button" class="b Ub kb Ic Mc fe ra">+</button> *@
+                                                    @if (cartitem.Type == 1)
+                                                    {
+                                                        <button type="button" onclick="subtract('@cartitem.ProductID')" class="b Ub kb Hc Mc fe ra">-</button>
+                                                        <input name="quantity" type="number" required="" min="1" max="1" step="1" placeholder="Số lượng" class="kb Zd Td Ac Ah" id="@(cartitem.ProductID)quantity" value="@cartitem.Quantity" disabled />
+                                                        <button type="button" onclick="add('@cartitem.ProductID')" class="b Ub kb Ic Mc fe ra">+</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input name="quantity" type="number" required="" min="1" max="1" step="1" placeholder="Số lượng" class="kb Zd Td Ac Ah" id="@(cartitem.ProductID)quantity" value="@cartitem.Quantity" disabled />
+                                                    }
                                                 </div>
                                             </div>
                                         </div>
@@ -103,9 +125,9 @@
                 </div>
                 <div class="Fc sd xc">
                     <div class="zd">@Model.Where(m => m.ProductOptionQuantity < 1).Count() sản phẩm hết hàng</div>
-                    <div class="f" style="margin-bottom:10px"></div>
                     @foreach (var cartitem in Model.Where(m => m.ProductOptionQuantity < 1))
                     {
+                        <div style="border:solid 1px;margin-top:12px;margin-bottom:12px"></div>
                         <div class="Mf Me">
                             <div class="mg fh">
                                 <a class="lf gf ff ra" href="/user/product/@cartitem.ProductID/@cartitem.OptionValue">
@@ -122,6 +144,7 @@
                                             <div class="ng ea Ce">
                                                 <h6><a href="/user/product/@cartitem.ProductID/@cartitem.OptionValue"></a>@cartitem.ProductName</h6>
                                                 <div class="fe"><a>@cartitem.OptionName</a></div>
+                                                <div class="fe"><a>@producttype(cartitem.Type)</a></div>
                                             </div>
                                             <div class="lg If Ub ta Uf Vf De">
                                                 <h5>@topricestr(cartitem.PriceNow) đ</h5>
@@ -161,42 +184,39 @@
                     }
                 </div>
             </div>
-            <div class="eh">
-                <div class="Oe">
-                    <form class="Oe">
-                        <div class="Le">
-                            <h6>Thanh toán</h6>
-                            <div class="Ie">
-                                <div class="Fe">
-                                    <div class="ta Ee hc nc">
-                                        <div>Tổng giá trị sản phẩm</div>
-                                        <div id="totalproductprice">@topricestr(total) đ</div>
-                                    </div>
-                                </div>
-                                <div class="f"></div>
-                                <div class="Fe">
-                                    <div class="ta Ee hc nc">
-                                        <div>Tổng giá trị phải thanh toán</div>
-                                        <div class="Zd" id="totalpay">@topricestr(total) đ</div>
-                                    </div>
-                                </div>
+            <div class="eh" style="display: flex;align-items: center;">
+                <form style="max-height:350px !important;">
+                    <h6>Thanh toán</h6>
+                    <div class="Ie">
+                        <div class="Fe">
+                            <div class="ta Ee hc nc">
+                                <div>Tổng giá trị sản phẩm</div>
+                                <div id="totalproductprice"><h5>@topricestr(total) đ</h5></div>
                             </div>
-                            <fieldset class="ta ec kc Ie">
-                                <h6><i>Chú ý:<br /> </i> Bạn sẽ thanh toán tất cả sản phẩm đang có trong giỏ hàng, hãy xóa bất kì sản phẩm bạn không cần thiết ra khỏi giỏ hàng!</h6>
-                                <div class="Td he vc rc tc">Sử dụng thẻ hoặc máy quét QR. Thanh toán ngay!</div>
-                                <button type="button" class="b c ta mc jc bd xf Cf" onclick="paynow()">
-                                    <div class="ta Ee rc">
-                                        <img loading="lazy" src="~/QR.svg" class="Db wa" alt="Mua siêu tốc qua Mobile Banking" />
-                                        <svg class="od Db" style="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
-                                            <path d="M0 432c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V256H0v176zm192-68c0-6.6 5.4-12 12-12h136c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-40zm-128 0c0-6.6 5.4-12 12-12h72c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM576 80v48H0V80c0-26.5 21.5-48 48-48h480c26.5 0 48 21.5 48 48z"></path>
-                                        </svg>
-                                        <div style="margin-top:1px">Mua siêu tốc qua Mobile Banking</div>
-                                    </div>
-                                </button>
-                            </fieldset>
                         </div>
-                    </form>
-                </div>
+                        <div class="f"></div>
+                        <div class="Fe">
+                            <div class="ta Ee hc nc">
+                                <div>Tổng giá trị phải thanh toán</div>
+                                <div class="Zd" id="totalpay"><h5>@topricestr(total) đ</h5></div>
+                            </div>
+                        </div>
+                        <div class="f"></div>
+                    </div>
+                    <fieldset class="ta ec kc Ie">
+                        <h6><i>Chú ý:<br /> </i> Bạn sẽ thanh toán tất cả sản phẩm đang có trong giỏ hàng, hãy xóa bất kì sản phẩm bạn không cần thiết ra khỏi giỏ hàng!</h6>
+                        <div class="Td he vc rc tc">Sử dụng thẻ hoặc máy quét QR. Thanh toán ngay!</div>
+                        <button type="button" class="b c ta mc jc bd xf Cf" onclick="paynow()">
+                            <div class="ta Ee rc">
+                                <img loading="lazy" src="~/QR.svg" class="Db wa" alt="Mua siêu tốc qua Mobile Banking" />
+                                <svg class="od Db" style="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                                    <path d="M0 432c0 26.5 21.5 48 48 48h480c26.5 0 48-21.5 48-48V256H0v176zm192-68c0-6.6 5.4-12 12-12h136c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-40zm-128 0c0-6.6 5.4-12 12-12h72c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12H76c-6.6 0-12-5.4-12-12v-40zM576 80v48H0V80c0-26.5 21.5-48 48-48h480c26.5 0 48 21.5 48 48z"></path>
+                                </svg>
+                                <div style="margin-top:1px">Mua siêu tốc qua Mobile Banking</div>
+                            </div>
+                        </button>
+                    </fieldset>
+                </form>
             </div>
         </div>
     </div>
@@ -204,11 +224,11 @@
 <script>
     function paynow() {
         sendPopUp(`
-                <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
-                    <div style="width: 992px;height:500px;background-color:white;">
+                                    <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
+                                        <div style="width: 992px;height:500px;background-color:white;">
 
-                    </div>
-                </div>`);
+                                        </div>
+                                    </div>`);
         fetch("/user/cart/pay")
             .then(response => {
                 if (!response.ok) {
@@ -222,10 +242,56 @@
                 if (data.code == 1) {
                     window.location.href = data.messenger;
                 }
+                else {
+                    shownoti(data.messenger);
+                }
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         clearPopUp();
+    }
+    function add(productid) {
+        fetch("/user/cart/add-" + productid)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Process the retrieved user data
+                if (data.code == 1) {
+                    ajax_page('/user/cart');
+                }
+                else {
+                    shownoti(data.messenger);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+    function subtract(productid) {
+        fetch("/user/cart/subtract-" + productid)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Process the retrieved user data
+                console.log(data);
+                if (data.code == 1) {
+                    ajax_page('/user/cart');
+                }
+                else {
+                    shownoti(data.messenger);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
     }
 </script>

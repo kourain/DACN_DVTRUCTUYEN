@@ -2,6 +2,20 @@
 
 @{
     ViewData["Title"] = "Index";
+    string producttype(int type)
+    {
+        switch (type)
+        {
+            case 0:
+                return "Tạo tài khoản";
+            case 1:
+                return "Có sẵn";
+            case 2:
+                return "Đăng ký/mua chính chủ";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
 }
 
 <div class="pagetitle">
@@ -31,7 +45,7 @@
                                 <th class="col-1 ">Giá mới</th>
                                 <th class="col-1 ">Còn lại</th>
                                 <th class="col-1 ">Đã bán</th>
-                                <th class="col-1 ">Đăng ký chính chủ</th>
+                                <th class="col-1 ">Loại</th>
                                 <th class="col-3 ">Thời gian cập nhật</th>
                                 <th class="col-2 ">Chức năng</th>
                             </tr>
@@ -48,11 +62,14 @@
                                     <td class="">@item.PriceNow</td>
                                     <td class="">@item.Quantity</td>
                                     <td class="">@item.SoldCount</td>
-                                    <td class="">@item.Type</td>
+                                    <td class="">@producttype(item.Type)</td>
                                     <td class="">@item.CreateDate</td>
                                     <td class="">
                                         <a href="/admin/productoptions/edit/@item.ProductID/@item.OptionValue" class="btn btn-primary btn-sm" title="Sửa">
                                             <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="/admin/productoptions/details?id=@item.ProductID&option=@item.OptionValue" class="btn btn-primary btn-sm" title="Chi tiết">
+                                            <i class="bi bi-ticket-detailed"></i>
                                         </a>
                                         <a href="/admin/productoptions/delete/@item.ProductID/@item.OptionValue" class="btn btn-danger btn-sm" title="Xoá">
                                             <i class="bi bi-trash"></i>

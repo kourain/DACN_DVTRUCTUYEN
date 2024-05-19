@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DACN_DVTRUCTUYEN.Areas.User.Models
 {
     [Table("OrderView")]
-    [PrimaryKey(nameof(ProductID), nameof(ProductID))]
+    [PrimaryKey(nameof(OrderID),nameof(ProductID), nameof(ProductOptionValue))]
     public class OrderView
     {
         [Key]

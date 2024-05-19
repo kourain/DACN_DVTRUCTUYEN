@@ -29,7 +29,26 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 Redirect("/user/");
             }
-            return View(_dataContext.CartViews.Where(m => m.UserID == userid).ToList());
+            var cartitem = _dataContext.CartViews.Where(m => m.UserID == userid).ToList();
+            foreach (var item in cartitem)
+            {
+                if(item.Quantity > item.ProductOptionQuantity)
+                {
+                    item.Quantity = item.ProductOptionQuantity;
+                    var item2 = new Cart()
+                    {
+                        UserID = userid,
+                        Quantity = item.ProductOptionQuantity,
+                        CreateDate = item.CreateDate,
+                        ProductID = item.ProductID,
+                        ProductOptionValue = item.OptionValue,
+                    };
+                    _dataContext.Update(item2);
+                }
+                
+            }
+            _dataContext.SaveChanges();
+            return View(cartitem);
         }
         [Route("/User/cart/add&{productid}&{productoptionvalue}")]
         public IActionResult AddToCart(string productid, string productoptionvalue)
@@ -39,7 +58,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 Redirect("/user/");
             }
-            if (_dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid && m.ProductOptionValue == productoptionvalue).FirstOrDefault() != null)
+            if (_dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid).FirstOrDefault() != null)
             {
                 return Ok(new
                 {
@@ -47,7 +66,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     messenger = "Sản phẩm đã tồn tại trong giỏ hàng, vui lòng xác nhận"
                 });
             }
-            var item = new DACN_DVTRUCTUYEN.Areas.User.Models.Cart()
+            var item = new Cart()
             {
                 UserID = userid,
                 ProductID = productid,
@@ -61,16 +80,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 code = 1,
                 messenger = "Đã thêm vào giỏ hàng"
             });
-        }
-        [Route("/user/cart/{ProductID}")]
-        public async Task<IActionResult> Detail(string ProductID)
-        {
-            var cart = _dataContext.Products.Where(m => m.ProductID == ProductID).FirstOrDefault();
-            if (cart == null)
-            {
-                return Redirect("/User");
-            }
-            return View(cart);
         }
         [Route("/user/cart/pay")]
         public IActionResult Pay()
@@ -146,7 +155,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     ProductID = item.ProductID,
                     ProductOptionValue = item.OptionValue,
                     Amount = item.PriceNow,
-                    OrderStatusID = 1,
+                    OrderStatusID = 0,
                 });
             }
             //lên lịch 15phút kể từ lúc tạo thanh toán đến lúc hết thời hạn thanh toán(15phút theo VNPay)
@@ -256,6 +265,100 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             _dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid).ExecuteDelete();
             _dataContext.SaveChanges();
             return RedirectToAction(nameof(Index));
+        }
+        [Route("/User/cart/add-{productid}")]
+        public IActionResult add(string productid)
+        {
+            productid = productid.ToLower();
+            int.TryParse(Request.Cookies["id"], out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                return BadRequest();
+            }
+            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid).FirstOrDefault();
+            if (item == null)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
+                });
+            }
+            if (item.Type != 1)
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
+                });
+            if (item.ProductOptionQuantity == item.Quantity)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Đạt giới hạn sản phẩm"
+                });
+            }
+            var cart = new Cart()
+            {
+                UserID = item.UserID,
+                ProductID = item.ProductID,
+                ProductOptionValue = item.OptionValue,
+                Quantity = item.Quantity + 1,
+                CreateDate = item.CreateDate,
+            };
+            _dataContext.Update(cart);
+            _dataContext.SaveChanges();
+            return Ok(new
+            {
+                code = 1
+            });
+        }
+        [Route("/User/cart/subtract-{productid}")]
+        public IActionResult subtract(string productid)
+        {
+            productid = productid.ToLower();
+            int.TryParse(Request.Cookies["id"], out int userid);
+            if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
+            {
+                return BadRequest();
+            }
+            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid).FirstOrDefault();
+            if (item == null)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
+                });
+            }
+            if (item.Type != 1)
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
+                });
+            if (1 == item.Quantity)
+            {
+                return Ok(new
+                {
+                    code = 0,
+                    messenger = "Tối thiểu tồn tại 1 sản phẩm"
+                });
+            }
+            var cart = new Cart()
+            {
+                UserID = item.UserID,
+                ProductID = item.ProductID,
+                ProductOptionValue = item.OptionValue,
+                Quantity = item.Quantity - 1,
+                CreateDate = item.CreateDate,
+            };
+            _dataContext.Update(cart);
+            _dataContext.SaveChanges();
+            return Ok(new
+            {
+                code = 1
+            });
         }
     }
 }

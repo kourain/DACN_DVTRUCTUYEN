@@ -1,4 +1,4 @@
-﻿@model DACN_DVTRUCTUYEN.Models.Product_Question
+﻿@model DACN_DVTRUCTUYEN.Models.Product_Key
 
 @{
     ViewData["Title"] = "Delete";
@@ -17,28 +17,29 @@
             @Html.DisplayFor(model => model.ProductID)
         </dd>
         <dt class="col-sm-2">
-            Mã câu hỏi
+            Mã lựa chọn
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.QuestionId)
+            @Html.DisplayFor(model => model.OptionValue)
+        </dd>
+        <dt class="col-sm-2">
+            Khóa 1
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Key1)
         </dd>
         <dt class = "col-sm-2">
-            Câu hỏi
+            Khóa 2
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Question)
+            @Html.DisplayFor(model => model.Key2)
         </dd>
         <dt class = "col-sm-2">
             Câu trả lời
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Answer)
-        </dd>
     </dl>
     
     <form asp-action="Delete">
-        <div asp-validation-summary="All"></div>
-        <input type="hidden" asp-for="QuestionId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <button onclick="history.back()" class="btn btn-lg btn-warning p-2">Quay lại</button>
     </form>
