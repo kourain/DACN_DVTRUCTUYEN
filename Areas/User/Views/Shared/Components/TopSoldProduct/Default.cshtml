@@ -28,7 +28,7 @@
         fetch('/user/product/getproduct/top/' + topSoldProductCount)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Máy chủ không phản hồi!');
                 }
                 return response.json();
             })

@@ -75,58 +75,57 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Item1?.ProductID">Chỉnh sửa</a> |
+    <a href="/admin/productoptions/Edit/@Model.Item1?.ProductID/@Model.Item1?.OptionValue">Chỉnh sửa</a> |
     <a asp-action="Index">Quay lại</a>
 </div>
-
-<div class="pagetitle">
-</div>
-
-<p>
-    <h2>Danh sách khóa/tài khoản bán của sản phẩm</h2>
-</p>
-<section class="section dashboard">
+@if (Model.Item1?.Type == 1)
+{
     <p>
-        <a type="button" class="btn btn-success" href="/admin/productkeys/create?id=@(Model.Item1.ProductID)&optionvalue=@Model.Item1.OptionValue">
-            <i class="bi bi-file-earmark-text me-1">
-                Thêm mới
-            </i>
-        </a>
+        <h2>Danh sách khóa/tài khoản bán của sản phẩm</h2>
     </p>
-    <div class="row">
-        <div class="col-12">
-            <div class="card recent-sales overflow-auto">
-                <div class="card-body mt-4">
-                    <table class="table table-borderless datatable">
-                        <thead>
-                            <tr>
-                                <th class="col-1 ">Mã SP</th>
-                                <th class="col-1 ">Mã lựa chọn</th>
-                                <th class="col-3 ">Key1</th>
-                                <th class="col-2 ">Chức năng</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.Item2)
-                            {
+    <section class="section dashboard">
+        <p>
+            <a type="button" class="btn btn-success" href="/admin/productkeys/create?id=@(Model.Item1.ProductID)&optionvalue=@Model.Item1.OptionValue">
+                <i class="bi bi-file-earmark-text me-1">
+                    Thêm mới
+                </i>
+            </a>
+        </p>
+        <div class="row">
+            <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+                    <div class="card-body mt-4">
+                        <table class="table table-borderless datatable">
+                            <thead>
                                 <tr>
-                                    <td class="" scope="row">@item.ProductID</td>
-                                    <td class="">@item.OptionValue</td>
-                                    <td class="">@item.Key1</td>
-                                    <td class="">
-                                        <a href="/admin/productkeys/edit?productid=@item.ProductID&optionvalue=@item.OptionValue&key1=@item.Key1" class="btn btn-primary btn-sm" title="Sửa">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <a href="/admin/productkeys/delete/@item.ProductID/@item.OptionValue/@item.Key1" class="btn btn-danger btn-sm" title="Xoá">
-                                            <i class="bi bi-trash"></i>
-                                        </a>
-                                    </td>
+                                    <th class="col-1 ">Mã SP</th>
+                                    <th class="col-1 ">Mã lựa chọn</th>
+                                    <th class="col-3 ">Key1</th>
+                                    <th class="col-2 ">Chức năng</th>
                                 </tr>
-                            }
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Item2)
+                                {
+                                    <tr>
+                                        <td class="" scope="row">@item.ProductID</td>
+                                        <td class="">@item.OptionValue</td>
+                                        <td class="">@item.Key1</td>
+                                        <td class="">
+                                            <a href="/admin/productkeys/edit?productid=@item.ProductID&optionvalue=@item.OptionValue&key1=@item.Key1" class="btn btn-primary btn-sm" title="Sửa">
+                                                <i class="bi bi-pencil"></i>
+                                            </a>
+                                            <a href="/admin/productkeys/delete/@item.ProductID/@item.OptionValue/@item.Key1" class="btn btn-danger btn-sm" title="Xoá">
+                                                <i class="bi bi-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
+}

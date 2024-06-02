@@ -66,10 +66,6 @@ namespace DACN_DVTRUCTUYEN.Areas.TelegramBot
 
             // Echo received message text
         }
-        public void SendStaticMess(long? chatId, string messageText)
-        {
-            Sendmess(chatId, messageText);
-        }
         public void Sendmess(long? chatId, string messageText)
         {
             if(chatId == null) return;
@@ -101,10 +97,8 @@ namespace DACN_DVTRUCTUYEN.Areas.TelegramBot
         }
         public static void SendStaticMess(long? chatId, string messageText)
         {
+            if (chatId == null || string.IsNullOrEmpty(messageText)) return;
             bot.Sendmess(chatId, messageText);
         }
-
     }
-
-
 }

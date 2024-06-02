@@ -6,8 +6,56 @@ using DACN_DVTRUCTUYEN.Areas.User.Models;
 using Hangfire;
 using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
+using Telegram.Bot.Types.Payments;
+using System.Threading;
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
 {
+    [Area("User")]
+    public class OrderCancellationBackgroundService : BackgroundService
+    {
+        private readonly IServiceProvider _services;
+        public OrderCancellationBackgroundService(IServiceProvider services)
+        {
+            _services = services;
+        }
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await Task.Delay(10000, stoppingToken); // cập nhật mỗi 10s
+                using (var dataContext = _services.CreateScope().ServiceProvider.GetRequiredService<DataContext>())
+                {
+                    // > 15p tức quá hạn
+                    var orderlist = dataContext.Orders.Where(m => m.Time.AddMinutes(15) < DateTime.Now && m.PayStatus == 0).ToList();
+                    //var orderlist2 = dataContext.Orders.Where(m => m.OrderID == "20240602065405_1").FirstOrDefault();
+                    foreach (var order in orderlist)
+                    {
+                        //trả lại số lượng hàng hóa
+                        var product = dataContext.OrderDetails.Where(m => m.OrderID == order.OrderID).ToList();
+                        foreach (var item in product)
+                        {
+                            var productoption = dataContext.ProductOptions.FirstOrDefault(m => m.ProductID == item.ProductID && m.OptionValue == item.ProductOptionValue);
+                            if (productoption != null)
+                            {
+                                productoption.Quantity += item.Quantity;
+                                dataContext.ProductOptions.Update(productoption);
+                            }
+                        }
+                        if (order.PayStatus == 0)
+                            order.PayStatus = -1;
+                        dataContext.Update(order);
+                        dataContext.SaveChanges();
+                        Areas.TelegramBot.TelegramBotStatic.SendStaticMess(dataContext.Users.Where(m => m.UserId == order.UserID).FirstOrDefault().TelegramChatID,
+                                $"Bạn có một đơn hàng quá hạn thanh toán:" +
+                                $"\n\tID đơn hàng: {order.OrderID} " +
+                                $"\n\tThời điểm phát sinh: {order.Time.ToString("dd/MM/yyyy HH:mm:ss")}" +
+                                $"\n\tTổng số tiền thanh toán: {order.TotalPay}vnđ");
+                    }
+                }
+            }
+        }
+    }
+
     [Area("User")]
     public class CartController : Controller
     {
@@ -15,10 +63,11 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         private readonly IRecurringJobManager _recurringJobManager;
 
         private readonly DataContext _dataContext;
-        public CartController(DataContext dataContext, IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager)
+        public CartController(DataContext dataContext)
         {
-            _backgroundJobClient = backgroundJobClient;
-            _recurringJobManager = recurringJobManager;
+            //, IBackgroundJobClient backgroundJobClient, IRecurringJobManager recurringJobManager
+            //    _backgroundJobClient = backgroundJobClient;
+            //    _recurringJobManager = recurringJobManager;
             _dataContext = dataContext;
         }
         [Route("/User/cart")]
@@ -27,12 +76,12 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
-                Redirect("/user/");
+                return Redirect("/user/");
             }
             var cartitem = _dataContext.CartViews.Where(m => m.UserID == userid).ToList();
             foreach (var item in cartitem)
             {
-                if(item.Quantity > item.ProductOptionQuantity)
+                if (item.Quantity > item.ProductOptionQuantity)
                 {
                     item.Quantity = item.ProductOptionQuantity;
                     var item2 = new Cart()
@@ -45,7 +94,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     };
                     _dataContext.Update(item2);
                 }
-                
+
             }
             _dataContext.SaveChanges();
             return View(cartitem);
@@ -58,7 +107,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 Redirect("/user/");
             }
-            if (_dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid).FirstOrDefault() != null)
+            if (_dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid && m.ProductOptionValue == productoptionvalue).FirstOrDefault() != null)
             {
                 return Ok(new
                 {
@@ -82,7 +131,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             });
         }
         [Route("/user/cart/pay")]
-        public IActionResult Pay()
+        [HttpPost]
+        public async Task<IActionResult> Pay(string note)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
@@ -98,12 +148,16 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return BadRequest();
             }
-            if (userinf.TelegramChatID == null || string.IsNullOrEmpty(userinf.TelegramName))
+            if ((userinf.TelegramChatID == null && string.IsNullOrEmpty(userinf.TelegramName)) || string.IsNullOrEmpty(userinf.Phone))
+            {
+
+            }
+            else
             {
                 return Ok(new
                 {
                     code = 0,
-                    messenger = $"Vui lòng liên kết với tài khoản Telegram để nhận thông báo!!!"
+                    messenger = $"Vui lòng liên kết với tài khoản Telegram hoặc thêm số điện thoại !!!"
                 });
             }
             //còn đơn chưa thanh toán
@@ -113,7 +167,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 return Ok(new
                 {
                     code = 0,
-                    messenger = $"Bạn có đơn hàng chưa hoàn thành thanh toán tại VNPay({orderold.Time.ToString("hh:mm:ss dd/MM/yyyy")}), vui lòng kiểm tra tại lịch sử mua hàng!"
+                    messenger = $"Bạn có đơn hàng chưa hoàn thành thanh toán tại VNPay(lúc {orderold.Time.ToString("HH:mm:ss dd/MM/yyyy")}), vui lòng kiểm tra tại lịch sử mua hàng!"
                 });
             }
             //make value
@@ -132,7 +186,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             var infor = "";
             foreach (var item in listcart)
             {
-                totalpay += item.PriceNow;
+                totalpay += item.PriceNow * item.Quantity;
                 infor += item.ProductID + "_" + item.OptionValue + ",";
             }
             infor = infor.Substring(0, infor.Length - 1);
@@ -144,11 +198,18 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 TotalPay = totalpay,
                 Time = now,
                 PayStatus = 0,
+                Note = note
             };
             _dataContext.Add(neworder);
             // add order infor
             foreach (var item in listcart)
             {
+                //cập nhật số lượng của sản phẩm trước để giữ chỗ cho lượt mua này
+                var productoption = _dataContext.ProductOptions.FirstOrDefault(m => m.ProductID == item.ProductID && m.OptionValue == item.OptionValue);
+                if (productoption == null) continue;
+                if (productoption.Quantity < item.Quantity) item.Quantity = productoption.Quantity;
+                productoption.Quantity -= item.Quantity;
+                _dataContext.ProductOptions.Update(productoption);
                 _dataContext.OrderDetails.Add(new OrderDetail()
                 {
                     OrderID = orderid,
@@ -156,33 +217,49 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     ProductOptionValue = item.OptionValue,
                     Amount = item.PriceNow,
                     OrderStatusID = 0,
+                    Quantity = item.Quantity,
                 });
             }
             //lên lịch 15phút kể từ lúc tạo thanh toán đến lúc hết thời hạn thanh toán(15phút theo VNPay)
+            //OrderCancellationBackgroundService.addQueue(orderid);
+            //chuyển sang background service
+            _dataContext.SaveChanges();
             Areas.TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.Where(m => m.UserId == neworder.UserID).FirstOrDefault().TelegramChatID,
                 $"Bạn có một đơn hàng cần thanh toán mới: " +
                 $"\n\tID đơn hàng: {neworder.OrderID} " +
-                $"\n\tThời điểm phát sinh: {neworder.Time.ToString("dd/MM/yyyy hh:mm:ss")}" +
+                $"\n\tThời điểm phát sinh: {neworder.Time.ToString("dd/MM/yyyy HH:mm:ss")}" +
                 $"\n\tTổng số tiền cần thanh toán: {neworder.TotalPay}vnđ");
-            _backgroundJobClient.Schedule(neworder.OrderID, () => Pay_Cancel(orderid), TimeSpan.FromHours(0.25));
-            _dataContext.SaveChanges();
             return Ok(new
             {
                 code = 1,
-                messenger = $"/vnpayapi/{totalpay}00&{infor}&{orderid}"
+                messenger = await VNPayAPI.Controllers.VNPayStatic.Payment($"{totalpay}00", infor, orderid)
             });
+
         }
+
+
         [Route("/user/orders/cancel/{orderid}")]
         public async Task<IActionResult> order_cancel(string orderid)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
-                return NotFound();
+                return Redirect("/user/");
             }
             var value = _dataContext.Orders.Where(m => m.OrderID == orderid && m.UserID == userid).FirstOrDefault();
             if (value != null)
             {
+                //trả lại số lượng hàng hóa
+                var product = _dataContext.OrderDetails.Where(m => m.OrderID == orderid).ToList();
+                foreach (var item in product)
+                {
+                    var productoption = _dataContext.ProductOptions.FirstOrDefault(m => m.ProductID == item.ProductID && m.OptionValue == item.ProductOptionValue);
+                    if (productoption != null)
+                    {
+                        productoption.Quantity += item.Quantity;
+                        _dataContext.ProductOptions.Update(productoption);
+                    }
+                }
                 if (value.PayStatus == 0)
                     value.PayStatus = -2;
                 _dataContext.Update(value);
@@ -191,27 +268,9 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             }
             return Redirect("/user/OrdersHistory");
         }
-        //xử lý việc người dùng thoát trang thanh toán
-        public void Pay_Cancel(string orderid)
-        {
-            // Thực hiện logic hủy đơn hàng ở đây
-            var value = _dataContext.Orders.Where(m => m.OrderID == orderid).FirstOrDefault();
-            if (value != null)
-            {
-                if (value.PayStatus == 0)
-                    value.PayStatus = -1;
-                _dataContext.Update(value);
-                _dataContext.SaveChanges();
-                Areas.TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.Where(m => m.UserId == value.UserID).FirstOrDefault().TelegramChatID,
-                    $"Bạn có một đơn hàng quá hạn thanh toán:" +
-                    $"\n\tID đơn hàng: {value.OrderID} " +
-                    $"\n\tThời điểm phát sinh: {value.Time.ToString("dd/MM/yyyy hh:mm:ss")}" +
-                    $"\n\tTổng số tiền thanh toán: {value.TotalPay}vnđ");
-            }
-        }
 
         [Route("/user/cart/getProductOption/{ProductID}")]
-        public IActionResult getcartOption(string ProductID)
+        public async Task<IActionResult> getcartOption(string ProductID)
         {
             var query = (from m in _dataContext.ProductOptions.Where(m => m.ProductID == ProductID)
                          select new ProductOption()
@@ -228,19 +287,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             return Ok(query);
         }
 
-        [Route("/user/cart/{ProductID}/{ProductOptionValue}")]
-        public async Task<IActionResult> Detail(string ProductID, string ProductOptionValue)
-        {
-            var cart = _dataContext.Products.Where(m => m.ProductID == ProductID).FirstOrDefault();
-            if (cart == null)
-            {
-                return Redirect("/User");
-            }
-            ViewBag.ProductOption0 = ProductOptionValue;
-            return View(cart);
-        }
         [Route("/user/cart/get_cart_count")]
-        public IActionResult getcartCount()
+        public async Task<IActionResult> getcartCount()
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
@@ -253,8 +301,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 messenger = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductOptionQuantity > 0).Count(),
             });
         }
-        [Route("/user/cart/delproduct/{productid}")]
-        public async Task<IActionResult> delproduct(string productid)
+        [Route("/user/cart/delproduct/{productid}/{optionvalue}")]
+        public async Task<IActionResult> delproduct(string productid, string optionvalue)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
@@ -262,20 +310,21 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 return BadRequest();
             }
             if (string.IsNullOrEmpty(productid)) { return BadRequest(); }
-            _dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid).ExecuteDelete();
+            _dataContext.Carts.Where(m => m.UserID == userid && m.ProductID == productid && m.ProductOptionValue == optionvalue).ExecuteDelete();
             _dataContext.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
-        [Route("/User/cart/add-{productid}")]
-        public IActionResult add(string productid)
+        [Route("/User/cart/add-{productid}-{optionvalue}")]
+        public async Task<IActionResult> add(string productid, string optionvalue)
         {
             productid = productid.ToLower();
+            optionvalue = optionvalue.ToLower();
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
                 return BadRequest();
             }
-            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid).FirstOrDefault();
+            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid && m.OptionValue == m.OptionValue).FirstOrDefault();
             if (item == null)
             {
                 return Ok(new
@@ -284,12 +333,12 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
                 });
             }
-            if (item.Type != 1)
-                return Ok(new
-                {
-                    code = 0,
-                    messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
-                });
+            //if (item.Type != 1)
+            //    return Ok(new
+            //    {
+            //        code = 0,
+            //        messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
+            //    });
             if (item.ProductOptionQuantity == item.Quantity)
             {
                 return Ok(new
@@ -313,16 +362,17 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 code = 1
             });
         }
-        [Route("/User/cart/subtract-{productid}")]
-        public IActionResult subtract(string productid)
+        [Route("/User/cart/subtract-{productid}-{optionvalue}")]
+        public async Task<IActionResult> subtract(string productid, string optionvalue)
         {
             productid = productid.ToLower();
+            optionvalue = optionvalue.ToLower();
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
                 return BadRequest();
             }
-            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid).FirstOrDefault();
+            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid && m.OptionValue == m.OptionValue).FirstOrDefault();
             if (item == null)
             {
                 return Ok(new
@@ -331,12 +381,12 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
                 });
             }
-            if (item.Type != 1)
-                return Ok(new
-                {
-                    code = 0,
-                    messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
-                });
+            //if (item.Type != 1)
+            //    return Ok(new
+            //    {
+            //        code = 0,
+            //        messenger = "Yêu cầu không hợp lệ, vui lòng làm mới trang giỏ hàng"
+            //    });
             if (1 == item.Quantity)
             {
                 return Ok(new

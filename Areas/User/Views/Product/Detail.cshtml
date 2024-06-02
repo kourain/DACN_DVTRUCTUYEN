@@ -168,7 +168,7 @@
             fetch("/User/cart/add&@Model.Item1.ProductID&@now.OptionValue")
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        throw new Error('Máy chủ không phản hồi!');
                     }
                     return response.json();
                 })
@@ -286,7 +286,7 @@ else
                             <div class="yh">
                                 <hr />
                                 <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5;">Thời gian bảo hành:</h3>
-                                <p style="margin-left: 40px;" id="baohanhtime">- Chúng tôi cam kết bảo hành trong 15 ngày kể từ thời điểm đơn hàng hoàn thành</p>
+                                <p style="margin-left: 40px;" id="baohanhtime">- Chúng tôi cam kết bảo hành trong 7 ngày kể từ thời điểm đơn hàng hoàn thành</p>
                                 <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5;">Cách thức bảo hành</h3>
                                 <p style="margin-left: 40px;">- Đổi mới code/tài khoản/gói đăng ký khác nếu lỗi trong quá trình sử dụng hoặc hoàn tiền theo thời gian bạn đã sử dụng tối đa 80% nếu không có sản phẩm bảo hành.</p>
                             </div>

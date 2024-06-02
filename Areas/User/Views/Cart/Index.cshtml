@@ -86,16 +86,14 @@
                                             </div>
                                             <div class="kg Jf ta Wf ga">
                                                 <div class="ta Ga Fc Mc yc ge Zd">
-                                                    @if (cartitem.Type == 1)
-                                                    {
-                                                        <button type="button" onclick="subtract('@cartitem.ProductID')" class="b Ub kb Hc Mc fe ra">-</button>
-                                                        <input name="quantity" type="number" required="" min="1" max="1" step="1" placeholder="Số lượng" class="kb Zd Td Ac Ah" id="@(cartitem.ProductID)quantity" value="@cartitem.Quantity" disabled />
-                                                        <button type="button" onclick="add('@cartitem.ProductID')" class="b Ub kb Ic Mc fe ra">+</button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <input name="quantity" type="number" required="" min="1" max="1" step="1" placeholder="Số lượng" class="kb Zd Td Ac Ah" id="@(cartitem.ProductID)quantity" value="@cartitem.Quantity" disabled />
-                                                    }
+                                                    <button type="button" onclick="subtract('@cartitem.ProductID','@cartitem.OptionValue')" class="b Ub kb Hc Mc fe ra">-</button>
+                                                    <input name="quantity" type="number" required="" min="1" max="1" step="1" placeholder="Số lượng" class="kb Zd Td Ac Ah" id="@(cartitem.ProductID)quantity" value="@cartitem.Quantity" disabled />
+                                                    <button type="button" onclick="add('@cartitem.ProductID','@cartitem.OptionValue')" class="b Ub kb Ic Mc fe ra">+</button>
+                                                    @* }
+                                                else
+                                                {
+                                                <input name="quantity" type="number" required="" min="1" max="1" step="1" placeholder="Số lượng" class="kb Zd Td Ac Ah" id="@(cartitem.ProductID)quantity" value="@cartitem.Quantity" disabled />
+                                                } *@
                                                 </div>
                                             </div>
                                         </div>
@@ -185,7 +183,7 @@
                 </div>
             </div>
             <div class="eh" style="display: flex;align-items: center;">
-                <form style="max-height:350px !important;">
+                <form style="max-height:650px !important;" id="payform">
                     <h6>Thanh toán</h6>
                     <div class="Ie">
                         <div class="Fe">
@@ -194,19 +192,28 @@
                                 <div id="totalproductprice"><h5>@topricestr(total) đ</h5></div>
                             </div>
                         </div>
+                        @*<div class="f"></div>
+                        <div class="Fe">
+                        <div class="ta Ee hc nc">
+                        <div>Thuế tiêu dùng(10%)</div>
+                        <div class="Zd" id="totalpay"><h5>@topricestr(Convert.ToInt32(total * 0.1)) đ</h5></div>
+                        </div>
+                        </div> *@
                         <div class="f"></div>
                         <div class="Fe">
                             <div class="ta Ee hc nc">
                                 <div>Tổng giá trị phải thanh toán</div>
-                                <div class="Zd" id="totalpay"><h5>@topricestr(total) đ</h5></div>
+                                <div class="Zd" id="totalpay"><h5>@topricestr(Convert.ToInt32(total * 1)) đ</h5></div>
                             </div>
                         </div>
                         <div class="f"></div>
                     </div>
                     <fieldset class="ta ec kc Ie">
                         <h6><i>Chú ý:<br /> </i> Bạn sẽ thanh toán tất cả sản phẩm đang có trong giỏ hàng, hãy xóa bất kì sản phẩm bạn không cần thiết ra khỏi giỏ hàng!</h6>
+                        <div class="Td he vc rc tc">Ghi chú của bạn cho DB shop cho đơn hàng này</div>
+                        <textarea name="note" id="note" style="border:solid 1px;resize: none; height:200px;"></textarea>
                         <div class="Td he vc rc tc">Sử dụng thẻ hoặc máy quét QR. Thanh toán ngay!</div>
-                        <button type="button" class="b c ta mc jc bd xf Cf" onclick="paynow()">
+                        <button type="submit" type="button" class="b c ta mc jc bd xf Cf">
                             <div class="ta Ee rc">
                                 <img loading="lazy" src="~/QR.svg" class="Db wa" alt="Mua siêu tốc qua Mobile Banking" />
                                 <svg class="od Db" style="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
@@ -222,17 +229,25 @@
     </div>
 </div>
 <script>
-    function paynow() {
-        sendPopUp(`
-                                    <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
-                                        <div style="width: 992px;height:500px;background-color:white;">
+    // Lấy form
+    let form = document.getElementById("payform");
 
-                                        </div>
-                                    </div>`);
-        fetch("/user/cart/pay")
+    form.addEventListener('submit', function (event) {
+        shownoti("đang tạo đơn hàng");
+        // Ngăn chặn hành vi mặc định của form
+        event.preventDefault();
+
+        // Tạo một đối tượng FormData từ form
+        let formData = new FormData(form);
+
+        // Gửi dữ liệu form sử dụng phương thức POST
+        fetch("/user/cart/pay", {
+            method: 'POST',
+            body: formData
+        })
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Máy chủ không phản hồi!');
                 }
                 return response.json();
             })
@@ -247,15 +262,16 @@
                 }
             })
             .catch(error => {
+                shownoti('Error:' + error);
                 console.error('Error:', error);
             });
         clearPopUp();
-    }
-    function add(productid) {
-        fetch("/user/cart/add-" + productid)
+    });
+    function add(productid, option) {
+        fetch("/user/cart/add-" + productid + "-" + option)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Máy chủ không phản hồi!');
                 }
                 return response.json();
             })
@@ -272,17 +288,17 @@
                 console.error('Error:', error);
             });
     }
-    function subtract(productid) {
-        fetch("/user/cart/subtract-" + productid)
+    function subtract(productid, option) {
+        fetch("/user/cart/subtract-" + productid + "-" + option)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Máy chủ không phản hồi!');
                 }
                 return response.json();
             })
             .then(data => {
                 // Process the retrieved user data
-                console.log(data);
+                //console.log(data);
                 if (data.code == 1) {
                     ajax_page('/user/cart');
                 }

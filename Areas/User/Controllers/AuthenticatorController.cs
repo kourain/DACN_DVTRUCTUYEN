@@ -167,7 +167,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
-                return BadRequest();
+                return Redirect("/user/");
             }
             var check = _dataContext.Users.Where(m => (m.UserId == userid) && (m.Password == Functions.MD5Hash(cp.oldPass))).FirstOrDefault();
             if (check == null)

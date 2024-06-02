@@ -14,5 +14,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public int TotalPay { get; set; }
         public int PayStatus { get; set; }
         public long? TransactionNo { get; set; }
+        public string? Note { get; set; }
     }
 }

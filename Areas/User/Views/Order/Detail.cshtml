@@ -1,51 +1,46 @@
-﻿@model IList<DACN_DVTRUCTUYEN.Areas.User.Models.Order>;
+﻿@model (Order,List<OrderDetailView>)
 @{
-    Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
     ViewData["Title"] = "Lịch sử mua hàng";
-    string paystatus_str(int paystatus)
+    string order_str(int orderstatus_id)
     {
-        switch (paystatus)
+        switch (orderstatus_id)
         {
-            case -2:
-                return "Hủy thanh toán";
-            case -1:
-                return "Thanh toán thất bại";
-            case 0:
-                return "Chờ thanh toán";
             case 1:
-                return "Thanh toán thành công";
+                return "Chờ tiến hành";
+            case 2:
+                return "Đang tiến hành";
+            case 3:
+                return "Hoàn thành";
             default:
                 return "Không thể đọc thông tin";
         }
     }
-    string actionname(int paystatus)
+    string actionname(int orderstatus_id, int type = 2)
     {
-        switch (paystatus)
+        switch (orderstatus_id)
         {
-            case -2:
-                return "";
-            case -1:
-                return "";
-            case 0:
-                return "Hủy thanh toán";
             case 1:
-                return "Xem đơn hàng";
+                return "Hủy tiến hành";
+            case 2:
+                return "";
+            case 3:
+                if (type == 1)
+                    return "Xem chi tiết";
+                else return "";
             default:
                 return "Không thể đọc thông tin";
         }
     }
-    string actionlink(int paystatus,string orderid)
+    string actionlink(string productid, string optionvalue, int orderstatus_id, string orderid)
     {
-        switch (paystatus)
+        switch (orderstatus_id)
         {
-            case -2:
-                return "";
-            case -1:
-                return "";
-            case 0:
-                return $"/user/orders/cancel/{orderid}";
             case 1:
-                return $"/user/orders/detail/{orderid}";
+                return $"cancel";
+            case 2:
+                return "";
+            case 3:
+                return $"/user/orders/detail/api/{orderid}/{productid}/{optionvalue}";
             default:
                 return "";
         }
@@ -61,9 +56,23 @@
         }
         return result;
     }
+    string producttype(int type)
+    {
+        switch (type)
+        {
+            case 0:
+                return "Tạo tài khoản";
+            case 1:
+                return "Có sẵn";
+            case 2:
+                return "Đăng ký/mua chính chủ";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
 }
 <div style="background: #F3F4F6;">
-    <div style="width: 1200px; height: 750.80px; margin:auto">
+    <div style="width: 1300px; height: 780.80px; margin:auto">
         <div style="height: 445.27px; padding: 0.91px; left: 21px; top: 4px; background: white; border-radius: 5.25px; overflow: hidden; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: inline-flex">
             <a href="/user/profile" style="align-self: stretch; height: 63.91px; padding-top: 0.91px; border-top: 0.91px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                 <div style="align-self: stretch; padding-top: 21px; padding-bottom: 21px; padding-left: 26.45px; padding-right: 21px; justify-content: flex-start; align-items: flex-start; display: inline-flex">
@@ -110,27 +119,30 @@
             </a>
         </div>
         <div style="padding: 35.91px; left: -0.28px; top: 0px; background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 12.20px; display: inline-flex">
-            <div style="width: 900.62px; height: 650px;position:relative;background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; ">
+            <div style="width: 900.62px; height: 700px;position:relative;background: white; border-radius: 5.25px; border: 1px rgba(156, 163, 175, 0.25) solid; ">
                 <div style="height:100px; left: 35.91px; top: 35.91px; position:relative; flex-direction: column; justify-content: flex-start; align-items: flex-start; gap: 6.93px; display: inline-flex">
                     <div style="align-self: stretch; height: 28px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
-                        <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Lịch sử đơn hàng</div>
+                        <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Lịch sử đơn hàng: "@Model.Item1.OrderID"</div>
                     </div>
-                    <div style="color: #374151; font-size: 14px; font-family: Roboto; font-weight: 400; line-height: 21px; word-wrap: break-word">Hiển thị thông tin các sản phẩm bạn đã mua tại DB Shop</div>
+                    <div style="color: #374151; font-size: 14px; font-family: Roboto; font-weight: 400; line-height: 21px; word-wrap: break-word">Ngày: @Model.Item1.Time.ToString("HH:mm:ss dd/MM/yyyy")</div>
                 </div>
                 <div style="width: 85%; height: 1px; margin-left:8%; border-top: 0.91px rgba(156, 163, 175, 0.25) solid"></div>
-                <div style="width: 85%; height: 10%; margin-left:8%; border-top: 0.91px rgba(156, 163, 175, 0.25) solid"></div>
 
-                <table class="table tbborder" style="margin-top:10px; max-height:70%">
+                <div style="height:100px;margin-left:5%;"><h6>Thông tin đính kèm</h6><textarea style="width:90%;height:80px;border:solid 1px;padding:5px;resize:none;" readonly>@Model.Item1.Note</textarea></div>
+                <table class="table tbborder" style="margin-top:10px; height:230px;border:solid 1px">
                     <thread>
                         <tr>
-                            <th style="width:5%">
-                                Mã đơn hàng
+                            <th style="width:10%">
+                                Tên sản phẩm
                             </th>
                             <th style="width:10%">
-                                Thời gian
+                                Loại
                             </th>
                             <th style="width:5%">
                                 Tổng tiền
+                            </th>
+                            <th style="width:5%">
+                                Số lượng
                             </th>
                             <th>
                                 Trạng thái
@@ -141,51 +153,94 @@
                         </tr>
                     </thread>
                     <tbody>
-                        @if (Model.Count == 0)
+                        @foreach (var item in Model.Item2)
                         {
-                            <tr>
-                                <td class="rowdata">
+                            <tr style="height:30px">
+                                <td class="">
+                                    <a href="/user/product/@item.ProductID/@item.ProductOptionValue">@Html.DisplayFor(modelItem => item.ProductName) - @Html.DisplayFor(modelItem => item.OptionName)</a>
                                 </td>
-                                <td class="rowdata">
+                                <td class="">
+                                    @producttype(item.Type)
                                 </td>
-                                <td class="rowdata">
-                                    <center>
-                                        <h5>Không có đơn hàng  nào</h5>
-                                    </center>
+                                <td class="">
+                                    @topricestr(item.Amount)đ
                                 </td>
-                                <td class="rowdata">
+                                <td class="">
+                                    @item.Quantity
                                 </td>
-                                <td class="rowdata">
+                                <td class="">
+                                    @order_str(item.OrderStatusID)
+                                </td>
+                                <td class="">
+                                    <button type="button" onclick="actionlink('@actionlink(item.ProductID,item.ProductOptionValue,item.OrderStatusID,item.OrderID)','@item.ProductName','@item.ProductID','@item.ProductOptionValue');" style="color:green;font-weight: 500;"><i>@actionname(item.OrderStatusID, item.Type)</i></button>
                                 </td>
                             </tr>
                         }
-                        else
-                            foreach (var item in Model)
-                            {
-                                <tr style="height:30px">
-                                    <td class="">
-                                        @Html.DisplayFor(modelItem => item.OrderID)
-                                    </td>
-                                    <td class="">
-                                        @Html.DisplayFor(modelItem => item.Time)
-                                    </td>
-                                    <td class="">
-                                        @topricestr(item.TotalPay)đ
-                                    </td>
-                                    <td class="">
-                                        @paystatus_str(item.PayStatus)
-                                    </td>
-                                    <td class="">
-                                        <a href="@actionlink(item.PayStatus,item.OrderID)" style="color:green;font-weight: 500;"><i>@actionname(item.PayStatus)</i></a>
-                                    </td>
-                                </tr>
-                            }
                     </tbody>
                 </table>
+                <div style="display:none;margin-top:10px;border:solid 0.1px" id="displaytable">
+                    <h6 style="margin-left:10%;margin-top:10px;" id="productname"></h6>
+                    <table class="table tbborder" style="margin-top:10px; height:200px;">
+                        <thread>
+                            <tr>
+                                <th style="width:1%">
+                                    Mục 1
+                                </th>
+                                <th style="width:1%">
+                                    Mục 2
+                                </th>
+                                <th style="width:1%">
+                                    Tác vụ
+                                </th>
+                            </tr>
+                        </thread>
+                        <tbody id="productkey">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<script>
+    function actionlink(link,name,productid,optionvalue) {
+        if (link == '' || link == null) return;
+        if (link == 'cancel') shownoti('Không thể hủy', 4000);
+        let displaytable = document.getElementById("displaytable");
+        displaytable.style.display = "block";
+        document.getElementById("productkey").innerHTML = "";
+        $("#productname").html("Thông tin của \"" + name + "\"")
+        fetch(link)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Máy chủ không phản hồi!');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Process the retrieved user data
+                // console.log('User Data:', data);
+                data.forEach(function (item) {
+                    var htmlval = `
+                        <tr style="height:30px">
+                            <td class="">
+                                ${item.key1}
+                            </td>
+                            <td class="">
+                                ${item.key2}
+                            </td>
+                            <td class="">
+                                 <i>@Html.Raw((Model.Item1.Time.AddDays(7).Date < DateTime.Now.Date) ? "" : $"<a href='/user/orders/error-rp/{Model.Item1.OrderID}&" + "${productid}&" + "${optionvalue}&" + "${item.key1}" + "' style='color: green; font-weight: 500; '>` + ((item.rp_FromUser == null)? 'Báo lỗi' : 'Xem lại báo lỗi') +`</a>")
+                            </td>
+                        </tr>`;
+                    document.getElementById("productkey").innerHTML += htmlval;
+                })
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+</script>
 <style>
     td {
         flex-direction: column;

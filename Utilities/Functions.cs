@@ -39,14 +39,14 @@ namespace DACN_DVTRUCTUYEN.Utilities
                 tokenUser.Add(agg1, JsonNode.Parse(JsonSerializer.Serialize(new
                 {
                     //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
-                    time = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd hh:mm:ss"),
+                    time = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd HH:mm:ss"),
                     UID = agg2,
                     email = agg3
                 })));
             }
             catch { 
                 //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
-                tokenUser[agg1]["time"] = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd hh:mm:ss");
+                tokenUser[agg1]["time"] = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd HH:mm:ss");
             }
             if (agg4 == true)
                 tokenUser[agg1]["time"] = "1";
@@ -57,7 +57,7 @@ namespace DACN_DVTRUCTUYEN.Utilities
             //đặt lại quá hạn cho thời hạn sử dụng token có trên hệ thống
             var thisval = tokenUser[agg1];
             if (thisval != null)
-                tokenUser[agg1]["time"] = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                tokenUser[agg1]["time"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         }
         public static int GetUIDFromToken(string? posttokenUser)
         {
@@ -96,13 +96,13 @@ namespace DACN_DVTRUCTUYEN.Utilities
                 {
                     adminid = agg3,
                     //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
-                    time = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd hh:mm:ss"),
+                    time = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd HH:mm:ss"),
                     UID = agg2
                 })));
             else
             {
                 //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
-                tokenAdmin[agg1]["time"] = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd hh:mm:ss");
+                tokenAdmin[agg1]["time"] = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd HH:mm:ss");
             }
         }
         public static void LogoutAdmin(string agg1)
@@ -111,7 +111,7 @@ namespace DACN_DVTRUCTUYEN.Utilities
             //đặt lại quá hạn cho thời hạn sử dụng token có trên hệ thống
             var thisval = tokenAdmin[agg1];
             if (thisval != null)
-                tokenAdmin[agg1]["time"] = DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss");
+                tokenAdmin[agg1]["time"] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
         }
 
         public static int IsLoginAdmin(string? posttokenAdmin, string? uid = "")

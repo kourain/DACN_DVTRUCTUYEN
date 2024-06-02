@@ -14,5 +14,9 @@ namespace DACN_DVTRUCTUYEN.Models
         public string Key1 { get; set; }
         public string Key2 { get; set; }
         public string? OrderID { get; set; }
+        public string? Rp_FromUser { get; set; }
+        public DateTime? Rp_FromUser_Time { get; set; }
+        public string? Rp_Response { get; set; }
+        public DateTime? Rp_Response_Time { get; set; }
     }
 }

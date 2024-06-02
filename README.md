@@ -25,3 +25,14 @@ switch (ProductOption.Type)
     default:
         return "Không thể đọc thông tin";
 }
+switch (orderstatus_id)
+{
+    case 1:
+        return "Chờ tiến hành";
+    case 2:
+        return "Đang tiến hành";
+    case 3:
+        return "Hoàn thành";
+    default:
+        return "Không thể đọc thông tin";
+}

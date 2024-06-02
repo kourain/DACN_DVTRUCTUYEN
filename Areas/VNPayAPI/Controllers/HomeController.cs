@@ -3,6 +3,7 @@ using System;
 using System.Configuration;
 using System.Web;
 using DACN_DVTRUCTUYEN.Areas.VNPayAPI.Util;
+using DACN_DVTRUCTUYEN.Areas.User.Models;
 
 namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
 {
@@ -17,8 +18,7 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         {
             return View();
         }
-        [Route("/VNPayAPI/{amount}&{infor}&{orderinfor}")]
-        public ActionResult Payment(string amount, string infor, string orderinfor)
+        public async Task<string> Payment(string amount, string infor, string orderinfor)
         {
             string hostName = System.Net.Dns.GetHostName();
             string clientIPAddress = System.Net.Dns.GetHostAddresses(hostName).GetValue(0).ToString();
@@ -39,10 +39,10 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
             pay.AddRequestData("vnp_TxnRef", orderinfor); //mã hóa đơn
 
             string paymentUrl = pay.CreateRequestUrl(url, hashSecret);
-            return Redirect(paymentUrl);
+            return paymentUrl;
         }
         [Route("/VNpayAPI/paymentconfirm")]
-        public IActionResult PaymentConfirm()
+        public async Task<IActionResult> PaymentConfirm()
         {
             if (Request.QueryString.HasValue)
             {
@@ -85,6 +85,18 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         {
             string myChecksum = PayLib.HmacSHA512(secretKey, rspraw);
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
+        }
+    }
+    public class VNPayStatic
+    {
+        protected static HomeController statics;
+        public VNPayStatic()
+        {
+            statics = new HomeController();
+        }
+        public static async Task<string> Payment(string amount, string infor, string orderinfor)
+        {
+            return await statics.Payment(amount, infor, orderinfor);
         }
     }
 }
