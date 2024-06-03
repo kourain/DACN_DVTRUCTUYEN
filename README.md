@@ -1,5 +1,6 @@
 ﻿# DACN_DVTRUCTUYEN
 # Một số giá trị được cố định:
+```
 switch (Order.PayStatus)
 {
     case -2:
@@ -15,7 +16,6 @@ switch (Order.PayStatus)
     default:
         return "Không thể đọc thông tin";
 }
-
 switch (ProductOption.Type)
 {
     case 0:
@@ -38,3 +38,5 @@ switch (orderstatus_id)
     default:
         return "Không thể đọc thông tin";
 }
+
+```
