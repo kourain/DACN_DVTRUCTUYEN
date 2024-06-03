@@ -1,6 +1,7 @@
 ﻿using DACN_DVTRUCTUYEN.Models;
 using DACN_DVTRUCTUYEN.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net.WebSockets;
 
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
@@ -14,7 +15,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             _dataContext = dataContext;
         }
         [Route("/user/profile")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
 
             int.TryParse(Request.Cookies["id"], out int userid);
@@ -26,14 +27,31 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             return View(us);
         }
         [Route("/user/OrdersHistory")]
-        public IActionResult OrdersHistory()
+        public async Task<IActionResult> OrdersHistory(int paystatus = 0, string sort="asc", int date=30)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
                 return BadRequest();
             }
-            var us = _dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m=> m.Time).ToList();
+            var result = _dataContext.Orders.Where(m => m.UserID == userid && m.Time >= DateTime.Now.AddDays(-date));
+            if (sort == "asc")
+                result = result.OrderBy(m => m.Time);
+            else
+            {
+                result = result.OrderByDescending(m => m.Time);
+            }
+            switch (paystatus)
+            {
+                case -2:
+                    result = result.Where(m=> m.PayStatus == -2);
+                    break;
+                case 2:
+                    result = result.Where(m => m.PayStatus == 2);
+                    break;
+                default:
+                    break;
+            }
             //test scroll table
             //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
             //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
@@ -41,11 +59,11 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
             //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
             //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());
-            return View(us);
+            return View(await result.ToListAsync());
         }
         [Route("/user/totalpaid")]
         [HttpGet]
-        public IActionResult totalpaid()
+        public async Task<IActionResult> totalpaid()
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
@@ -61,7 +79,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         }
         [Route("/user/password")]
         [HttpGet]
-        public IActionResult password()
+        public async Task<IActionResult> password()
         {
             return View();
         }

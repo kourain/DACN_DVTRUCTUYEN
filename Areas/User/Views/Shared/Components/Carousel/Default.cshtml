@@ -106,7 +106,7 @@
         <a class="mySlides fade" href="/user/product/@item.ProductID">
             <div class="numbertext"></div>
             <img src="@item.ProductImg" style="width:100%;height:500px">
-            <center class="text" style="background-color:black;max-width:@(item.ProductName.Length * 11)px;margin-left:48%">@item.ProductName</center>
+            <center class="text" style="background-color:black;max-width:@(item.ProductName.Length * 11)px;margin-left:@(48-item.ProductName.Length/5)%">@item.ProductName</center>
         </a>
     }
     <!-- Next and previous buttons -->

@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Web;
 using DACN_DVTRUCTUYEN.Areas.VNPayAPI.Util;
 using DACN_DVTRUCTUYEN.Areas.User.Models;
+using DACN_DVTRUCTUYEN.Models;
 
 namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
 {
@@ -14,6 +15,14 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         public string returnUrl = "https://localhost:44311/vnpayAPI/PaymentConfirm";
         public string tmnCode = "W0NBIFXR";
         public string hashSecret = "RNOIJLQLRSXPYXUPKHXBQMGJZAWJAVPV";
+        private readonly DataContext _dataContext;
+        public HomeController()
+        {
+        }
+        public HomeController(DataContext dataContext)
+        {
+            _dataContext = dataContext;
+        }
         public ActionResult Index()
         {
             return View();
@@ -61,13 +70,30 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
                 bool checkSignature = ValidateSignature(Request.QueryString.Value.Substring(1, pos - 1), vnp_SecureHash, hashSecret); //check chữ ký đúng hay không?
                 if (checkSignature && tmnCode == json["vnp_TmnCode"].ToString())
                 {
+                    var value = _dataContext.Orders.Where(m => m.OrderID == orderId && m.PayStatus == 0).FirstOrDefault();
+                    if (value == null)
+                        return Redirect("/user/");
+                    var user = _dataContext.Users.Where(m => m.UserId == value.UserID).FirstOrDefault();
+                    if (user == null)
+                        return Redirect("/user/");
                     if (vnp_ResponseCode == "00")
                     {
+                        //send mess
+                        TelegramBot.TelegramBotStatic.SendStaticMess(user.TelegramChatID, $"Chào {user.Name}\n\tBạn vừa thanh toán cho đơn hàng {orderId}");
+                        value.PayStatus = 1;
+                        value.TransactionNo = vnpayTranId;
+                        _dataContext.Update(value);
+                        _dataContext.SaveChanges();
                         //Thanh toán thành công
                         return Redirect($"/user/Orders/OK/{orderId}&{vnpayTranId}&{orderInfor}");
                     }
                     else
                     {
+                        TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.FirstOrDefault(m => m.UserId == value.UserID).TelegramChatID, $"Thanh toán thất bại tại đơn hàng {value.OrderID}");
+                        value.PayStatus = -1;
+                        value.TransactionNo = vnpayTranId;
+                        _dataContext.Update(value);
+                        _dataContext.SaveChanges();
                         //Thanh toán không thành công. Mã lỗi: vnp_ResponseCode
                         return Redirect($"/user/Orders/ERROR/{orderId}&{vnpayTranId}&{orderInfor}");
                     }

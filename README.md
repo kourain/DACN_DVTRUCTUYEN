@@ -3,12 +3,14 @@
 switch (Order.PayStatus)
 {
     case -2:
-        return "Hủy thanh toán";
+        return "Thanh toán thất bại";
     case -1:
         return "Thanh toán thất bại";
     case 0:
         return "Chờ thanh toán";
     case 1:
+        return "Thanh toán thành công";
+    case 2:
         return "Thanh toán thành công";
     default:
         return "Không thể đọc thông tin";

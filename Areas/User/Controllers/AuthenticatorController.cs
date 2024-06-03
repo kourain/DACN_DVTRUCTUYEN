@@ -139,6 +139,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             }
             else
             {
+
                 check.Password = null;
                 _dataContext.Update(check);
                 _dataContext.SaveChanges();

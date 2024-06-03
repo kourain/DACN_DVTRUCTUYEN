@@ -1,0 +1,85 @@
+﻿@model (List<(ProductView,int,int,long)>,int)
+
+@{
+    ViewData["Title"] = "Thống kê";
+}
+
+<div class="pagetitle">
+    <h2>Danh sách 20 sản phẩm được mua nhiều nhất nhiều nhất @Model.Item2 ngày qua</h2>
+</div>
+
+<p>
+    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=30">
+        <i class="bi bi-file-earmark-text me-1">
+            30ngày gần nhất
+        </i>
+    </a>
+    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=60">
+        <i class="bi bi-file-earmark-text me-1">
+            60ngày gần nhất
+        </i>
+    </a>
+    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=90">
+        <i class="bi bi-file-earmark-text me-1">
+            90ngày gần nhất
+        </i>
+    </a>
+    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=180">
+        <i class="bi bi-file-earmark-text me-1">
+            180ngày gần nhất
+        </i>
+    </a>
+</p>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table">
+                        <colgroup>
+                            <col style="width:8%"/>
+                            <col style="width:10%"/>
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="">Mã sản phẩm</th>
+                                <th class="">Tên sản phẩm</th>
+                                <th class="">Bán chạy nhất</th>
+                                <th class="">Số đơn(@Model.Item2 ngày)</th>
+                                <th class="">Tổng số đơn</th>
+                                <th class="">Số lượng(@Model.Item2 ngày)</th>
+                                <th class="">Tổng số lượng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Item1)
+                            {
+                                <tr>
+                                    <td class="" scope="row">@item.Item1.ProductID</td>
+                                    <td class="">@item.Item1.ProductName</td>
+                                    <td class="">@item.Item1.OptionName (@item.Item1.OptionValue)</td>
+                                    <td class="">@item.Item2</td>
+                                    <td class="">@item.Item3</td>
+                                    <td class="">@item.Item4</td>
+                                    <td class="">@item.Item1.SoldCount</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        td, th {
+            border: solid 1px;
+        }
+    </style>
+</section>

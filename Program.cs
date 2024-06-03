@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
-using Newtonsoft.Json;
-using Hangfire;
 using DACN_DVTRUCTUYEN.Areas.TelegramBot;
 using DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers;
-using DACN_DVTRUCTUYEN.Areas.User.Controllers;
+using DACN_DVTRUCTUYEN.Areas.User.Services;
+using DACN_DVTRUCTUYEN.Utilities;
 namespace DACN_DVTRUCTUYEN
 {
     public class Program
@@ -31,6 +30,7 @@ namespace DACN_DVTRUCTUYEN
             builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connection));
 
             builder.Services.AddHostedService<OrderCancellationBackgroundService>();
+            builder.Services.AddHostedService<OrderBackgroundService>();
 
             var app = builder.Build();
 
@@ -53,6 +53,7 @@ namespace DACN_DVTRUCTUYEN
                   name: "areas",
                   pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                 );
+            var function = new Functions();
             var telebot = new TelegramBotStatic();
             var vnpay = new VNPayStatic();
             app.Run();

@@ -28,7 +28,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         [HttpGet]
         [Route("/admin/ProductOptions/details")]
         // GET: Admin/ProductOptions/Details/5
-        public async Task<IActionResult> Details(string id,string option)
+        public async Task<IActionResult> Details(string id, string option)
         {
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(option))
             {
@@ -46,7 +46,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // GET: Admin/ProductOptions/Create
         [HttpGet]
         [Route("/admin/productoptions/create")]
-        public IActionResult Create(string? productid)
+        public async Task<IActionResult> Create(string? productid)
         {
             var product = new ProductOption();
             if (string.IsNullOrEmpty(productid))
@@ -145,6 +145,27 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             return View(productOption);
         }
 
+        // GET: Admin/ProductKeys/Update
+        [HttpGet]
+        [Route("/admin/ProductKeys/Update")]
+        public async Task<IActionResult> Update(string id, string optionvalue)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(optionvalue))
+            {
+                return NotFound();
+            }
+            id = id.ToLower();
+            optionvalue = optionvalue.ToLower();
+            var productoption = _context.ProductOptions.FirstOrDefault(m => m.ProductID == id && m.OptionValue == optionvalue && m.Type == 1);
+            if (productoption != null)
+            {
+                //productoption.SoldCount = _context.Product_Keys.Count(m => m.OrderID != "0");
+                productoption.Quantity = _context.Product_Keys.Count(m => m.OrderID == "0");
+                _context.Update(productoption);
+                _context.SaveChanges();
+            }
+            return Redirect($"/admin/ProductOptions/details?id={id}&option={optionvalue}");
+        }
         // GET: Admin/ProductOptions/Delete/5
         [HttpGet]
         [Route("/admin/ProductOptions/Delete/{productid}/{optionvalue}")]
@@ -158,7 +179,6 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
             return View(productOption);
         }
 

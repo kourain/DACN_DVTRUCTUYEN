@@ -16,10 +16,12 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public int TotalPay { get; set; }
         public int PayStatus { get; set; }
         public long? TransactionNo { get; set; }
+        public string? Note { get; set; }
         //order Detail
         public string ProductID { get; set; }
         public string ProductOptionValue { get; set; }
         public Int16 OrderStatusID { get; set; }
         public long Amount { get; set; }
+        public int Quantity { get; set; }
     }
 }

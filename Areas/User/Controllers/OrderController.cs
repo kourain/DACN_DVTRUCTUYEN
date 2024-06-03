@@ -1,37 +1,16 @@
 ﻿using DACN_DVTRUCTUYEN.Areas.User.Models;
+using DACN_DVTRUCTUYEN.Areas.User.Services;
 using DACN_DVTRUCTUYEN.Models;
 using DACN_DVTRUCTUYEN.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 using Telegram.Bot.Types;
 
 namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
 {
-    [Area("User")]
-    public class OrderBackgroundService : BackgroundService
-    {
-        private readonly ConcurrentQueue<(string, string)> _requestQueue = new();
-
-        public void EnqueueRequest((string, string) request) => _requestQueue.Enqueue(request);
-
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-        {
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                if (_requestQueue.TryDequeue(out var request))
-                {
-                    // Xử lý yêu cầu 'request' ở đây
-                }
-                else
-                {
-                    await Task.Delay(100, stoppingToken); // Tránh vòng lặp bận
-                }
-            }
-        }
-    }
-
     [Area("User")]
     public class OrderController : Controller
     {
@@ -49,44 +28,26 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [HttpGet]
         public async Task<IActionResult> Pay_return_OK(string orderid, string vnp_transid, string orderInfor)
         {
-            var value = _dataContext.Orders.Where(m => m.OrderID == orderid && m.PayStatus == 0).FirstOrDefault();
-            if (value == null)
-                return Redirect("/user/");
-            var user_data = _dataContext.Users.Where(m => m.UserId == value.UserID).FirstOrDefault();
-            if (user_data == null)
-                return Redirect("/user/");
-            //send mess
-            TelegramBot.TelegramBotStatic.SendStaticMess(user_data.TelegramChatID, $"Chào {user_data.Name}\n\tBạn vừa thanh toán cho đơn hàng {orderid}");
             //update orders
             if (!long.TryParse(vnp_transid, out long trans_no))
                 return Redirect("/user/");
-            value.PayStatus = 1;
-            value.TransactionNo = trans_no;
+            var value = _dataContext.Orders.Where(m => m.OrderID == orderid && m.PayStatus == 1 && m.TransactionNo == trans_no).FirstOrDefault();
+            if (value == null)
+                return Redirect("/user/");
+            value.PayStatus = 2;
             _dataContext.Update(value);
+            _dataContext.SaveChanges();
+
+            var user = _dataContext.Users.Where(m => m.UserId == value.UserID).FirstOrDefault();
+            if (user == null)
+                return Redirect("/user/");
             //lấy key cho người dùng
             var product = _dataContext.OrderDetailViews.Where(m => m.OrderID == orderid).ToList();
             foreach (var item in product)
             {
                 if (item.Type == 1)
                 {
-                    var key = _dataContext.Product_Keys.Where(m => m.OrderID == "0").Take(item.Quantity).ToList();
-                    string messenger = $"DB SHOP gửi {user_data.Name}, đây là {item.Quantity} khóa kích hoạt/tài khoản của sản phẩm \"{item.ProductName}\" - \"{item.OptionName}\":";
-                    foreach (var item2 in key)
-                    {
-                        item2.OrderID = orderid;
-                        messenger += $"\n{item2.Key1} - {item2.Key2}";
-                        _dataContext.Product_Keys.Update(item2);
-                    }
-                    _dataContext.OrderDetails.Update(new OrderDetail()
-                    {
-                        Amount = item.Amount,
-                        ProductID = item.ProductID,
-                        ProductOptionValue = item.ProductOptionValue,
-                        OrderID = item.OrderID,
-                        OrderStatusID = 3,
-                        Quantity = item.Quantity,
-                    });
-                    TelegramBot.TelegramBotStatic.SendStaticMess(user_data.TelegramChatID, messenger);
+                    OrderBackgroundService.EnqueueRequest((item, user));
                 }
                 else
                 {
@@ -100,6 +61,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                         Quantity = item.Quantity,
                     });
                 }
+                var num = _dataContext.ProductOptions.FromSql(FormattableStringFactory.Create($"UPDATE [DBO].[ProductOption] SET SoldCount = SoldCount + {item.Quantity} WHERE ProductID = '{item.ProductID}' AND " +
+                $"OptionValue = N'{item.ProductOptionValue}' ;")).ToList();// OR ProductDescription LIKE N'%{like}%'
             }
             //del user cart
             var listcart = _dataContext.CartViews.Where(m => m.UserID == value.UserID && m.ProductOptionQuantity > 0).ToList();
@@ -108,8 +71,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 _dataContext.Carts.Where(m => m.UserID == value.UserID && m.ProductID == item.ProductID && m.ProductOptionValue == item.OptionValue).ExecuteDelete();
             }
             //change user totalpaid
-            user_data.TotalPaid += value.TotalPay;
-            _dataContext.Update(user_data);
+            user.TotalPaid += value.TotalPay;
+            _dataContext.Update(user);
             //save
             _dataContext.SaveChanges();
             return Redirect("/user/ordershistory");
@@ -118,13 +81,15 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         [HttpGet]
         public async Task<IActionResult> Pay_return_Error(string orderid, string vnp_transid, string orderInfor)
         {
-            var value = _dataContext.Orders.Where(m => m.OrderID == orderid).FirstOrDefault();
-            if (value == null)
-                return Redirect("/user/");
             if (!long.TryParse(vnp_transid, out long trans_no))
                 return Redirect("/user/");
-            value.PayStatus = -1;
-            value.TransactionNo = trans_no;
+            var value = _dataContext.Orders.Where(m => m.OrderID == orderid && m.TransactionNo == trans_no && m.PayStatus == -1).FirstOrDefault();
+            if (value == null)
+                return Redirect("/user/");
+            value.PayStatus = -2;
+            _dataContext.Update(value);
+            _dataContext.SaveChanges();
+
             var product = _dataContext.OrderDetails.Where(m => m.OrderID == orderid).ToList();
             foreach (var item in product)
             {
@@ -135,8 +100,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     _dataContext.ProductOptions.Update(productoption);
                 }
             }
-            TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.FirstOrDefault(m => m.UserId == value.UserID).TelegramChatID, $"Thanh toán thất bại tại đơn hàng {value.OrderID}");
-            _dataContext.Update(value);
             _dataContext.SaveChanges();
             return Redirect("/user/ordershistory");
         }
@@ -177,7 +140,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return Redirect("/user/");
             }
-            var value = _dataContext.Orders.FirstOrDefault(m => m.UserID == userid && m.OrderID == orderid);
+            var value = _dataContext.Orders.FirstOrDefault(m => m.UserID == userid && m.OrderID == orderid && m.Time.AddDays(7) > DateTime.Now);
             if (value == null)
                 return Redirect("/user/");
             return View((_dataContext.Product_Keys.FirstOrDefault(m => m.OrderID == orderid && m.ProductID == productid && m.OptionValue == optionvalue), _dataContext.OrderDetailViews.FirstOrDefault(m => m.ProductID == productid && m.ProductOptionValue == optionvalue)));
@@ -191,7 +154,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return Redirect("/user/");
             }
-            var value = _dataContext.Orders.FirstOrDefault(m => m.UserID == userid && m.OrderID == orderid);
+            var value = _dataContext.Orders.FirstOrDefault(m => m.UserID == userid && m.OrderID == orderid && m.Time.AddDays(7) > DateTime.Now);
             if (value == null)
                 return Redirect("/user/");
             var thisorderdetail = _dataContext.OrderDetailViews.FirstOrDefault(m => m.OrderID == orderid && m.ProductID == productid && m.ProductOptionValue == optionvalue);

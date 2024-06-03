@@ -230,8 +230,8 @@
                                 ${item.key2}
                             </td>
                             <td class="">
-                                 <i>@Html.Raw((Model.Item1.Time.AddDays(7).Date < DateTime.Now.Date) ? "" : $"<a href='/user/orders/error-rp/{Model.Item1.OrderID}&" + "${productid}&" + "${optionvalue}&" + "${item.key1}" + "' style='color: green; font-weight: 500; '>` + ((item.rp_FromUser == null)? 'Báo lỗi' : 'Xem lại báo lỗi') +`</a>")
-                            </td>
+                                <i>@Html.Raw((Model.Item1.Time.AddDays(7) < DateTime.Now) ? $"` + ((item.rp_FromUser == null)?'':`<a href='/user/orders/error-rp/{Model.Item1.OrderID}&" + "${productid}&${optionvalue}&${item.key1}' style='color: green; font-weight: 500; '>Xem lại báo lỗi</a>`)" : $"<a href='/user/orders/error-rp/{Model.Item1.OrderID}&" + "${productid}&" + "${optionvalue}&" + "${item.key1}" + "' style='color: green; font-weight: 500; '>` + ((item.rp_FromUser == null)? 'Báo lỗi' : 'Xem lại báo lỗi') +`</a>`")
+                            + `</td>
                         </tr>`;
                     document.getElementById("productkey").innerHTML += htmlval;
                 })

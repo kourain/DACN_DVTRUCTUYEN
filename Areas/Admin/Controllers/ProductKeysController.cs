@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
 using System.Runtime.CompilerServices;
+using Microsoft.CodeAnalysis;
 
 namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
 {
@@ -76,6 +77,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return Redirect($"/admin/productoptions/details?id={productkey.ProductID}&option={productkey.OptionValue}");
             }
+            Update_quantity(productkey.ProductID, productkey.OptionValue);
             return View(productkey);
         }
 
@@ -182,12 +184,35 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             }
 
             await _context.SaveChangesAsync();
+            Update_quantity(productid, optionvalue);
             return Redirect($"/admin/productoptions/details?id={productkey.ProductID}&option={productkey.OptionValue}");
         }
 
         private bool ProductKeyExists(string id)
         {
             return _context.Product_Keys.Any(e => e.ProductID == id);
+        }
+        //MOVE TO PRODUCT OPTIONCONTROLLER
+        // GET: Admin/ProductKeys/Update
+        //[HttpGet]
+        //[Route("/admin/ProductKeys/Update")]
+        public bool Update_quantity(string id, string optionvalue)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(optionvalue))
+            {
+                return false;
+            }
+            id = id.ToLower();
+            optionvalue = optionvalue.ToLower();
+            var productoption = _context.ProductOptions.FirstOrDefault(m => m.ProductID == id && m.OptionValue == optionvalue);
+            if (productoption != null)
+            {
+                productoption.SoldCount = _context.Product_Keys.Count(m => m.OrderID != "0");
+                productoption.Quantity = _context.Product_Keys.Count(m => m.OrderID == "0");
+                _context.Update(productoption);
+                _context.SaveChanges();
+            }
+            return true;
         }
     }
 }

@@ -2,7 +2,7 @@
 @{
     Layout = "~/Areas/User/Views/Shared/_Layout.cshtml";
     ProductOption now = Model.Item2.Where(m => m.OptionValue == ViewBag.ProductOption0).FirstOrDefault();
-    ViewData["Title"] = Model.Item1.ProductName + (now ==null ? "" : " - " + now.OptionName);
+    ViewData["Title"] = Model.Item1.ProductName + (now == null ? "" : " - " + now.OptionName);
     string topricestr(int number)
     {
         string result = number.ToString();
@@ -37,7 +37,7 @@
                 <div class="Ig" style="margin:auto">
                     <div class="Le">
                         <div class="lf gf ff">
-                            <img src="@Model.Item1.ProductImg" class="xc" style="height:130%;width:auto; margin-top:-30px" alt="@Model.Item1.ProductName">
+                            <img src="@Model.Item1.ProductImg" class="xc" style="height:130%;width:auto; margin-top:-30px; border: solid 1px;" alt="@Model.Item1.ProductName">
                         </div>
                     </div>
                 </div>
@@ -53,7 +53,10 @@
                                     <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                                         <path d="M509.5 184.6L458.9 32.8C452.4 13.2 434.1 0 413.4 0H98.6c-20.7 0-39 13.2-45.5 32.8L2.5 184.6c-1.6 4.9-2.5 10-2.5 15.2V464c0 26.5 21.5 48 48 48h416c26.5 0 48-21.5 48-48V199.8c0-5.2-.8-10.3-2.5-15.2zM32 199.8c0-1.7.3-3.4.8-5.1L83.4 42.9C85.6 36.4 91.7 32 98.6 32H240v168H32v-.2zM480 464c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V232h448v232zm0-264H272V32h141.4c6.9 0 13 4.4 15.2 10.9l50.6 151.8c.5 1.6.8 3.3.8 5.1v.2z"></path>
                                     </svg>
-                                    <div>Tình trạng: <span class="be" style="@(now.Quantity > 0 ? "" : "color:red")">@(now.Quantity > 0 ? "Còn hàng" : "Hết hàng")</span></div>
+                                    <div>Tình trạng: <span class="be" style="@(now.Quantity > 0 ? "" : "color:red")"><b>@(now.Quantity > 0 ? $"Còn {now.Quantity}" : "Hết hàng")</b></span></div>
+                                </div>
+                                <div class="ta Ee fe">
+                                    <div>Đã bán: <span class="be" style="color:black"><b>@now.SoldCount</b></span></div>
                                 </div>
                                 <div class="ta Ee fe">
                                     <div>Loại: <span class="be" style="color:blue">@producttype(now.Type)</span></div>
@@ -68,7 +71,7 @@
                         <div class="f">
                         </div>
                         <div class="Ie" onload="productoptionload()">
-                            <h6>Gói cước khác</h6>
+                            <h6>Lựa chọn khác</h6>
                             <div>
                                 <div class="ta gc Ge" id="productOption">
                                     @foreach (var item in Model.Item2)
@@ -86,6 +89,7 @@
                             </div>
                         </div>
                         <fieldset class="Oe">
+                            <h6>Bạn có thể thay đổi số lượng tại giỏ hàng</h6>
                             <div class="ta gc Ge">
                                 @* <div class="Tb">
                             <button type="submit" class="db b c ta Ee mc jc" onclick="buy()" alt="Mua siêu tốc qua Mobile Banking" @(now.Quantity > 0 ? "" : "disabled")>
@@ -141,6 +145,8 @@
                                 <p style="margin-left: 40px;" id="baohanhtime">- Chúng tôi cam kết bảo hành trong 15 ngày kể từ thời điểm đơn hàng hoàn thành</p>
                                 <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5;">Cách thức bảo hành</h3>
                                 <p style="margin-left: 40px;">- Đổi mới code/tài khoản/gói đăng ký khác nếu lỗi trong quá trình sử dụng hoặc hoàn tiền theo thời gian bạn đã sử dụng tối đa 80% nếu không có sản phẩm bảo hành.</p>
+                                <h3 style="font-family: Roboto Condensed, sans-serif; font-size: 16px; font-weight: 700; line-height: 1.5; color:red">Trường hợp từ chối bảo hành</h3>
+                                <p style="margin-left: 40px; color:red">- Vi phạm chính sách nền tảng, đã đổi mật khẩu tài khoản được cấp, tự ý thoát các gói family, tự ý thay đổi thông tin thanh toán liên kết với tài khoản.</p>
                             </div>
                         </div>
                     </div>
@@ -195,7 +201,7 @@ else
                 <div class="Ig" style="margin:auto">
                     <div class="Le">
                         <div class="lf gf ff">
-                            <img src="@Model.Item1.ProductImg" class="xc" style="height:130%;width:auto; margin-top:-30px" alt="@Model.Item1.ProductName">
+                            <img src="@Model.Item1.ProductImg" class="xc" style="height:130%;width:auto; margin-top:-30px; border: solid 1px;" alt="@Model.Item1.ProductName">
                         </div>
                     </div>
                 </div>
@@ -226,7 +232,7 @@ else
                         <div class="f">
                         </div>
                         <div class="Ie">
-                            <h6>Gói cước khác</h6>
+                            <h6>Lựa chọn khác</h6>
                             <div>
                                 <div class="ta gc Ge" id="productOption">
                                     <div><a class="b ta jc Ga d Gh">Chưa được thêm</a></div>

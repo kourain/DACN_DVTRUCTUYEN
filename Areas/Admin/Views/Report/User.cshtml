@@ -1,0 +1,81 @@
+﻿@model (List<(User,int,long)>,int)
+
+@{
+    ViewData["Title"] = "Thống kê";
+}
+
+<div class="pagetitle">
+    <h2>Danh sách 20 người mua nhiều nhất @Model.Item2 ngày qua</h2>
+</div>
+
+<p>
+    <a type="button" class="btn btn-success" href="/admin/report/user/?date=30">
+        <i class="bi bi-file-earmark-text me-1">
+            30ngày gần nhất
+        </i>
+    </a>
+    <a type="button" class="btn btn-success" href="/admin/report/user/?date=60">
+        <i class="bi bi-file-earmark-text me-1">
+            60ngày gần nhất
+        </i>
+    </a>
+    <a type="button" class="btn btn-success" href="/admin/report/user/?date=90">
+        <i class="bi bi-file-earmark-text me-1">
+            90ngày gần nhất
+        </i>
+    </a>
+    <a type="button" class="btn btn-success" href="/admin/report/user/?date=180">
+        <i class="bi bi-file-earmark-text me-1">
+            180ngày gần nhất
+        </i>
+    </a>
+</p>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table">
+                        <colgroup>
+                            <col style="width:8%"/>
+                            <col style="width:10%"/>
+                            <col style="width:10%"/>
+                            <col style="width:10%"/>
+                            <col style="width:10%"/>
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="">Mã người dùng</th>
+                                <th class="">Tên người dùng</th>
+                                <th class="">Số đơn hàng</th>
+                                <th class="">Số tiền đã sử dụng</th>
+                                <th class="">Tổng số tiền đã sử dụng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model.Item1)
+                            {
+                                <tr>
+                                    <td class="" scope="row">@item.Item1.UserId</td>
+                                    <td class="">@item.Item1.Name</td>
+                                    <td class="">@item.Item2</td>
+                                    <td class="">@item.Item3</td>
+                                    <td class="">@item.Item1.TotalPaid</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+    <style>
+        td, th {
+            border: solid 1px;
+        }
+    </style>
+</section>

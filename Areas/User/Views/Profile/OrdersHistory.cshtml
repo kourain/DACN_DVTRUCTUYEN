@@ -7,12 +7,14 @@
         switch (paystatus)
         {
             case -2:
-                return "Hủy thanh toán";
+                return "Thanh toán thất bại";
             case -1:
                 return "Thanh toán thất bại";
             case 0:
                 return "Chờ thanh toán";
             case 1:
+                return "Thanh toán thành công";
+            case 2:
                 return "Thanh toán thành công";
             default:
                 return "Không thể đọc thông tin";
@@ -27,14 +29,16 @@
             case -1:
                 return "";
             case 0:
-                return "Hủy thanh toán";
+                return "Thanh toán thất bại";
             case 1:
+                return "Xem đơn hàng";
+            case 2:
                 return "Xem đơn hàng";
             default:
                 return "Không thể đọc thông tin";
         }
     }
-    string actionlink(int paystatus,string orderid)
+    string actionlink(int paystatus, string orderid)
     {
         switch (paystatus)
         {
@@ -45,6 +49,8 @@
             case 0:
                 return $"/user/orders/cancel/{orderid}";
             case 1:
+                return $"/user/orders/detail/{orderid}";
+            case 2:
                 return $"/user/orders/detail/{orderid}";
             default:
                 return "";
@@ -115,12 +121,57 @@
                     <div style="align-self: stretch; height: 28px; flex-direction: column; justify-content: flex-start; align-items: flex-start; display: flex">
                         <div style="align-self: stretch; color: black; font-size: 21px; font-family: Roboto; font-weight: 500; line-height: 28px; word-wrap: break-word">Lịch sử đơn hàng</div>
                     </div>
-                    <div style="color: #374151; font-size: 14px; font-family: Roboto; font-weight: 400; line-height: 21px; word-wrap: break-word">Hiển thị thông tin các sản phẩm bạn đã mua tại DB Shop</div>
+                    <div style="color: #374151; font-size: 14px; font-family: Roboto; font-weight: 400; line-height: 21px; word-wrap: break-word">Hiển thị thông tin các sản phẩm bạn đã mua tại DB Shop(chú ý chỉ có thể hiển thị lịch sử trong 180ngày gần nhất)</div>
                 </div>
                 <div style="width: 85%; height: 1px; margin-left:8%; border-top: 0.91px rgba(156, 163, 175, 0.25) solid"></div>
-                <div style="width: 85%; height: 10%; margin-left:8%; border-top: 0.91px rgba(156, 163, 175, 0.25) solid"></div>
-
-                <table class="table tbborder" style="margin-top:10px; max-height:70%">
+                <form style="width: 85%;height: 60px;margin-left:8%;padding-top:10px;z-index: 999;position: inherit;" method="get">
+                    <div class="af vh">
+                        <div class="ta gc Je" style="display:flex;justify-content: space-evenly;">
+                            <div class="af og Gg">
+                                <div class="z">
+                                    <select class="g j gd h i" name="paystatus">
+                                        <option value="0">Tất cả</option>
+                                        <option value="-2">Thất bại</option>
+                                        <option value="2">Hoàn tất</option>
+                                    </select><label>Phân loại</label>
+                                </div>
+                            </div>
+                            <div class="va Ng" style="align-content: center;">
+                                <b>-</b>
+                            </div>
+                            <div class="af og Gg">
+                                <div class="z">
+                                    <select class="g j gd h i" name="sort">
+                                        <option value="asc">Mới nhất trước</option>
+                                        <option value="desc">Cũ nhất trước</option>
+                                    </select><label>Sắp xếp</label>
+                                </div>
+                            </div>
+                            <div class="va Ng" style="align-content: center;">
+                                <b>-</b>
+                            </div>
+                            <div class="af og Gg">
+                                <div class="z">
+                                    <select class="g j gd h i" name="date">
+                                        <option value="30">30 ngày</option>
+                                        <option value="60">60 ngày</option>
+                                        <option value="90">90 ngày</option>
+                                        <option value="180">180 ngày</option>
+                                    </select><label>Thời gian</label>
+                                </div>
+                            </div>
+                            <div class="nh" style="width:90px !important;padding:0.5rem 0 0 0;min-width:90px;">
+                                <button type="submit" class="b c ta jc db Bd Ee">
+                                    <svg class="od Cb Da" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+                                        <path d="M479.968 0H32.038C3.613 0-10.729 34.487 9.41 54.627L192 237.255V424a31.996 31.996 0 0 0 10.928 24.082l64 55.983c20.438 17.883 53.072 3.68 53.072-24.082V237.255L502.595 54.627C522.695 34.528 508.45 0 479.968 0zM288 224v256l-64-56V224L32 32h448L288 224z"></path>
+                                    </svg>
+                                    <div>Lọc</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <table class="table tbborder" style="margin-top:5px; max-height:70%">
                     <thread>
                         <tr>
                             <th style="width:5%">

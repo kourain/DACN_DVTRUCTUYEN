@@ -194,7 +194,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 {
                     if (product.ProductID != productidold)
                         _context.Database.ExecuteSql(FormattableStringFactory.Create($"UPDATE [dbo].[PRODUCT] SET " +
-                            $"PRODUCTID = '{product.ProductID}', " +
+                            $"PRODUCTID = '{product.ProductID}' " +
                             $" WHERE PRODUCTID = '{productidold}'"));
                     _context.Update(product);
                 }

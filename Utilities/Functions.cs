@@ -14,8 +14,13 @@ namespace DACN_DVTRUCTUYEN.Utilities
 {
     public class Functions
     {
-        protected static JsonObject tokenUser = new JsonObject();
-        protected static JsonObject tokenAdmin = new JsonObject();
+        protected static JsonObject tokenUser;
+        protected static JsonObject tokenAdmin;
+        public Functions()
+        {
+            tokenUser = new JsonObject();
+            tokenAdmin = new JsonObject();
+        }
         public static string MD5Hash(string text)
         {
             using (MD5 md5 = MD5.Create())
@@ -30,12 +35,13 @@ namespace DACN_DVTRUCTUYEN.Utilities
                 return strBuilder.ToString();
             }
         }
-        public static void saveLoginUser(string agg1, string agg2,string agg3, bool agg4)
+        public static void saveLoginUser(string agg1, string agg2, string agg3, bool agg4)
         {
 
             var thisval = tokenUser[agg1];
             //lưu token tại hệ thống với thời hạn sử dụng là 6 giờ
-            try { 
+            try
+            {
                 tokenUser.Add(agg1, JsonNode.Parse(JsonSerializer.Serialize(new
                 {
                     //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
@@ -44,7 +50,8 @@ namespace DACN_DVTRUCTUYEN.Utilities
                     email = agg3
                 })));
             }
-            catch { 
+            catch
+            {
                 //6 giờ cho thời hạn token, 7 giờ do hệ thống đang sử dụng giờ GMT+7
                 tokenUser[agg1]["time"] = DateTime.Now.AddHours(6 + 7).ToString("yyyy-MM-dd HH:mm:ss");
             }
@@ -66,7 +73,7 @@ namespace DACN_DVTRUCTUYEN.Utilities
             if (thisval == null)
                 return 0;
             return int.Parse(thisval["UID"].ToString());
-            
+
         }
 
         public static int IsLoginUser(string? posttokenUser, string? uid = "")
