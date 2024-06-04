@@ -21,7 +21,7 @@
                                     <div class="Zd">@item.PriceNow</div>
                                     <div class="ie Zd me">@item.PriceOld</div>
                                     <div>
-                                        <small class="Zd aa Id Jd xc _c ke">-62%</small>
+                                        <small class="Zd aa Id Jd xc _c ke">-@Math.Round((1 - item.PriceNow / (float)item.PriceOld) * 100)%</small>
                                     </div>
                                 </div>
                             </div>

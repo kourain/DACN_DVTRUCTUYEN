@@ -21,7 +21,7 @@
 <h1>Chi tiết</h1>
 
 <div>
-    <h4>Lựa chọn của sản phẩm</h4>
+    <h4>loại sản phẩm</h4>
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
@@ -88,6 +88,11 @@
             <a type="button" class="btn btn-success" href="/admin/productkeys/create?id=@(Model.Item1.ProductID)&optionvalue=@Model.Item1.OptionValue">
                 <i class="bi bi-file-earmark-text me-1">
                     Thêm mới
+                </i>
+            </a>
+            <a type="button" class="btn btn-success" href="/admin/productkeys/from_excel?id=@(Model.Item1.ProductID)&optionvalue=@Model.Item1.OptionValue">
+                <i class="bi bi-file-earmark-text me-1">
+                    Nhập từ tệp excel
                 </i>
             </a>
             <a type="button" class="btn btn-success" href="/admin/productkeys/update?id=@(Model.Item1.ProductID)&optionvalue=@Model.Item1.OptionValue"> 

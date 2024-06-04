@@ -172,7 +172,7 @@
                                     @order_str(item.OrderStatusID)
                                 </td>
                                 <td class="">
-                                    <button type="button" onclick="actionlink('@actionlink(item.ProductID,item.ProductOptionValue,item.OrderStatusID,item.OrderID)','@item.ProductName','@item.ProductID','@item.ProductOptionValue');" style="color:green;font-weight: 500;"><i>@actionname(item.OrderStatusID, item.Type)</i></button>
+                                    <button type="button" onclick="actionlink('@actionlink(item.ProductID,item.ProductOptionValue,item.OrderStatusID,item.OrderID)','@item.ProductName','@item.ProductID','@item.ProductOptionValue',@item.Quantity);" style="color:green;font-weight: 500;"><i>@actionname(item.OrderStatusID, item.Type)</i></button>
                                 </td>
                             </tr>
                         }
@@ -203,13 +203,13 @@
     </div>
 </div>
 <script>
-    function actionlink(link,name,productid,optionvalue) {
+    function actionlink(link,name,productid,optionvalue,quantity) {
         if (link == '' || link == null) return;
         if (link == 'cancel') shownoti('Không thể hủy', 4000);
         let displaytable = document.getElementById("displaytable");
         displaytable.style.display = "block";
         document.getElementById("productkey").innerHTML = "";
-        $("#productname").html("Thông tin của \"" + name + "\"")
+        $("#productname").html("Thông tin của \"" + name + "\", lưu ý: vùng có nền vàng là sản phẩm được gửi lại sau khi báo lỗi!")
         fetch(link)
             .then(response => {
                 if (!response.ok) {
@@ -220,9 +220,13 @@
             .then(data => {
                 // Process the retrieved user data
                 // console.log('User Data:', data);
+                var count = 0;
                 data.forEach(function (item) {
+                    count++;
+                    var substr = '';
+                    if (count > quantity) substr = 'class="SendNew"';
                     var htmlval = `
-                        <tr style="height:30px">
+                        <tr style="height:30px" ${substr} >
                             <td class="">
                                 ${item.key1}
                             </td>
@@ -258,5 +262,8 @@
         text-align: center;
         width: 10%;
         border: 1px rgba(156, 163, 175, 0.25) solid;
+    }
+    .SendNew{
+        background-color:yellow;
     }
 </style>

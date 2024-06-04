@@ -8,7 +8,10 @@ using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
 using System.Runtime.CompilerServices;
 using Microsoft.CodeAnalysis;
-
+using DACN_DVTRUCTUYEN.Utilities;
+using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Spreadsheet;
+using Microsoft.Data.SqlClient;
 namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
 {
     [Area("Admin")]
@@ -30,7 +33,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         // GET: Admin/ProductKeys/Create
         [HttpGet]
         [Route("/admin/ProductKeys/create")]
-        public async Task<IActionResult> Create([FromQuery]string id, [FromQuery]string optionvalue)
+        public async Task<IActionResult> Create([FromQuery] string id, [FromQuery] string optionvalue)
         {
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(optionvalue))
             {
@@ -49,7 +52,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             var temp = _context.ProductOptions.Where(m => m.ProductID == id && m.OptionValue == optionvalue).ToList();
             if (temp.FirstOrDefault() == null)
                 return Redirect($"/admin/productoptions/details?id={id}&option={optionvalue}");
-            if(temp.FirstOrDefault().Type != 1)
+            if (temp.FirstOrDefault().Type != 1)
                 return Redirect($"/admin/productoptions/details?id={id}&option={optionvalue}");
             ViewBag.ProductOption = (from m in temp
                                      select new SelectListItem()
@@ -204,7 +207,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             }
             id = id.ToLower();
             optionvalue = optionvalue.ToLower();
-            var productoption = _context.ProductOptions.FirstOrDefault(m => m.ProductID == id && m.OptionValue == optionvalue);
+            var productoption = _context.ProductOptions.FirstOrDefault(m => m.ProductID == id && m.OptionValue == optionvalue && m.Type == 1);
             if (productoption != null)
             {
                 productoption.SoldCount = _context.Product_Keys.Count(m => m.OrderID != "0");
@@ -213,6 +216,128 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 _context.SaveChanges();
             }
             return true;
+        }
+
+        [HttpGet]
+        [Route("/admin/ProductKeys/template/{id}/{optionvalue}")]
+        public async Task<IActionResult> Download_template(string id, string optionvalue)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(optionvalue))
+            {
+                return NotFound();
+            }
+            id = id.ToLower();
+            optionvalue = optionvalue.ToLower();
+            var xlsx = new XLWorkbook("wwwroot/template.xlsx");
+            var worksheet = xlsx.Worksheet(1);
+            byte[] workbookBytes;
+            var productoption = _context.ProductOptions.Where(m => m.OptionValue == optionvalue && m.ProductID == id && m.Type == 1).FirstOrDefault();
+            if (productoption == null)
+            {
+                return NotFound();
+            }
+            worksheet.Cell("B1").Value = id;
+            worksheet.Cell("B2").Value = optionvalue;
+            using (var ms = new MemoryStream())
+            {
+                xlsx.SaveAs(ms);
+                workbookBytes = ms.ToArray();
+            }
+            return File(workbookBytes, contentType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", fileDownloadName: $"Template-{id}-{optionvalue}.xlsx");
+        }
+        [HttpGet]
+        [Route("/admin/ProductKeys/from_excel")]
+        public async Task<IActionResult> ImportFromExcel([FromQuery] string id, [FromQuery] string optionvalue)
+        {
+            if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(optionvalue))
+            {
+                return NotFound();
+            }
+            id = id.ToLower();
+            optionvalue = optionvalue.ToLower();
+            var productoption = _context.ProductOptions.Where(m => m.OptionValue == optionvalue && m.ProductID == id && m.Type == 1).FirstOrDefault();
+            if (productoption == null)
+            {
+                return NotFound();
+            }
+            return View((id, optionvalue));
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("/admin/ProductKeys/from_excel")]
+        public async Task<IActionResult> ImportFromExcel([FromForm] IFormFile FormFile, [FromQuery] string id, [FromQuery] string optionvalue)
+        {
+            if (FormFile == null || FormFile.Length == 0)
+            {
+                ViewBag.error = "Vui lòng chọn một tệp Excel.";
+                ModelState.Remove(nameof(FormFile));
+                return View((id, optionvalue));
+            }
+            id = id.ToLower();
+            optionvalue = optionvalue.ToLower();
+            var productoption = _context.ProductOptions.Where(m => m.OptionValue == optionvalue && m.ProductID == id && m.Type == 1).FirstOrDefault();
+            if (productoption == null)
+            {
+                return NotFound();
+            }
+            int row_count = 3;
+            int success_row_count = 0;
+            int err_row_count = 0;
+            using (var stream = new MemoryStream())
+            {
+                FormFile.CopyTo(stream);
+                XLWorkbook workbook;
+                try
+                {
+                    workbook = new XLWorkbook(stream);
+                }
+                catch (System.IO.FileFormatException)
+                {
+                    ViewBag.error = "Định dạng tệp tin không đúng";
+                    return View((id, optionvalue));
+                }
+                var worksheet = workbook.Worksheet(1);
+                if (worksheet.Cell("B1").Value.GetText().ToLower() == id && worksheet.Cell("B2").Value.GetText().ToLower() == optionvalue)
+                    while (true)
+                    {
+                        var row = worksheet.Row(row_count + 1);
+                        if (row.Cell(1).Value.IsBlank)
+                        {
+                            break;
+                        }
+                        var productkey = new Product_Key()
+                        {
+                            ProductID = id,
+                            OptionValue = optionvalue,
+                            Key1 = row.Cell(1).GetString().ToLower(),
+                            Key2 = row.Cell(2).GetString(),
+                            OrderID = "0",
+                        };
+                        if(_context.Product_Keys.FirstOrDefault(m=> m.ProductID == id && m.OptionValue == optionvalue && m.Key1 == productkey.Key1) == null)
+                        {
+                            _context.Product_Keys.Add(productkey);
+                            success_row_count++;
+                        }
+                        else
+                        {
+                            err_row_count++;
+                        }
+                        row_count++;
+                    }
+                else
+                {
+                    ViewBag.error = "định dạng tệp tin không đúng";
+                    return View((id, optionvalue));
+                }
+                _context.SaveChanges();
+            }
+            ViewBag.inf = $"Tìm thấy {row_count-3} khóa/tài khoản";
+            ViewBag.success = $"Thêm thành công cho {success_row_count} khóa/tài khoản";
+            if (err_row_count > 0)
+            {
+                ViewBag.error = $"Thêm thất bại cho {err_row_count} khóa/tài khoản";
+            }
+            return View((id, optionvalue));
         }
     }
 }

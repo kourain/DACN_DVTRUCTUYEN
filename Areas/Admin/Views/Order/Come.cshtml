@@ -1,0 +1,75 @@
+﻿@model IList<OrderReportView>
+
+@{
+    ViewData["Title"] = "Đơn hàng cần xử lý";
+    string producttype(int type)
+    {
+        switch (type)
+        {
+            case 0:
+                return "Tạo tài khoản";
+            case 1:
+                return "Có sẵn";
+            case 2:
+                return "Đăng ký/mua chính chủ";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
+}
+
+<div class="pagetitle">
+    <h2>Danh sách đơn hàng cần xử lý</h2>
+</div>
+
+<section class="section dashboard">
+    <div class="row">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto">
+                <div class="card-body mt-4">
+                    <table class="table table-borderless datatable">
+                        <colgroup>
+                            <col style="width:10%"/>
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                            <col style="width:10%" />
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th class="">Mã đơn hàng</th>
+                                <th class="">Sản phẩm</th>
+                                <th class="">Tên người dùng</th>
+                                <th class="">Số lượng</th>
+                                <th class="">Loại</th>
+                                <th class="">Thời điểm phát sinh</th>
+                                <th class="">Chức năng</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td class="" scope="row">@item.OrderID</td>
+                                    <td class="">@item.ProductName-@item.OptionName</td>
+                                    <td class="">@item.Name</td>
+                                    <td class="">@item.Quantity</td>
+                                    <td class="">@producttype(item.Type)</td>
+                                    <td class="">@item.Time.ToString("HH:mm:ss dd/MM/yyyy")</td>
+
+                                    <td class="">
+                                        <a href="/admin/Order/Details?orderid=@item.OrderID&productid=@item.ProductID&optionvalue=@item.ProductOptionValue" class="btn btn-primary btn-sm" title="Xem chi tiết">
+                                            <i class="bi bi-ticket-detailed"> Xem chi tiết</i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

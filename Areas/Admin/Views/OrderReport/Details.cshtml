@@ -1,0 +1,124 @@
+﻿@model (Product_Key,OrderReportView)
+
+@{
+    ViewData["Title"] = "Chi tiết";
+    string producttype(int type)
+    {
+        switch (type)
+        {
+            case 0:
+                return "Tạo tài khoản";
+            case 1:
+                return "Có sẵn";
+            case 2:
+                return "Đăng ký/mua chính chủ";
+            default:
+                return "Không thể đọc thông tin";
+        }
+    }
+}
+
+<div class="container shadow p-5">
+    <div class="row pb-2">
+        <h2>Xem chi tiết</h2>
+    </div>
+    <form method="post">
+        <div asp-validation-summary="All"></div>
+        <div class="form-row">
+            <input name="productid" value="@Model.Item1.ProductID" hidden>
+            <input name="optionvalue" value="@Model.Item1.OptionValue" hidden>
+            <div class="form-group col-md-6">
+                <label>Mã đơn hàng</label>
+                <input type="text" class="form-control mb-3" name="orderid" value="@Model.Item1.OrderID" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Thời điểm phát sinh</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item2.Time.ToString("HH:mm:ss dd/MM/yyyy")" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Sản phẩm</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item2.ProductName-@Model.Item2.OptionName" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Loại</label>
+                <input type="text" class="form-control mb-3" value="@producttype(Model.Item2.Type)" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Khóa 1</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item1.Key1" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Khóa 2</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item1.Key2" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Tên người dùng</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item2.Name" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Email</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item2.Email" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Số điện thoại</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item2.Phone" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Telegram username</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item2.TelegramUserName" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Thời điểm phản hồi</label>
+                <input type="text" class="form-control mb-3" value="@Model.Item1.Rp_FromUser_Time?.ToString("HH:mm:ss dd/MM/yyyy")" readonly>
+                <span class=" alert-danger"></span>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Phản hồi của người dùng</label>
+                <textarea type="text" class="form-control mb-3" readonly>@Model.Item1.Rp_FromUser</textarea>
+                <span class=" alert-danger"></span>
+            </div>
+            @if (Model.Item2.Type == 1)
+            {
+                if (Model.Item1.Rp_Response == null)
+                {
+                    <div class="form-group col-md-6">
+                        <label>Gửi tài khoản mới cho người dùng</label>
+                        <select class="form-control mb-3" id="set" name="set">
+                            <option value="0">Không</option>
+                            <option value="1">Có</option>
+                        </select>
+                        <span class=" alert-danger"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="form-group col-md-6">
+                        <label>Gửi tài khoản mới cho người dùng</label>
+                        <input type="text" class="form-control mb-3" value="@Html.Raw(Model.Item1.Rp_SendNew == true? "Có":"Không")" readonly>
+                        <span class=" alert-danger"></span>
+                    </div>
+                }
+            }
+            <div class="form-group col-md-6">
+                <label>Phản hồi gửi người dùng</label>
+                <textarea type="text" class="form-control mb-3" name="rp_response" required>@Model.Item1.Rp_Response</textarea>
+                <span class=" alert-danger"></span>
+            </div>
+        </div>
+        @if (Model.Item1.Rp_Response == null)
+        {
+            <button type="submit" class="btn btn-lg btn-primary p-2"><i class="bi bi-file-plus-fill"></i>Gửi phản hồi</button>
+        }
+        <button onclick="history.back()" class="btn btn-lg btn-warning p-2">Quay lại</button>
+    </form>
+</div>

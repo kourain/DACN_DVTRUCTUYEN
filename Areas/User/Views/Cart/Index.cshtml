@@ -211,9 +211,9 @@
                     <fieldset class="ta ec kc Ie">
                         <h6><i>Chú ý:<br /> </i> Bạn sẽ thanh toán tất cả sản phẩm đang có trong giỏ hàng, hãy xóa bất kì sản phẩm bạn không cần thiết ra khỏi giỏ hàng!</h6>
                         <div class="Td he vc rc tc">Ghi chú của bạn cho DB shop cho đơn hàng này</div>
-                        <textarea name="note" id="note" style="border:solid 1px;resize: none; height:200px;"></textarea>
+                        <textarea name="note" id="note" style="border:solid 1px;resize: none; height:200px;" required></textarea>
                         <div class="Td he vc rc tc">Sử dụng thẻ hoặc máy quét QR. Thanh toán ngay!</div>
-                        <button type="submit" type="button" class="b c ta mc jc bd xf Cf">
+                        <button type="submit" id="paybuttonn" class="pay b c ta mc jc bd xf Cf">
                             <div class="ta Ee rc">
                                 <img loading="lazy" src="~/QR.svg" class="Db wa" alt="Mua siêu tốc qua Mobile Banking" />
                                 <svg class="od Db" style="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
@@ -230,9 +230,9 @@
 </div>
 <script>
     // Lấy form
-    let form = document.getElementById("payform");
-
+    form = document.getElementById("payform");
     form.addEventListener('submit', function (event) {
+        $("#paybuttonn").attr("disabled", true);
         shownoti("đang tạo đơn hàng");
         // Ngăn chặn hành vi mặc định của form
         event.preventDefault();
@@ -266,6 +266,9 @@
                 console.error('Error:', error);
             });
         clearPopUp();
+        setTimeout(() => {
+            $("#paybuttonn").attr("disabled", false);
+        }, 3000);
     });
     function add(productid, option) {
         fetch("/user/cart/add-" + productid + "-" + option)

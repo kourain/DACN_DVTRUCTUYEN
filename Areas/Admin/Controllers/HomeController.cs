@@ -25,7 +25,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
         [Route("/Admin/Login")]
         [HttpPost]
-        public ActionResult Login(Login postdata)
+        public IActionResult Login(Login postdata)
         {
             if (!ModelState.IsValid)
             {
@@ -75,15 +75,18 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         [Route("/Admin/AdminChangePass")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult AdminChangePass(ChangePass cp)
+        public async Task<IActionResult> AdminChangePass(ChangePass cp)
         {
             if (!ModelState.IsValid)
+            {
+                //return NotFound();
                 return Ok(new
                 {
                     code = "0",
                     messenger = "Thông tin không hợp lệ",
                     res2 = cp.oldPass + cp.newPass
                 });
+            }
             int adminid = Functions.IsLoginAdmin(Request.Cookies["token"], Request.Cookies["id"]);
             if (adminid == 0)
             {

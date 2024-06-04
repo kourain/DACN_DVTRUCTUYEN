@@ -18,5 +18,6 @@ namespace DACN_DVTRUCTUYEN.Models
         public DateTime? Rp_FromUser_Time { get; set; }
         public string? Rp_Response { get; set; }
         public DateTime? Rp_Response_Time { get; set; }
+        public bool? Rp_SendNew { get; set; }
     }
 }

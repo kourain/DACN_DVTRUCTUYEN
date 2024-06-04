@@ -50,13 +50,13 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             }
             if(banuser.Ban == true)
             {
-                TelegramBot.TelegramBotStatic.SendStaticMess(banuser.TelegramChatID, $"Chào {banuser.Name}:\n" +
+                TelegramBot.Controllers.HomeController.SendMess(banuser.TelegramChatID, $"Chào {banuser.Name}:\n" +
                     $"\tTài khoản DB Shop {banuser.Email} của bạn vừa được gỡ trạng thái cấm\n" +
                     $"\tHãy tới trang web mua hàng ngay nào!");
             }
             else
             {
-                TelegramBot.TelegramBotStatic.SendStaticMess(banuser.TelegramChatID, $"Chào {banuser.Name}:\n" +
+                TelegramBot.Controllers.HomeController.SendMess(banuser.TelegramChatID, $"Chào {banuser.Name}:\n" +
                     $"\tTài khoản DB Shop {banuser.Email} của bạn vừa bị cấm\n" +
                     $"\tLý do: {us.BanReason}");
             }

@@ -61,8 +61,9 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                         Quantity = item.Quantity,
                     });
                 }
-                var num = _dataContext.ProductOptions.FromSql(FormattableStringFactory.Create($"UPDATE [DBO].[ProductOption] SET SoldCount = SoldCount + {item.Quantity} WHERE ProductID = '{item.ProductID}' AND " +
-                $"OptionValue = N'{item.ProductOptionValue}' ;")).ToList();// OR ProductDescription LIKE N'%{like}%'
+                var num = _dataContext.ProductOptions.FirstOrDefault(m => m.ProductID == item.ProductID && m.OptionValue == item.ProductOptionValue);
+                num.SoldCount += item.Quantity;
+                _dataContext.Update(num);
             }
             //del user cart
             var listcart = _dataContext.CartViews.Where(m => m.UserID == value.UserID && m.ProductOptionQuantity > 0).ToList();
@@ -119,7 +120,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         }
         [Route("/user/orders/detail/api/{orderid}/{productid}/{optionvalue}")]
         [HttpGet]
-        public async Task<IActionResult> GETDETAIL(string orderid,string productid,string optionvalue)
+        public async Task<IActionResult> GETDETAIL(string orderid, string productid, string optionvalue)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
@@ -143,11 +144,11 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             var value = _dataContext.Orders.FirstOrDefault(m => m.UserID == userid && m.OrderID == orderid && m.Time.AddDays(7) > DateTime.Now);
             if (value == null)
                 return Redirect("/user/");
-            return View((_dataContext.Product_Keys.FirstOrDefault(m => m.OrderID == orderid && m.ProductID == productid && m.OptionValue == optionvalue), _dataContext.OrderDetailViews.FirstOrDefault(m => m.ProductID == productid && m.ProductOptionValue == optionvalue)));
+            return View((_dataContext.Product_Keys.FirstOrDefault(m => m.OrderID == orderid && m.ProductID == productid && m.OptionValue == optionvalue), _dataContext.OrderDetailViews.FirstOrDefault(m => m.OrderID == orderid && m.ProductID == productid && m.ProductOptionValue == optionvalue)));
         }
         [Route("/user/orders/error-rp/{orderid}&{productid}&{optionvalue}&{key1}")]
         [HttpPost]
-        public async Task<IActionResult> ERROR_REPORT(string orderid, string productid, string optionvalue,string userreport)
+        public async Task<IActionResult> ERROR_REPORT(string orderid, string productid, string optionvalue, string userreport)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
@@ -167,7 +168,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             thiskey.Rp_FromUser_Time = DateTime.Now;
             _dataContext.Update(thiskey);
             _dataContext.SaveChanges();
-            return View((thiskey,thisorderdetail));
+            return View((thiskey, thisorderdetail));
         }
         //[Route("/user/orders/cancel/{orderid}")]
         //MOVE TO CartController

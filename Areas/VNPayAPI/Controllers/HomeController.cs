@@ -11,14 +11,11 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
     [Area("VNPayAPI")]
     public class HomeController : Controller
     {
-        public string url = "http://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        public string returnUrl = "https://localhost:44311/vnpayAPI/PaymentConfirm";
-        public string tmnCode = "W0NBIFXR";
-        public string hashSecret = "RNOIJLQLRSXPYXUPKHXBQMGJZAWJAVPV";
+        public static string url = "http://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+        public static string returnUrl = "https://localhost:44311/vnpayAPI/PaymentConfirm";
+        public static string tmnCode = "W0NBIFXR";
+        public static string hashSecret = "RNOIJLQLRSXPYXUPKHXBQMGJZAWJAVPV";
         private readonly DataContext _dataContext;
-        public HomeController()
-        {
-        }
         public HomeController(DataContext dataContext)
         {
             _dataContext = dataContext;
@@ -27,7 +24,7 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         {
             return View();
         }
-        public async Task<string> Payment(string amount, string infor, string orderinfor)
+        public async static Task<string> Payment(string amount, string infor, string orderinfor)
         {
             string hostName = System.Net.Dns.GetHostName();
             string clientIPAddress = System.Net.Dns.GetHostAddresses(hostName).GetValue(0).ToString();
@@ -79,7 +76,7 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
                     if (vnp_ResponseCode == "00")
                     {
                         //send mess
-                        TelegramBot.TelegramBotStatic.SendStaticMess(user.TelegramChatID, $"Chào {user.Name}\n\tBạn vừa thanh toán cho đơn hàng {orderId}");
+                        TelegramBot.Controllers.HomeController.SendMess(user.TelegramChatID, $"Chào {user.Name}\n\tBạn vừa thanh toán cho đơn hàng {orderId}");
                         value.PayStatus = 1;
                         value.TransactionNo = vnpayTranId;
                         _dataContext.Update(value);
@@ -89,7 +86,7 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
                     }
                     else
                     {
-                        TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.FirstOrDefault(m => m.UserId == value.UserID).TelegramChatID, $"Thanh toán thất bại tại đơn hàng {value.OrderID}");
+                        TelegramBot.Controllers.HomeController.SendMess(_dataContext.Users.FirstOrDefault(m => m.UserId == value.UserID).TelegramChatID, $"Thanh toán thất bại tại đơn hàng {value.OrderID}");
                         value.PayStatus = -1;
                         value.TransactionNo = vnpayTranId;
                         _dataContext.Update(value);
@@ -111,18 +108,6 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         {
             string myChecksum = PayLib.HmacSHA512(secretKey, rspraw);
             return myChecksum.Equals(inputHash, StringComparison.InvariantCultureIgnoreCase);
-        }
-    }
-    public class VNPayStatic
-    {
-        protected static HomeController statics;
-        public VNPayStatic()
-        {
-            statics = new HomeController();
-        }
-        public static async Task<string> Payment(string amount, string infor, string orderinfor)
-        {
-            return await statics.Payment(amount, infor, orderinfor);
         }
     }
 }

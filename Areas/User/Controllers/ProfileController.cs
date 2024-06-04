@@ -21,36 +21,37 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
-                return BadRequest();
+                return Redirect("/user");
             }
             var us = _dataContext.Users.Where(m => m.UserId == userid).FirstOrDefault();
             return View(us);
         }
         [Route("/user/OrdersHistory")]
-        public async Task<IActionResult> OrdersHistory(int paystatus = 0, string sort="asc", int date=30)
+        public async Task<IActionResult> OrdersHistory(int paystatus = 0, string sort = "asc", int date = 7)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
             {
-                return BadRequest();
+                return Redirect("/user");
             }
             var result = _dataContext.Orders.Where(m => m.UserID == userid && m.Time >= DateTime.Now.AddDays(-date));
-            if (sort == "asc")
-                result = result.OrderBy(m => m.Time);
-            else
-            {
-                result = result.OrderByDescending(m => m.Time);
-            }
+
             switch (paystatus)
             {
                 case -2:
-                    result = result.Where(m=> m.PayStatus == -2);
+                    result = result.Where(m => m.PayStatus == -2);
                     break;
                 case 2:
                     result = result.Where(m => m.PayStatus == 2);
                     break;
                 default:
                     break;
+            }
+            if (sort == "asc")
+                result = result.OrderByDescending(m => m.Time);
+            else
+            {
+                result = result.OrderBy(m => m.Time);
             }
             //test scroll table
             //us.AddRange(_dataContext.Orders.Where(m => m.UserID == userid).OrderByDescending(m => m.Time).AsEnumerable());

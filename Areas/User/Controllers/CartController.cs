@@ -174,7 +174,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             //OrderCancellationBackgroundService.addQueue(orderid);
             //chuyển sang background service
             _dataContext.SaveChanges();
-            Areas.TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.Where(m => m.UserId == neworder.UserID).FirstOrDefault().TelegramChatID,
+            Areas.TelegramBot.Controllers.HomeController.SendMess(_dataContext.Users.Where(m => m.UserId == neworder.UserID).FirstOrDefault().TelegramChatID,
                 $"Bạn có một đơn hàng cần thanh toán mới: " +
                 $"\n\tID đơn hàng: {neworder.OrderID} " +
                 $"\n\tThời điểm phát sinh: {neworder.Time.ToString("dd/MM/yyyy HH:mm:ss")}" +
@@ -182,7 +182,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             return Ok(new
             {
                 code = 1,
-                messenger = await VNPayAPI.Controllers.VNPayStatic.Payment($"{totalpay}00", infor, orderid)
+                messenger = await VNPayAPI.Controllers.HomeController.Payment($"{totalpay}00", infor, orderid)
             });
 
         }
@@ -214,7 +214,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                     value.PayStatus = -2;
                 _dataContext.Update(value);
                 _dataContext.SaveChanges();
-                TelegramBot.TelegramBotStatic.SendStaticMess(_dataContext.Users.FirstOrDefault(m => m.UserId == value.UserID).TelegramChatID, $"Bạn đã hủy thanh toán đối với đơn hàng đơn hàng {value.OrderID}");
+                TelegramBot.Controllers.HomeController.SendMess(_dataContext.Users.FirstOrDefault(m => m.UserId == value.UserID).TelegramChatID, $"Bạn đã hủy thanh toán đối với đơn hàng đơn hàng {value.OrderID}");
             }
             return Redirect("/user/OrdersHistory");
         }

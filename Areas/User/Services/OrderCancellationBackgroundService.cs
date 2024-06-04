@@ -36,7 +36,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Services
                             order.PayStatus = -1;
                         dataContext.Update(order);
                         dataContext.SaveChanges();
-                        Areas.TelegramBot.TelegramBotStatic.SendStaticMess(dataContext.Users.Where(m => m.UserId == order.UserID).FirstOrDefault().TelegramChatID,
+                        Areas.TelegramBot.Controllers.HomeController.SendMess(dataContext.Users.Where(m => m.UserId == order.UserID).FirstOrDefault().TelegramChatID,
                                 $"Bạn có một đơn hàng quá hạn thanh toán:" +
                                 $"\n\tID đơn hàng: {order.OrderID} " +
                                 $"\n\tThời điểm phát sinh: {order.Time.ToString("dd/MM/yyyy HH:mm:ss")}" +

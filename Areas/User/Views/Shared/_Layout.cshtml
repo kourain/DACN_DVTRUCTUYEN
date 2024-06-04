@@ -65,7 +65,7 @@ else
                 text-align: center;
                 border-radius:10px;
                 z-index: 1000; /* Đảm bảo thông báo nằm trên các phần tử khác */
-                transition: top 1s ease; /* Hiệu ứng trượt */
+                transition: top 0.75s ease; /* Hiệu ứng trượt */
             }
 
                 .notification-banner.show {
@@ -158,6 +158,7 @@ else
             Đây là nội dung thông báo của bạn.
         </div>
         <script>
+            let form = '';
             var shownoti_timeout = '';
             function shownoti(show,timeout = 3000) {
                 var banner = document.getElementById("notification-banner");
@@ -172,10 +173,10 @@ else
             }
             function sendPopUp(htmlstr) {
                 var template = `
-                                <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
-                                    <div style="width: 992px;height:500px;background-color:white;">
+                        <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
+                            <div style="width: 992px;height:500px;background-color:white;">
 
-                                    </div>
+                            </div>
                                 </div>`;
                 $("#__popup").html(htmlstr);
             };

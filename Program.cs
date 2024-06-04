@@ -53,9 +53,8 @@ namespace DACN_DVTRUCTUYEN
                   name: "areas",
                   pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                 );
-            var function = new Functions();
-            var telebot = new TelegramBotStatic();
-            var vnpay = new VNPayStatic();
+            var function = new Functions(); // cookie v.v.
+            Areas.TelegramBot.Controllers.HomeController.Start();
             app.Run();
         }
     }
