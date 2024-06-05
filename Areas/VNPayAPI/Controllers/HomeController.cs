@@ -24,7 +24,7 @@ namespace DACN_DVTRUCTUYEN.Areas.VNPayAPI.Controllers
         {
             return View();
         }
-        public async static Task<string> Payment(string amount, string infor, string orderinfor)
+        public static string Payment(string amount, string infor, string orderinfor)
         {
             string hostName = System.Net.Dns.GetHostName();
             string clientIPAddress = System.Net.Dns.GetHostAddresses(hostName).GetValue(0).ToString();

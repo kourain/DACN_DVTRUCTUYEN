@@ -14,7 +14,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Models
         public int UserID { get; set; }
         public DateTime Time { get; set; }
         public int TotalPay { get; set; }
-        public int PayStatus { get; set; }
+        public Int16 PayStatus { get; set; }
         public long? TransactionNo { get; set; }
         public string? Note { get; set; }
         //order Detail
@@ -27,7 +27,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Models
         public string? ProductName { get; set; }
         //product option
         public string OptionName { get; set; }
-        public int Type { get; set; }
+        public byte Type { get; set; }
         //user
         public string? Name { get; set; }
         public string? Email { get; set; }

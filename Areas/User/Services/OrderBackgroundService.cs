@@ -47,10 +47,11 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Services
                         else
                         {
                             messenger = $"DB SHOP gửi {request.Item2.Name}, \nđây là 1 khóa kích hoạt/tài khoản của sản phẩm \"{request.Item1.ProductName}\" - \"{request.Item1.OptionName}\" thuộc đơn hàng \"{request.Item1.OrderID}\" được gửi với dạng sản phẩm bảo hành:";
-                            var key = dataContext.Product_Keys.Where(m => m.OrderID == "0").Take(1).ToList();
-                            foreach (var item2 in key)
+                            var item2 = dataContext.Product_Keys.FirstOrDefault(m => m.OrderID == "0");
+                            if (item2 != null)
                             {
                                 item2.OrderID = request.Item1.OrderID;
+                                item2.From_SendNew = true;
                                 messenger += $"\n\"{item2.Key1}\" - \"{item2.Key2}\"";
                                 dataContext.Product_Keys.Update(item2);
                             }

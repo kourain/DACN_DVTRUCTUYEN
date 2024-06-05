@@ -66,7 +66,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                     var orderdetail = _dataContext.OrderDetailViews.FirstOrDefault(m => m.ProductID == productid && m.OrderID == orderid && m.ProductOptionValue == optionvalue);
                     Areas.User.Services.OrderBackgroundService.EnqueueRequest((orderdetail, _dataContext.Users.FirstOrDefault(m=> m.UserId == orderreportview.UserID)),true);
                 }
-                else
+                else if(keys.Rp_Response == null)
                 {
                     keys.Rp_SendNew = false;
                 }

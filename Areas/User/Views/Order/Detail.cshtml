@@ -219,15 +219,13 @@
             })
             .then(data => {
                 // Process the retrieved user data
-                // console.log('User Data:', data);
-                var count = 0;
+                console.log('User Data:', data);
                 data.forEach(function (item) {
-                    count++;
                     var substr = '';
-                    if (count > quantity) substr = 'class="SendNew"';
+                    if (item.rp_SendNew == 1) substr = 'KeyOld';
                     var htmlval = `
-                        <tr style="height:30px" ${substr} >
-                            <td class="">
+                        <tr style="height:30px" >
+                                <td class="${substr}">
                                 ${item.key1}
                             </td>
                             <td class="">
@@ -262,6 +260,10 @@
         text-align: center;
         width: 10%;
         border: 1px rgba(156, 163, 175, 0.25) solid;
+    }
+
+    .KeyOld {
+        background-color: dimgrey;
     }
     .SendNew{
         background-color:yellow;

@@ -12,7 +12,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public int UserID { get; set; }
         public DateTime Time { get; set; }
         public int TotalPay { get; set; }
-        public int PayStatus { get; set; }
+        public Int16 PayStatus { get; set; }
         public long? TransactionNo { get; set; }
         public string? Note { get; set; }
     }

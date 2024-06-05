@@ -98,11 +98,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return BadRequest();
             }
-            if ((userinf.TelegramChatID == null && string.IsNullOrEmpty(userinf.TelegramName)) || string.IsNullOrEmpty(userinf.Phone))
-            {
-
-            }
-            else
+            if (!((userinf.TelegramChatID == null && string.IsNullOrEmpty(userinf.TelegramName)) || string.IsNullOrEmpty(userinf.Phone)))
             {
                 return Ok(new
                 {
@@ -182,9 +178,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             return Ok(new
             {
                 code = 1,
-                messenger = await VNPayAPI.Controllers.HomeController.Payment($"{totalpay}00", infor, orderid)
+                messenger = VNPayAPI.Controllers.HomeController.Payment($"{totalpay}00", infor, orderid)
             });
-
         }
 
 

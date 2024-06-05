@@ -21,6 +21,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Models
         public string? ProductName { get; set; }
         //product option
         public string OptionName { get; set; }
-        public int Type { get; set; }
+        public byte Type { get; set; }
     }
 }
