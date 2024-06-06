@@ -53,11 +53,16 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 });
             }
             var token = Functions.MD5Hash("admin" + postdata.LoginName + postdata.PassWord);
+            var cookieoption = new CookieOptions() { Expires = DateTime.Now.AddHours(6) };
+            if (postdata.savelogin == true)
+            {
+                cookieoption.Expires = DateTime.Now.AddDays(30);
+            }
             Functions.saveLoginAdmin(token, postdata.LoginName, temp.AdminUserID);
-            Response.Cookies.Append("username", HttpUtility.UrlEncode(temp.AdminName));
-            Response.Cookies.Append("name", "admin");
-            Response.Cookies.Append("id", postdata.LoginName);
-            Response.Cookies.Append("token", token);
+            Response.Cookies.Append("username", HttpUtility.UrlEncode(temp.AdminName), cookieoption);
+            Response.Cookies.Append("name", "admin", cookieoption);
+            Response.Cookies.Append("id", postdata.LoginName, cookieoption);
+            Response.Cookies.Append("token", token, cookieoption);
             return Ok(new
             {
                 code = "1",

@@ -1,4 +1,5 @@
 ﻿@using DACN_DVTRUCTUYEN.Utilities;
+@using DACN_DVTRUCTUYEN.Areas.User.Services;
 @using System.Web;
 @{
     Context.Request.Cookies.TryGetValue("token", out string? token);
@@ -7,7 +8,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-@if (DACN_DVTRUCTUYEN.Utilities.Functions.IsLoginUser(token, id) == 0)
+@if (OrderBackgroundService.bancheck(token, id) == true)
 {
     IgnoreBody();
     <head>
@@ -20,7 +21,7 @@ else
         <meta charset="utf-8" />
         <link rel="stylesheet" href="~/styles.css" />
         <title>@ViewData["Title"] | DB Shop</title>
-        @await Component.InvokeAsync("CheckBan")
+
         <link rel="icon" type="image/x-icon" href="/Logo.png">
         <style>
             /* onErrorImg.css */
@@ -63,7 +64,7 @@ else
                 left: 0;
                 right: 0;
                 text-align: center;
-                border-radius:10px;
+                border-radius: 10px;
                 z-index: 1000; /* Đảm bảo thông báo nằm trên các phần tử khác */
                 transition: top 0.75s ease; /* Hiệu ứng trượt */
             }
@@ -71,8 +72,9 @@ else
                 .notification-banner.show {
                     top: 10px; /* Hiển thị thông báo */
                 }
-            textarea{
-                resize:none;
+
+            textarea {
+                resize: none;
             }
 
         </style>
@@ -160,7 +162,7 @@ else
         <script>
             let form = '';
             var shownoti_timeout = '';
-            function shownoti(show,timeout = 3000) {
+            function shownoti(show, timeout = 3000) {
                 var banner = document.getElementById("notification-banner");
                 //banner.classList.remove("show");
                 if (shownoti_timeout != '') clearTimeout(shownoti_timeout);
@@ -173,11 +175,11 @@ else
             }
             function sendPopUp(htmlstr) {
                 var template = `
-                        <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
-                            <div style="width: 992px;height:500px;background-color:white;">
+                                                <div class="w A" style="background-color: rgba(0, 0, 0, .75);display:flex;align-items: center;justify-content: center;">
+                                                    <div style="width: 992px;height:500px;background-color:white;">
 
-                            </div>
-                                </div>`;
+                                                    </div>
+                                                        </div>`;
                 $("#__popup").html(htmlstr);
             };
             function clearPopUp() {

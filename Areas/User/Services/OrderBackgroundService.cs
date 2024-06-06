@@ -1,18 +1,35 @@
 ﻿
 using DACN_DVTRUCTUYEN.Areas.User.Models;
 using DACN_DVTRUCTUYEN.Models;
+using DACN_DVTRUCTUYEN.Utilities;
 
 namespace DACN_DVTRUCTUYEN.Areas.User.Services
 {
     public class OrderBackgroundService : BackgroundService
     {
         private readonly IServiceProvider _services;
+        private static DataContext _dataContext;
         public OrderBackgroundService(IServiceProvider services)
         {
             _services = services;
+            _dataContext = _services.CreateScope().ServiceProvider.GetRequiredService<DataContext>();
         }
         private static Queue<(OrderDetailView, User.Models.User, bool)> _requestQueue = new();
         public static void EnqueueRequest((OrderDetailView, Models.User) request, bool SendNew = false) => _requestQueue.Enqueue((request.Item1, request.Item2, SendNew));
+        public static bool bancheck(string token,string uid)
+        {
+            if (Functions.IsLoginUser(token, uid) == 0)
+            {
+                return true;
+            }
+            int.TryParse(uid, out int userid);
+            var us = _dataContext.Users.Where(m => m.UserId == userid).FirstOrDefault();
+            if (us.Ban == true)
+            {
+                return true;
+            }
+            return false;
+        }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             while (!stoppingToken.IsCancellationRequested)
@@ -41,7 +58,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Services
                                 OrderStatusID = 3,
                                 Quantity = request.Item1.Quantity,
                             });
-                            dataContext.SaveChanges();
                             TelegramBot.Controllers.HomeController.SendMess(request.Item2.TelegramChatID, messenger);
                         }
                         else
@@ -55,9 +71,9 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Services
                                 messenger += $"\n\"{item2.Key1}\" - \"{item2.Key2}\"";
                                 dataContext.Product_Keys.Update(item2);
                             }
-                            dataContext.SaveChanges();
                             TelegramBot.Controllers.HomeController.SendMess(request.Item2.TelegramChatID, messenger);
                         }
+                        dataContext.SaveChanges();
                     }
                 }
                 else

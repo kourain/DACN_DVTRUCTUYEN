@@ -18,6 +18,8 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         {
             _dataContext = dataContext;
         }
+        //MOVE to Service
+        //public static bool bancheck(string token,string uid)
         [HttpGet]
         public IActionResult Index()
         {
@@ -63,10 +65,15 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             }
             string token = Functions.MD5Hash("user" + logindata.LoginName + logindata.PassWord);
             Functions.saveLoginUser(token, check.UserId.ToString(), logindata.LoginName, logindata.savelogin);
-            Response.Cookies.Append("username", check.Name);
-            Response.Cookies.Append("id", check.UserId.ToString());
-            Response.Cookies.Append("mail", logindata.LoginName);
-            Response.Cookies.Append("token", token);
+            var cookieoption = new CookieOptions() { Expires = DateTime.Now.AddHours(6) };
+            if (logindata.savelogin)
+            {
+                cookieoption.Expires = DateTime.Now.AddDays(30);
+            }
+            Response.Cookies.Append("username", check.Name, cookieoption);
+            Response.Cookies.Append("id", check.UserId.ToString(),cookieoption);
+            Response.Cookies.Append("mail", logindata.LoginName,cookieoption);
+            Response.Cookies.Append("token", token, cookieoption);
             return Ok(new
             {
                 code = 1,

@@ -2,11 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using DACN_DVTRUCTUYEN.Models;
 using System.Runtime.CompilerServices;
-using System.Reflection;
-using static System.Net.Mime.MediaTypeNames;
-using Microsoft.AspNetCore.Mvc.TagHelpers;
 using SixLabors.ImageSharp;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using Microsoft.Data.SqlClient;
 
 namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
