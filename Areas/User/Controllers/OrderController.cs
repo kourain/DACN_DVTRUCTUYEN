@@ -24,13 +24,11 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         {
             return Redirect("/user/");
         }
-        [Route("/user/Orders/OK/{orderid}&{vnp_transid}&{orderInfor}")]
+        [Route("/user/Orders/OK/{orderid}&{vnp_transid:long}&{orderInfor}")]
         [HttpGet]
-        public async Task<IActionResult> Pay_return_OK(string orderid, string vnp_transid, string orderInfor)
+        public async Task<IActionResult> Pay_return_OK(string orderid, long trans_no, string orderInfor)
         {
             //update orders
-            if (!long.TryParse(vnp_transid, out long trans_no))
-                return Redirect("/user/");
             var value = _dataContext.Orders.Where(m => m.OrderID == orderid && m.PayStatus == 1 && m.TransactionNo == trans_no).FirstOrDefault();
             if (value == null)
                 return Redirect("/user/");

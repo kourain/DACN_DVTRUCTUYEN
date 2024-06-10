@@ -56,7 +56,6 @@ namespace DACN_DVTRUCTUYEN.Areas.TelegramBot.Controllers
         }
         [Route("/telegrambot/api/messenger")]
         [HttpPost]
-
         public async Task<IActionResult> messenger()
         {
             using (var reader = new StreamReader(Request.Body, encoding: Encoding.UTF8))
