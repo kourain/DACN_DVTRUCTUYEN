@@ -1,4 +1,4 @@
-﻿@model List<(DateOnly,long)>
+﻿@model List<(DateOnly,long,int)>
 @{
     string topricestr(long number)
     {
@@ -41,7 +41,8 @@
                         </colgroup>
                         <thead>
                             <tr>
-                                <th class="">Thời điểm</th>
+                                <th class="">Tháng/Năm</th>
+                                <th class="">Số đơn hàng</th>
                                 <th class="">Doanh thu</th>
                             </tr>
                         </thead>
@@ -51,7 +52,8 @@
                             {
                                 <tr>
                                     <td class="" scope="row">@item.Item1.ToString("MM/yyyy")</td>
-                                    <td class="">@topricestr(item.Item2)</td>
+                                    <td class="" scope="row">@item.Item3</td>
+                                    <td class="">@topricestr(item.Item2) vnđ</td>
                                 </tr>
                             }
                         </tbody>

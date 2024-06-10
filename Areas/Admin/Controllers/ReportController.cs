@@ -91,17 +91,17 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Money()
         {
-            List<(DateOnly, long)> result = new List<(DateOnly, long)>();
-            for (int i = -6; i <= 0; i++)
+            List<(DateOnly, long,int)> result = new List<(DateOnly, long,int)>();
+            for (int i = 0; i <= 6; i++)
             {
-                DateOnly time = DateOnly.FromDateTime(DateTime.Now.AddMonths(i));
+                DateOnly time = DateOnly.FromDateTime(DateTime.Now.AddMonths(-i));
                 var list = _dataContext.Orders.Where(m => m.PayStatus == 2 && m.Time.Month == time.Month && m.Time.Year == time.Year).ToList();
                 long value = 0;
                 foreach (var item in list)
                 {
                     value += item.TotalPay;
                 }
-                result.Add((time, value));
+                result.Add((time, value,list.Count));
             }
             return View(result);
         }

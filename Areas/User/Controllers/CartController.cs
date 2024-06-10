@@ -82,7 +82,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         }
         [Route("/user/cart/pay")]
         [HttpPost]
-        public async Task<IActionResult> Pay(string note)
+        public IActionResult Pay(string note)
         {
             int.TryParse(Request.Cookies["id"], out int userid);
             if (Functions.IsLoginUser(Request.Cookies["token"], Request.Cookies["id"]) == 0)
