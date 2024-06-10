@@ -20,9 +20,17 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
         }
         [Route("/admin/report/user")]
         [HttpGet]
-        public async Task<IActionResult> User(int date = 30)
+        public async Task<IActionResult> User(DateOnly startdate, DateOnly enddate)
         {
-            var list_order = _dataContext.Orders.Where(m => m.PayStatus == 2 && m.Time >= DateTime.Now.AddDays(-date)).GroupBy(n => n.UserID).ToList();
+            if (startdate == null) { startdate = new DateOnly().AddDays(-30); }
+            if (enddate == null) { enddate = new DateOnly(); }
+            if (startdate < DateOnly.FromDateTime(DateTime.Now.AddDays(-180))) { startdate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30)); }
+            if (startdate > enddate)
+            {
+                startdate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+                enddate = DateOnly.FromDateTime(DateTime.Now);
+            }
+            var list_order = _dataContext.Orders.Where(m => m.PayStatus == 2 && DateOnly.FromDateTime(m.Time) >= startdate && DateOnly.FromDateTime(m.Time) <= enddate).GroupBy(n => n.UserID).ToList();
             List<(Areas.User.Models.User?, int, long)> result = new List<(User.Models.User?, int, long)>();
             foreach (var item in list_order)
             {
@@ -37,14 +45,22 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 result.Add(this_result);
             }
             result = result.OrderByDescending(m => m.Item3).Take(20).ToList();
-           
-            return View((result, date));
+
+            return View((result, startdate, enddate));
         }
         [Route("/admin/report/productoption")]
         [HttpGet]
-        public async Task<IActionResult> productoption(int date = 30)
+        public async Task<IActionResult> productoption(DateOnly startdate, DateOnly enddate)
         {
-            var list_order = _dataContext.OrderViews.Where(m => m.PayStatus == 2 && m.Time > DateTime.Now.AddDays(-date)).GroupBy(n => n.ProductID).ToList();
+            if (startdate == null) { startdate = new DateOnly().AddDays(-30); }
+            if (enddate == null) { enddate = new DateOnly(); }
+            if (startdate < DateOnly.FromDateTime(DateTime.Now.AddDays(-180))) { startdate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30)); }
+            if (startdate > enddate)
+            {
+                startdate = DateOnly.FromDateTime(DateTime.Now.AddDays(-30));
+                enddate = DateOnly.FromDateTime(DateTime.Now);
+            }
+            var list_order = _dataContext.OrderViews.Where(m => m.PayStatus == 2 && DateOnly.FromDateTime(m.Time) >= startdate && DateOnly.FromDateTime(m.Time) <= enddate).GroupBy(n => n.ProductID).ToList();
             List<(ProductView?, int, int, long)> result = new List<(ProductView?, int, int, long)>();
             foreach (var item in list_order)
             {
@@ -69,7 +85,25 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
                 result.Add(this_result);
             }
             result = result.OrderByDescending(m => m.Item4).Take(20).ToList();
-            return View((result, date));
+            return View((result, startdate, enddate));
+        }
+        [Route("/admin/report/money")]
+        [HttpGet]
+        public async Task<IActionResult> Money()
+        {
+            List<(DateOnly, long)> result = new List<(DateOnly, long)>();
+            for (int i = -6; i <= 0; i++)
+            {
+                DateOnly time = DateOnly.FromDateTime(DateTime.Now.AddMonths(i));
+                var list = _dataContext.Orders.Where(m => m.PayStatus == 2 && m.Time.Month == time.Month && m.Time.Year == time.Year).ToList();
+                long value = 0;
+                foreach (var item in list)
+                {
+                    value += item.TotalPay;
+                }
+                result.Add((time, value));
+            }
+            return View(result);
         }
     }
 }

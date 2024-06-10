@@ -24,7 +24,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         {
             return Redirect("/user/");
         }
-        [Route("/user/Orders/OK/{orderid}&{vnp_transid:long}&{orderInfor}")]
+        [Route("/user/Orders/OK/{orderid}&{trans_no:long}&{orderInfor}")]
         [HttpGet]
         public async Task<IActionResult> Pay_return_OK(string orderid, long trans_no, string orderInfor)
         {

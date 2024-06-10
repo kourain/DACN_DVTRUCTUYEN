@@ -165,7 +165,6 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
         }
         [Route("/User/ChangePass")]
         [HttpPost]
-        [ValidateAntiForgeryToken]
         public ActionResult ChangePass(ChangePass cp)
         {
             if (!ModelState.IsValid)
@@ -191,11 +190,17 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 check.Password = Functions.MD5Hash(cp.newPass);
                 _dataContext.Update(check);
                 _dataContext.SaveChanges();
+                //tạo token mới sau khi thay đổi mật khẩu
+                var newtoken = Functions.MD5Hash("user" + check.Email + check.Password);
+                Functions.tokenChangeUser(Request.Cookies["token"], newtoken);
+                //cập nhật token trên trình duyệt khách
+                Response.Cookies.Delete("token");
+                //cập nhật token trên máy chủ
             }
             return Ok(new
             {
                 code = 0,
-                messenger = "Thành Công!!!",
+                messenger = "Thành Công, Bạn cần đăng nhập lại ngay bây giờ!!!",
             });
         }
     }

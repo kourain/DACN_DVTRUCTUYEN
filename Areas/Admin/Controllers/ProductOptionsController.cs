@@ -160,7 +160,7 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             if (productoption != null)
             {
                 //productoption.SoldCount = _context.Product_Keys.Count(m => m.OrderID != "0");
-                productoption.Quantity = _context.Product_Keys.Count(m => m.OrderID == "0");
+                productoption.Quantity = _context.Product_Keys.Count(m => m.OrderID == "0" && m.ProductID == id && m.OptionValue == optionvalue);
                 _context.Update(productoption);
                 _context.SaveChanges();
             }

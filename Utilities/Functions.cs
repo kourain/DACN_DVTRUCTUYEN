@@ -91,8 +91,9 @@ namespace DACN_DVTRUCTUYEN.Utilities
         public static void tokenChangeUser(string oldkey, string newkey)
         {
             if (string.IsNullOrEmpty(oldkey) || string.IsNullOrEmpty(newkey)) return;// Rename the key
-            tokenUser[newkey] = tokenUser[oldkey];
             tokenUser.Remove(oldkey);
+            tokenUser.Remove(newkey);
+            tokenUser[newkey] = tokenUser[oldkey];
         }
         public static void saveLoginAdmin(string agg1, string agg2, int agg3)
         {

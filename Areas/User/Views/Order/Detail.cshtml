@@ -28,7 +28,7 @@
                     return "Xem chi tiết";
                 else return "";
             default:
-                return "Không thể đọc thông tin";
+                return "Đang đợi xử lý";
         }
     }
     string actionlink(string productid, string optionvalue, int orderstatus_id, string orderid)
@@ -172,7 +172,7 @@
                                     @order_str(item.OrderStatusID)
                                 </td>
                                 <td class="">
-                                    <button type="button" onclick="actionlink('@actionlink(item.ProductID,item.ProductOptionValue,item.OrderStatusID,item.OrderID)','@item.ProductName','@item.ProductID','@item.ProductOptionValue',@item.Quantity);" style="color:green;font-weight: 500;"><i>@actionname(item.OrderStatusID, item.Type)</i></button>
+                                    <button type="button" onclick="actionlink('@actionlink(item.ProductID,item.ProductOptionValue,item.OrderStatusID,item.OrderID)','@item.OptionName','@item.ProductID','@item.ProductOptionValue',@item.Quantity);" style="color:green;font-weight: 500;"><i>@actionname(item.OrderStatusID, item.Type)</i></button>
                                 </td>
                             </tr>
                         }
@@ -183,6 +183,9 @@
                     <table class="table tbborder" style="margin-top:10px; height:200px;">
                         <thread>
                             <tr>
+                                <th style="width:1%">
+                                    Trạng thái
+                                </th>
                                 <th style="width:1%">
                                     Mục 1
                                 </th>
@@ -222,13 +225,20 @@
                 console.log('User Data:', data);
                 data.forEach(function (item) {
                     var substr = '';
-                    if (item.rp_SendNew == 1) substr = 'KeyOld';
+                    var subclass = '';
+                    if (item.from_SendNew == 1) substr += 'Bảo hành ';
+                    if (item.from_SendNew == 1) subclass += 'SendNew ';
+                    if (item.rp_SendNew == 1) substr += 'Khóa hỏng';
+                    if (item.rp_SendNew == 1) subclass += ' KeyOld';
                     var htmlval = `
-                        <tr style="height:30px" >
-                                <td class="${substr}">
+                            <tr style="height:30px" >
+                                <td class="${subclass}">
+                                ${substr}
+                                </td>
+                                <td >
                                 ${item.key1}
-                            </td>
-                            <td class="">
+                                </td>
+                                <td>
                                 ${item.key2}
                             </td>
                             <td class="">

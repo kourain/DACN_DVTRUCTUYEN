@@ -1,58 +1,40 @@
-﻿@model (List<(ProductView,int,int,long)>,int)
+﻿@model (List<(ProductView,int,int,long)>,DateOnly,DateOnly)
 
 @{
     ViewData["Title"] = "Thống kê";
 }
 
 <div class="pagetitle">
-    <h2>Danh sách 20 sản phẩm được mua nhiều nhất nhiều nhất @Model.Item2 ngày qua</h2>
+    <h2>Danh sách sản phẩm được mua nhiều nhất nhiều nhất kể từ ngày @Model.Item2 tới ngày @Model.Item3</h2>
 </div>
-
-<p>
-    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=1">
-        <i class="bi bi-file-earmark-text me-1">
-            1ngày gần nhất
-        </i>
-    </a>
-    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=7">
-        <i class="bi bi-file-earmark-text me-1">
-            7ngày gần nhất
-        </i>
-    </a>
-    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=30">
-        <i class="bi bi-file-earmark-text me-1">
-            30ngày gần nhất
-        </i>
-    </a>
-    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=60">
-        <i class="bi bi-file-earmark-text me-1">
-            60ngày gần nhất
-        </i>
-    </a>
-    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=90">
-        <i class="bi bi-file-earmark-text me-1">
-            90ngày gần nhất
-        </i>
-    </a>
-    <a type="button" class="btn btn-success" href="/admin/report/productoption/?date=180">
-        <i class="bi bi-file-earmark-text me-1">
-            180ngày gần nhất
-        </i>
-    </a>
-    <select>
-        <option value=""></option>
-    </select>
-</p>
-
+<section style="margin:auto">
+    <p>
+        <form style="display:flex;align-items: center;justify-content: center;">
+            <div class="form-group col-md-2" style="padding-left:20px; padding-right:20px;">
+                <label>Từ ngày</label>
+                <input class="form-control mb-1" type="date" name="startdate" value="@Model.Item2.ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddDays(-180).ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="form-group col-md-2" style="padding-left:20px; padding-right:20px;">
+                <label>Từ ngày</label>
+                <input class="form-control mb-1" type="date" name="enddate" value="@Model.Item3.ToString("yyyy-MM-dd")" max="@DateTime.Now.ToString("yyyy-MM-dd")" min="@DateTime.Now.AddDays(-180).ToString("yyyy-MM-dd")" />
+            </div>
+            <button type="submit" class="btn btn-success" style="width:150px; height:10%;margin-top: 1%;">
+                <i class="bi bi-search">
+                    Tìm kiếm
+                </i>
+            </button>
+        </form>
+    </p>
+</section>
 <section class="section dashboard">
     <div class="row">
         <div class="col-12">
-            <div class="card overflow-auto">
+            <div class="card recent-sales overflow-auto">
                 <div class="card-body mt-4">
-                    <table class="table">
+                    <table class="table table-borderless datatable">
                         <colgroup>
-                            <col style="width:8%"/>
-                            <col style="width:10%"/>
+                            <col style="width:8%" />
+                            <col style="width:10%" />
                             <col style="width:10%" />
                             <col style="width:10%" />
                             <col style="width:10%" />
@@ -64,9 +46,9 @@
                                 <th class="">Mã sản phẩm</th>
                                 <th class="">Tên sản phẩm</th>
                                 <th class="">Bán chạy nhất</th>
-                                <th class="">Số đơn(@Model.Item2 ngày)</th>
+                                <th class="">Số đơn(@Model.Item2 - @Model.Item3)</th>
                                 <th class="">Tổng số đơn</th>
-                                <th class="">Số lượng(@Model.Item2 ngày)</th>
+                                <th class="">Số lượng(@Model.Item2 - @Model.Item3)</th>
                                 <th class="">Tổng số lượng</th>
                             </tr>
                         </thead>
@@ -91,8 +73,8 @@
         </div>
     </div>
     <style>
-        td, th {
-            border: solid 1px;
-        }
+      /*    td, th {
+             border: solid 1px;
+         } */
     </style>
 </section>

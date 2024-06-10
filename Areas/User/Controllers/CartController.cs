@@ -259,7 +259,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             _dataContext.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
-        [Route("/User/cart/add-{productid}-{optionvalue}")]
+        [Route("/User/cart/add/{productid}/{optionvalue}")]
         public async Task<IActionResult> add(string productid, string optionvalue)
         {
             productid = productid.ToLower();
@@ -269,7 +269,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return BadRequest();
             }
-            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid && m.OptionValue == m.OptionValue).FirstOrDefault();
+            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid && m.OptionValue == optionvalue).FirstOrDefault();
             if (item == null)
             {
                 return Ok(new
@@ -307,7 +307,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
                 code = 1
             });
         }
-        [Route("/User/cart/subtract-{productid}-{optionvalue}")]
+        [Route("/User/cart/subtract/{productid}/{optionvalue}")]
         public async Task<IActionResult> subtract(string productid, string optionvalue)
         {
             productid = productid.ToLower();
@@ -317,7 +317,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Controllers
             {
                 return BadRequest();
             }
-            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid && m.OptionValue == m.OptionValue).FirstOrDefault();
+            var item = _dataContext.CartViews.Where(m => m.UserID == userid && m.ProductID == productid && m.OptionValue == optionvalue).FirstOrDefault();
             if (item == null)
             {
                 return Ok(new

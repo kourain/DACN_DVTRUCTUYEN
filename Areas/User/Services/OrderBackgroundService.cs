@@ -42,7 +42,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Services
                         if (request.Item3 == false)
                         {
                             messenger = $"DB SHOP gửi {request.Item2.Name}, \nđây là {request.Item1.Quantity} khóa kích hoạt/tài khoản của sản phẩm \"{request.Item1.ProductName}\" - \"{request.Item1.OptionName}\" thuộc đơn hàng \"{request.Item1.OrderID}\":";
-                            var key = dataContext.Product_Keys.Where(m => m.OrderID == "0").Take(request.Item1.Quantity).ToList();
+                            var key = dataContext.Product_Keys.Where(m => m.OrderID == "0" && m.ProductID == request.Item1.ProductID && m.OptionValue ==request.Item1.ProductOptionValue).Take(request.Item1.Quantity).ToList();
                             foreach (var item2 in key)
                             {
                                 item2.OrderID = request.Item1.OrderID;
@@ -63,7 +63,7 @@ namespace DACN_DVTRUCTUYEN.Areas.User.Services
                         else
                         {
                             messenger = $"DB SHOP gửi {request.Item2.Name}, \nđây là 1 khóa kích hoạt/tài khoản của sản phẩm \"{request.Item1.ProductName}\" - \"{request.Item1.OptionName}\" thuộc đơn hàng \"{request.Item1.OrderID}\" được gửi với dạng sản phẩm bảo hành:";
-                            var item2 = dataContext.Product_Keys.FirstOrDefault(m => m.OrderID == "0");
+                            var item2 = dataContext.Product_Keys.FirstOrDefault(m => m.OrderID == "0" && m.ProductID == request.Item1.ProductID && m.OptionValue == request.Item1.ProductOptionValue);
                             if (item2 != null)
                             {
                                 item2.OrderID = request.Item1.OrderID;

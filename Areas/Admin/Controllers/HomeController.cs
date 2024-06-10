@@ -118,11 +118,11 @@ namespace DACN_DVTRUCTUYEN.Areas.Admin.Controllers
             _dataContext.SaveChanges();
             //tạo token mới sau khi thay đổi mật khẩu
             var newtoken = Functions.MD5Hash("admin" + check.Email + check.PassWord);
+            //cập nhật token trên máy chủ
+            Functions.tokenChangeAdmin(Request.Cookies["token"], newtoken);
             //cập nhật token trên trình duyệt khách
             Response.Cookies.Delete("token");
             Response.Cookies.Append("token",newtoken);
-            //cập nhật token trên máy chủ
-            Functions.tokenChangeAdmin(Request.Cookies["token"],newtoken);
             return Ok(new
             {
                 code = "1",
